@@ -74,3 +74,11 @@ __pycache__
 # Notebook checkpoints
 # =====================
 .ipynb_checkpoints/
+
+# =====================
+# Temp / Logs
+# =====================
+temp/
+*.err
+*.out
+
