@@ -17,6 +17,7 @@ import {
   PrimaryButton,
 } from "../components/ui";
 import { BottomNav } from "../components/BottomNav";
+import { useResponsive } from "../lib/layout";
 
 export default function Settings() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function Settings() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const responsive = useResponsive();
 
   useEffect(() => {
     (async () => {
@@ -70,7 +72,8 @@ export default function Settings() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} removeClippedSubviews>
+        <View style={responsive.inner}>
         <SectionTitle>Server</SectionTitle>
         <Card>
           <Text style={styles.muted}>Connected: {connected ? "yes" : "no"}</Text>
@@ -142,6 +145,7 @@ export default function Settings() {
             desktop server to chat with any configured provider from your phone.
           </Text>
         </Card>
+        </View>
       </ScrollView>
       <BottomNav />
     </View>
@@ -159,7 +163,6 @@ function KV({ k, v }: { k: string; v: string }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  content: { padding: 16 },
   rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 },
   label: {
     color: COLORS.muted,

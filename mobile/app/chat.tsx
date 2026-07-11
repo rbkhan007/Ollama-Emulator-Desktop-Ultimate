@@ -18,6 +18,7 @@ import { COLORS } from "../theme";
 import { MessageBubble } from "../components/MessageBubble";
 import { Chip } from "../components/ui";
 import { BottomNav } from "../components/BottomNav";
+import { useResponsive } from "../lib/layout";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -34,6 +35,7 @@ export default function Chat() {
   const [status, setStatus] = useState<any>(null);
   const scrollRef = useRef<ScrollView>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const responsive = useResponsive();
 
   useEffect(() => {
     if (!connected) {
@@ -128,17 +130,21 @@ export default function Chat() {
         <ScrollView
           ref={scrollRef}
           style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          removeClippedSubviews
           onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
         >
-          {msgs.map((m, i) => (
-            <MessageBubble key={i} role={m.role} content={m.content} />
-          ))}
-          {busy && (
-            <View style={styles.typing}>
-              <ActivityIndicator size="small" color={COLORS.accent2} />
-            </View>
-          )}
+          <View style={[responsive.inner, { paddingVertical: 8 }]}>
+            {msgs.map((m, i) => (
+              <MessageBubble key={i} role={m.role} content={m.content} />
+            ))}
+            {busy && (
+              <View style={styles.typing}>
+                <ActivityIndicator size="small" color={COLORS.accent2} />
+              </View>
+            )}
+          </View>
         </ScrollView>
 
         {models.length > 1 && (

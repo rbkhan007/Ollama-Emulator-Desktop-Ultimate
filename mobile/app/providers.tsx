@@ -5,9 +5,11 @@ import * as api from "../lib/api";
 import { COLORS, FONT_SIZE } from "../theme";
 import { Card, SectionTitle, Chip } from "../components/ui";
 import { BottomNav } from "../components/BottomNav";
+import { useResponsive } from "../lib/layout";
 
 export default function Providers() {
   const { connected } = useApp();
+  const responsive = useResponsive();
   const [providers, setProviders] = useState<any[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [active, setActive] = useState("");
@@ -42,7 +44,8 @@ export default function Providers() {
     <View style={styles.container}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ flexGrow: 1 }}
+        removeClippedSubviews
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -51,6 +54,7 @@ export default function Providers() {
           />
         }
       >
+        <View style={responsive.inner}>
         <SectionTitle>Active provider</SectionTitle>
         <Card>
           <Text style={styles.active}>{active || "none"}</Text>
@@ -85,6 +89,7 @@ export default function Providers() {
             <Text style={styles.muted}>No models loaded yet.</Text>
           )}
         </View>
+        </View>
       </ScrollView>
       <BottomNav />
     </View>
@@ -93,7 +98,6 @@ export default function Providers() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  content: { padding: 16 },
   rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   active: { color: COLORS.text, fontSize: FONT_SIZE.lg, fontWeight: "700" },
   name: { color: COLORS.text, fontSize: FONT_SIZE.md, fontWeight: "700" },

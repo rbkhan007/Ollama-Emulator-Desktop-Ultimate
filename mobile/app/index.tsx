@@ -12,10 +12,12 @@ import { useRouter } from "expo-router";
 import { useApp } from "../lib/AppContext";
 import { COLORS } from "../theme";
 import { Input, PrimaryButton } from "../components/ui";
+import { useResponsive } from "../lib/layout";
 
 export default function Connect() {
   const router = useRouter();
   const { baseUrl, testConnection } = useApp();
+  const responsive = useResponsive();
   const [url, setUrl] = useState(baseUrl || "http://192.168.1.100:11434");
   const [loading, setLoading] = useState(false);
 
@@ -34,44 +36,40 @@ export default function Connect() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      style={{ flex: 1 }}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.logo}>
-          <Text style={styles.glyph}>{">"}_</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, backgroundColor: COLORS.bg }}
+      >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={[responsive.inner, { flexGrow: 1, justifyContent: "center" }]}>
+          <View style={styles.logo}>
+            <Text style={styles.glyph}>{">"}_</Text>
+          </View>
+          <Text style={styles.title}>OllamaEmu</Text>
+          <Text style={styles.subtitle}>Connect your phone to the desktop emulator</Text>
+
+          <Text style={styles.label}>Server address</Text>
+          <Input
+            value={url}
+            onChangeText={setUrl}
+            placeholder="http://192.168.1.100:11434"
+            keyboardType="url"
+          />
+
+          <PrimaryButton title="Connect" onPress={connect} loading={loading} />
+
+          <Text style={styles.hint}>
+            The desktop app serves on http://localhost:11434. To connect from your
+            phone, use your computer's local IP (e.g. 192.168.1.x) and ensure both
+            devices are on the same Wi-Fi network.
+          </Text>
         </View>
-        <Text style={styles.title}>OllamaEmu</Text>
-        <Text style={styles.subtitle}>Connect your phone to the desktop emulator</Text>
-
-        <Text style={styles.label}>Server address</Text>
-        <Input
-          value={url}
-          onChangeText={setUrl}
-          placeholder="http://192.168.1.100:11434"
-          keyboardType="url"
-        />
-
-        <PrimaryButton title="Connect" onPress={connect} loading={loading} />
-
-        <Text style={styles.hint}>
-          The desktop app serves on http://localhost:11434. To connect from your
-          phone, use your computer's local IP (e.g. 192.168.1.x) and ensure both
-          devices are on the same Wi-Fi network.
-        </Text>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: COLORS.bg,
-    padding: 28,
-    justifyContent: "center",
-  },
   logo: {
     width: 72,
     height: 72,

@@ -5,9 +5,11 @@ import * as api from "../lib/api";
 import { COLORS, FONT_SIZE } from "../theme";
 import { Card, SectionTitle } from "../components/ui";
 import { BottomNav } from "../components/BottomNav";
+import { useResponsive } from "../lib/layout";
 
 export default function Usage() {
   const { connected } = useApp();
+  const responsive = useResponsive();
   const [stats, setStats] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -45,7 +47,8 @@ export default function Usage() {
     <View style={styles.container}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ flexGrow: 1 }}
+        removeClippedSubviews
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -54,6 +57,7 @@ export default function Usage() {
           />
         }
       >
+        <View style={responsive.inner}>
         <SectionTitle>Overview</SectionTitle>
         <View style={styles.grid}>
           <Stat label="Requests" value={stats?.total_requests ?? 0} />
@@ -92,6 +96,7 @@ export default function Usage() {
         {(stats?.recent ?? []).length === 0 && (
           <Text style={styles.muted}>No activity recorded yet.</Text>
         )}
+        </View>
       </ScrollView>
       <BottomNav />
     </View>
@@ -109,7 +114,6 @@ function Stat({ label, value }: { label: string; value: any }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
-  content: { padding: 16 },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",

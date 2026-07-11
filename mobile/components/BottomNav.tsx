@@ -2,6 +2,7 @@ import React from "react";
 import { View, Pressable, Text, StyleSheet } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 import { COLORS } from "../theme";
+import { useResponsive } from "../lib/layout";
 
 const TABS = [
   { name: "Chat", path: "/chat", icon: "💬" },
@@ -13,21 +14,24 @@ const TABS = [
 export function BottomNav() {
   const router = useRouter();
   const path = usePathname();
+  const responsive = useResponsive();
   return (
     <View style={styles.bar}>
-      {TABS.map((t) => {
-        const active = path === t.path;
-        return (
-          <Pressable
-            key={t.path}
-            style={styles.tab}
-            onPress={() => router.push(t.path as any)}
-          >
-            <Text style={[styles.icon, active && styles.active]}>{t.icon}</Text>
-            <Text style={[styles.label, active && styles.active]}>{t.name}</Text>
-          </Pressable>
-        );
-      })}
+      <View style={[responsive.inner, { flexDirection: "row", paddingVertical: 0 }]}>
+        {TABS.map((t) => {
+          const active = path === t.path;
+          return (
+            <Pressable
+              key={t.path}
+              style={styles.tab}
+              onPress={() => router.push(t.path as any)}
+            >
+              <Text style={[styles.icon, active && styles.active]}>{t.icon}</Text>
+              <Text style={[styles.label, active && styles.active]}>{t.name}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
   );
 }
