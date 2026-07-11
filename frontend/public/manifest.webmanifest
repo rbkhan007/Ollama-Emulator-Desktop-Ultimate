@@ -1,0 +1,24 @@
+{
+  "name": "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+  "short_name": "OllamaEmu",
+  "description": "Free & open-source local Ollama API emulator that routes your prompts to 100% free LLMs. RAG, memory, analytics and a polished dashboard in one file.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#06060e",
+  "theme_color": "#6c5ce7",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand-mark.ico",
+      "sizes": "any",
+      "type": "image/vnd.microsoft.icon",
+      "purpose": "any maskable"
+    }
+  ]
+}

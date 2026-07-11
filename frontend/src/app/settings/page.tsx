@@ -182,7 +182,7 @@ export default function SettingsPage() {
       {/* Add new provider */}
       <div className="card stagger-3">
         <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>Add Custom Provider</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div className="grid-2">
           <div>
             <label style={{ fontSize: 13, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Name</label>
             <input placeholder="my-provider" value={newName} onChange={e => setNewName(e.target.value)} />

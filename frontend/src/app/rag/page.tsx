@@ -163,7 +163,7 @@ export default function RagPage() {
       </div>
 
       {/* Upload & Paste */}
-      <div className="stagger-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+      <div className="stagger-2 grid-2" style={{ marginBottom: 24 }}>
         <div className="card">
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <PageIcon type="upload" color="var(--accent)" />
@@ -186,7 +186,7 @@ export default function RagPage() {
             <h2 style={{ fontSize: 16, fontWeight: 600 }}>Paste Text</h2>
           </div>
           <input placeholder="Document name (optional)" value={textName} onChange={e => setTextName(e.target.value)} style={{ marginBottom: 8 }} />
-          <textarea placeholder="Paste your text content here..." value={textInput} onChange={e => setTextInput(e.target.value)} rows={4} style={{ marginBottom: 8, fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }} />
+           <textarea placeholder="Paste your text content here..." value={textInput} onChange={e => setTextInput(e.target.value)} rows={4} style={{ marginBottom: 8, fontFamily: "var(--font-jetbrains), monospace", fontSize: 13 }} />
           <button className="btn btn-primary" onClick={addText}>Add Text</button>
         </div>
       </div>

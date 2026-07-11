@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
@@ -102,132 +103,178 @@ export default function Navbar() {
   const path = usePathname();
   const { theme, toggle } = useTheme();
   const { user, logout, isAuthenticated } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => { setOpen(false); }, [path]);
+
+  const isActive = (href: string) => path === href || (href !== "/" && path.startsWith(href));
 
   return (
-    <nav style={{
-      position: "sticky",
-      top: 0,
-      zIndex: 100,
-      display: "flex",
-      alignItems: "center",
-      gap: 6,
-      padding: "12px 32px",
-      background: "var(--nav-bg)",
-      backdropFilter: "blur(20px) saturate(180%)",
-      borderBottom: "1px solid var(--glass-border)",
-    }}>
-      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20 }}>
-        <BrandIcon name="Ollama" size={30} color="#00cec9" />
-        <span style={{
-          fontWeight: 700,
-          fontSize: 16,
-          letterSpacing: "-0.02em",
-          background: "linear-gradient(135deg, #6c5ce7, #00cec9)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}>
-          OllamaEmu
-        </span>
-        <span style={{
-          fontSize: 10,
-          padding: "2px 8px",
-          borderRadius: 6,
-          background: "rgba(108,92,231,0.12)",
-          color: "#6c5ce7",
-          fontWeight: 600,
-          letterSpacing: "0.05em",
-        }}>v1.0.0</span>
-      </Link>
-      <div style={{ flex: 1 }} />
-      {links.map((l) => {
-        const active = path === l.href || (l.href !== "/" && path.startsWith(l.href));
-        return (
-          <Link key={l.href} href={l.href} style={{
-            padding: "7px 14px",
+    <>
+      <nav style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "12px 32px",
+        background: "var(--nav-bg)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        borderBottom: "1px solid var(--glass-border)",
+      }}>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20 }}>
+          <BrandIcon name="Ollama" size={30} color="#00cec9" />
+          <span style={{
+            fontWeight: 700,
+            fontSize: 16,
+            letterSpacing: "-0.02em",
+            background: "linear-gradient(135deg, #6c5ce7, #00cec9)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}>
+            OllamaEmu
+          </span>
+          <span style={{
+            fontSize: 10,
+            padding: "2px 8px",
+            borderRadius: 6,
+            background: "rgba(108,92,231,0.12)",
+            color: "#6c5ce7",
+            fontWeight: 600,
+            letterSpacing: "0.05em",
+          }}>v1.0.0</span>
+        </Link>
+        <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 6, flex: 1 }}>
+          {links.map((l) => {
+            const active = isActive(l.href);
+            return (
+              <Link key={l.href} href={l.href} style={{
+                padding: "7px 14px",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 500,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                background: active ? "rgba(108,92,231,0.12)" : "transparent",
+                color: active ? "#6c5ce7" : "var(--text-muted)",
+                border: active ? "1px solid rgba(108,92,231,0.2)" : "1px solid transparent",
+                transition: "all 0.2s",
+              }}>
+                <NavIcon type={l.icon} />
+                {l.label}
+              </Link>
+            );
+          })}
+        </div>
+        <button
+          onClick={toggle}
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          style={{
+            width: 36,
+            height: 36,
             borderRadius: 10,
-            fontSize: 13,
-            fontWeight: 500,
+            border: "1px solid var(--glass-border)",
+            background: "var(--surface)",
+            color: "var(--text-muted)",
+            cursor: "pointer",
             display: "flex",
             alignItems: "center",
-            gap: 6,
-            background: active ? "rgba(108,92,231,0.12)" : "transparent",
-            color: active ? "#6c5ce7" : "var(--text-muted)",
-            border: active ? "1px solid rgba(108,92,231,0.2)" : "1px solid transparent",
-            transition: "all 0.2s",
-          }}>
-            <NavIcon type={l.icon} />
-            {l.label}
-          </Link>
-        );
-      })}
-      <button
-        onClick={toggle}
-        title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-        style={{
-          width: 36,
-          height: 36,
-          borderRadius: 10,
-          border: "1px solid var(--glass-border)",
-          background: "var(--surface)",
-          color: "var(--text-muted)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.2s",
-        }}
-      >
-        {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-      </button>
-
-      {isAuthenticated ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 6 }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: "var(--gradient-1)", color: "white",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 13, fontWeight: 700,
-          }}>
-            {user?.email?.charAt(0).toUpperCase() || "U"}
-          </div>
-          <button
-            onClick={logout}
-            title="Sign out"
-            style={{
-              padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 500,
-              border: "1px solid var(--glass-border)", background: "var(--surface)",
-              color: "var(--text-muted)", cursor: "pointer",
-              fontFamily: "inherit", transition: "all 0.2s",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle" }}>
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-            {" Sign Out"}
-          </button>
-        </div>
-      ) : (
-        <Link
-          href="/login"
-          style={{
-            marginLeft: 8,
-            padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-            background: "var(--gradient-1)", color: "white",
-            display: "flex", alignItems: "center", gap: 6,
-            boxShadow: "0 4px 16px rgba(108,92,231,0.3)",
+            justifyContent: "center",
             transition: "all 0.2s",
           }}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" y1="12" x2="3" y2="12" />
-          </svg>
-          Sign In
-        </Link>
-      )}
-    </nav>
+          {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </button>
+
+        {isAuthenticated ? (
+          <div className="nav-auth" style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 6 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: 8,
+              background: "var(--gradient-1)", color: "white",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13, fontWeight: 700,
+            }}>
+              {user?.email?.charAt(0).toUpperCase() || "U"}
+            </div>
+            <button
+              onClick={logout}
+              title="Sign out"
+              style={{
+                padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                border: "1px solid var(--glass-border)", background: "var(--surface)",
+                color: "var(--text-muted)", cursor: "pointer",
+                fontFamily: "inherit", transition: "all 0.2s",
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle" }}>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              {" Sign Out"}
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/login"
+            className="nav-auth"
+            style={{
+              marginLeft: 8,
+              padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+              background: "var(--gradient-1)", color: "white",
+              display: "flex", alignItems: "center", gap: 6,
+              boxShadow: "0 4px 16px rgba(108,92,231,0.3)",
+              transition: "all 0.2s",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+              <polyline points="10 17 15 12 10 7" />
+              <line x1="15" y1="12" x2="3" y2="12" />
+            </svg>
+            Sign In
+          </Link>
+        )}
+
+        <button
+          className="nav-burger"
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Toggle navigation menu"
+          aria-expanded={open}
+        >
+          {open ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+          )}
+        </button>
+      </nav>
+
+      <div className={`nav-mobile${open ? " open" : ""}`}>
+        {links.map((l) => (
+          <Link key={l.href} href={l.href} className={isActive(l.href) ? "active" : ""}>
+            <NavIcon type={l.icon} />
+            {l.label}
+          </Link>
+        ))}
+        <div className="nav-mobile-auth">
+          {isAuthenticated ? (
+            <button
+              onClick={logout}
+              className="btn btn-ghost btn-sm"
+              style={{ flex: 1, justifyContent: "center" }}
+            >
+              Sign Out
+            </button>
+          ) : (
+            <Link href="/login" className="btn btn-primary btn-sm" style={{ flex: 1, justifyContent: "center" }}>
+              Sign In
+            </Link>
+          )}
+        </div>
+      </div>
+    </>
   );
 }

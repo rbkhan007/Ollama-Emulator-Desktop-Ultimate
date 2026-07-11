@@ -35,6 +35,8 @@
   /* Comic poster accent outline */
   --ink: #1a1a2e;
   --ink-soft: rgba(26,26,46,0.12);
+  /* Self-hosted fonts (next/font) with system fallbacks */
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 [data-theme="dark"] {
@@ -76,7 +78,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
@@ -498,10 +500,17 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 }
 
 /* ===========================
-    RESPONSIVE
-    =========================== */
+     RESPONSIVE
+     =========================== */
+@media (max-width: 1080px) {
+  .nav-links, .nav-auth { display: none !important; }
+  .nav-burger { display: inline-flex !important; }
+}
 @media (max-width: 900px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr !important; }
+  .compare-row { grid-template-columns: 1fr !important; gap: 4px !important; text-align: left; }
+  .compare-row > div:nth-child(2) { justify-self: start; }
 }
 @media (max-width: 768px) {
   .hero-title { font-size: 2rem !important; } /* 32px mobile */
@@ -509,8 +518,68 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   .code-grid { grid-template-columns: 1fr !important; }
   .page-container { padding: 20px 16px; }
   .page-header { flex-direction: column; text-align: center; gap: 12px; }
-  .page-header h1 { font-size: 22px; }
+  .page-header h1 { fontSize: 22px; }
+  .usage-hourly-labels { display: none; }
+}
+@media (max-width: 560px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-cta { flex-direction: column; align-items: stretch; }
+  .hero-cta > a { justify-content: center; }
 }
 @media (max-width: 480px) {
   .page-container { padding: 16px 12px; }
+}
+
+/* Two-column form/grid helper that collapses on small screens */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Comparison row: name | badge | note */
+.compare-row {
+  display: grid;
+  grid-template-columns: 160px 90px 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Mobile navbar */
+.nav-burger {
+  display: none;
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  align-items: center; justify-content: center;
+  margin-left: auto;
+}
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+}
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+  background: transparent;
+}
+.nav-mobile a.active { background: rgba(108,92,231,0.12); color: #6c5ce7; }
+.nav-mobile .nav-mobile-auth {
+  margin-top: 6px;
+  display: flex; gap: 8px;
 }

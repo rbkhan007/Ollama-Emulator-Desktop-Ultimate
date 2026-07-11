@@ -418,7 +418,7 @@ export function CodeSnippet() {
   return (
     <div style={{
       background: "var(--bg-2)", borderRadius: 16, border: "1px solid var(--glass-border)",
-      padding: 20, fontFamily: "'JetBrains Mono', 'Fira Code', monospace", fontSize: 13,
+      padding: 20, fontFamily: "var(--font-jetbrains), 'Fira Code', monospace", fontSize: 13,
       lineHeight: 1.7, overflow: "hidden", position: "relative",
     }}>
       <div style={{ display: "flex", gap: 6, marginBottom: 16 }}>

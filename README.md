@@ -35,6 +35,7 @@
 - 🧠 **Built-in brains** — RAG knowledge base (FTS5 + TF-IDF) and auto-saving memory, all local.
 - 📊 **Analytics** — real-time token tracking, resonance, accuracy, hourly activity.
 - 🔒 **Private by design** — your keys & docs never leave your machine; SSRF-protected, hashed auth.
+- 📱 **Fully Responsive & Blazing Fast** — the static site adapts to mobile, tablet, and desktop; it ships self-hosted fonts via `next/font` and includes built-in SEO (`sitemap.xml`, `robots.txt`, canonical URL, OpenGraph + Twitter cards, JSON-LD `SoftwareApplication` + `FAQPage`, and a web app manifest).
 
 If this saves you a subscription, ⭐ **[star the repo](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate)** and tell a friend. Virality is the only price.
 
@@ -62,9 +63,7 @@ Opens `http://localhost:11434` automatically. Add your API key in **Settings** a
 | **From source** | `run.bat` / `run.sh` | clone + run (see below) |
 | **npm (GitHub Packages)** | `@rbkhan007/ollama-emulator-desktop-ultimate` | see [Install from GitHub Packages](#-install-from-github-packages) |
 
-> 🌐 **Free Tier gateway** — the hosted zero-setup experience lives at **`https://ollamaemu.pages.dev`** (a free Cloudflare Pages domain — deploy the landing pages there, or change `FREETIER_DOMAIN` in [`frontend/src/lib/config.ts`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/blob/main/frontend/src/lib/config.ts) to your own).
->
-> 💡 Running the app? Visit the in-app **landing page** at **`http://localhost:11434/landing`** — it surfaces the repo, the download, and the Free Tier link.
+> 🌐 **Free Tier gateway** — the live public site is **`https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate`** (a free GitHub Pages deployment). The button is wired via `FREETIER_DOMAIN` in [`frontend/src/lib/config.ts`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/blob/main/frontend/src/lib/config.ts); you can override it with `NEXT_PUBLIC_FREETIER_DOMAIN`.
 
 ---
 
@@ -101,7 +100,7 @@ npm install @rbkhan007/ollama-emulator-desktop-ultimate
 | **Usage Analytics** | Real-time token tracking, resonance, accuracy, hourly activity |
 | **Local Auth System** | Email/password login, all data stored locally |
 | **Theme Support** | Dark/light mode with system preference detection |
-| **SPA Dashboard** | 10 pages: Home, Playground, Usage, Settings, RAG, Memory, Login, Register, Setup, Knowledge |
+| **SPA Dashboard** | ~10 pages: Home, Playground, Usage, Settings, Knowledge (RAG), Memory, Login, Register, Setup, About |
 
 ---
 
@@ -308,10 +307,10 @@ SEO is built in: `sitemap.xml`, `robots.txt`, canonical URL, OpenGraph + Twitter
 ├── .env.example             # Environment variables template
 ├── frontend/
 │   ├── src/
-│   │   ├── app/             # Next.js pages (7 pages)
+│   │   ├── app/             # Next.js app routes (~10 pages)
 │   │   ├── components/      # Navbar, Icons, Background
 │   │   └── lib/             # api, AuthContext, ThemeContext
-│   ├── next.config.ts       # Static export config
+│   ├── next.config.js       # Static export config (output: "export")
 │   └── package.json
 └── README.md
 ```

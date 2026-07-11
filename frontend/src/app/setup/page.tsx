@@ -95,7 +95,7 @@ export default function SetupPage() {
             onChange={e => setApiKey(e.target.value)}
             required
             autoFocus
-            style={{ fontSize: 15, padding: "12px 16px", fontFamily: "'JetBrains Mono', monospace" }}
+            style={{ fontSize: 15, padding: "12px 16px", fontFamily: "var(--font-jetbrains), monospace" }}
           />
           <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 6 }}>
             For a free tier, get an API key from{" "}

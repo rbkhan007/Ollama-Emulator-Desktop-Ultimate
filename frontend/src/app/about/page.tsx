@@ -73,9 +73,8 @@ export default function About() {
           {compares.map((c) => {
             const isUs = c.name === "OllamaEmu";
             return (
-              <div key={c.name} className={isUs ? "spidey-panel" : ""} style={{
+              <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
                 padding: "16px 22px", borderRadius: 14,
-                display: "grid", gridTemplateColumns: "160px 90px 1fr", gap: 16, alignItems: "center",
                 background: isUs ? "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.10))" : "var(--surface)",
                 border: isUs ? "1px solid rgba(108,92,231,0.35)" : "1px solid var(--glass-border)",
               }}>

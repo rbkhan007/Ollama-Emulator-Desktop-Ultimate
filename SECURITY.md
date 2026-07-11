@@ -10,6 +10,8 @@
 
 This is a **local desktop application**. All API keys, credentials, and user data are stored **locally on your machine** and are never sent to any external server except the LLM providers you explicitly configure.
 
+> **Note on the public GitHub Pages site:** `https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate` is **static-only** (marketing pages). It has **no backend** and collects **no data, keys, or telemetry** — all sensitive data exists only in the locally-run desktop app.
+
 ### What's Protected
 
 - **API keys** stored in local SQLite database (`providers.db`) — never exposed to the network
@@ -20,7 +22,7 @@ This is a **local desktop application**. All API keys, credentials, and user dat
 ### Best Practices
 
 1. Never commit `providers.db`, `rag.db`, or `memory.db` to version control (they are in `.gitignore`)
-2. Never commit `.env` files with real keys (`.env.example` is safe)
+2. Never commit API keys, `.env` files, or `*.db` files (all already covered by `.gitignore`)
 3. Use the `OLLAMA_EMU_API_KEY` environment variable instead of the web UI for CI/CD environments
 4. Regularly clear usage logs in the Usage page if you handle sensitive queries
 5. The server binds to `127.0.0.1:11434` by default (restricted CORS). Pass `--host 0.0.0.0` to expose it on your LAN — only do this on a trusted network, as it opens CORS to all origins

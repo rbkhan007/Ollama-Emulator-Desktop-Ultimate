@@ -203,7 +203,7 @@ export default function UsagePage() {
             </div>
           ))}
         </div>
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 9, color: "var(--text-muted)" }}>
+        <div className="usage-hourly-labels" style={{ display: "flex", justifyContent: "space-between", marginTop: 8, fontSize: 9, color: "var(--text-muted)" }}>
           {[0, 6, 12, 18, 23].map(i => (
             <span key={i}>{hourLabels[i]}</span>
           ))}

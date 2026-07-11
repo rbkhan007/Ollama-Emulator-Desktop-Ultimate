@@ -49,6 +49,11 @@ eas build -p android --profile apk   # standalone APK (assembleRelease)
 The build runs in Expo's cloud, so **no local Android SDK is required**. Download
 the artifact from the EAS dashboard and install it.
 
+> **Already built:** a standalone Android APK (**v1.0.0**) was produced with
+> `eas build -p android --profile apk` under the EAS project
+> `@rhavex/ollama-emu-mobile`. For CI/robot builds, export `EXPO_TOKEN` and run
+> `eas init --force` once before the first build.
+
 > Local native builds (`npx expo prebuild` + Android Studio/gradle) also work if
 > you have the Android SDK installed.
 

@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,6 +8,22 @@ import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import MobileSetup from "@/components/MobileSetup";
 import { SITE_URL, ASSET_BASE } from "@/lib/config";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+  preload: false,
+  fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+});
 
 const themeScript = `
 (function(){try{var t=localStorage.getItem('ollama-emu-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}catch(e){}})()
@@ -20,23 +37,34 @@ export const metadata: Metadata = {
     default: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     template: "%s · OllamaEmu",
   },
-  description: "Emulates the Ollama API locally and routes your prompts to real, free LLM models via OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base with TF-IDF search, persistent SQLite memory, and a polished Next.js dashboard. Works with Claude Code, OpenCode, and any Ollama-compatible AI coding tool.",
+  description: "OllamaEmu emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent SQLite memory, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
   applicationName: "OllamaEmu",
   keywords: [
-    "ollama emulator", "local LLM", "free AI models", "free LLM proxy", "RAG knowledge base",
-    "TF-IDF search", "AI coding assistant", "Claude Code", "OpenCode", "multi-provider AI",
-    "OpenRouter free models", "local AI proxy", "AI chat playground", "persistent memory",
-    "SQLite AI memory", "ollama alternative", "LM Studio alternative", "run free models locally",
-    "open source AI gateway", "fake ollama server",
+    "ollama emulator", "ollama alternative", "local LLM", "free AI models", "free LLM proxy",
+    "free AI coding assistant", "RAG knowledge base", "retrieval augmented generation",
+    "TF-IDF search", "vector search", "AI coding assistant", "Claude Code", "OpenCode", "Cursor", "Continue.dev",
+    "multi-provider AI", "OpenRouter free models", "OpenAI compatible", "Anthropic compatible",
+    "local AI proxy", "AI chat playground", "persistent memory", "SQLite AI memory",
+    "LM Studio alternative", "run free models locally", "open source AI gateway",
+    "fake ollama server", "ollama api emulator", "local gpt proxy", "free chatgpt alternative",
+    "private AI", "self-hosted LLM", "offline AI proxy", "free github copilot alternative",
+    "ai agent proxy", "llm load balancer", "streaming chat completions",
   ],
   authors: [{ name: "Rhasan@dev" }, { name: "rbkhan007" }],
   creator: "Rhasan@dev",
   publisher: "OllamaEmu",
   category: "technology",
   alternates: { canonical: SITE_URL },
+  manifest: `${ASSET_BASE}/manifest.webmanifest`,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "OllamaEmu",
+  },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   openGraph: {
     type: "website",
+    locale: "en_US",
     url: SITE_URL,
     siteName: "OllamaEmu",
     title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
@@ -53,25 +81,31 @@ export const metadata: Metadata = {
   icons: { icon: `${ASSET_BASE}/favicon.ico`, apple: `${ASSET_BASE}/brand-mark.ico` },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8f9fc" },
+    { media: "(prefers-color-scheme: dark)", color: "#06060e" },
+  ],
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable}`}>
         <head>
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <meta name="theme-color" content="#f8f9fc" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#06060e" media="(prefers-color-scheme: dark)" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-      </head>
+        </head>
       <body>
         <MobileSetup />
         <ThemeProvider>
           <AuthProvider>
-            <Particles count={18} />
+            <Particles count={12} />
             <GradientOrbs />
             <ComicHalftone />
             <MeshGrid />

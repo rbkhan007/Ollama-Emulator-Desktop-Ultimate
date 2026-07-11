@@ -10,11 +10,11 @@ export const NPM_PACKAGE = "@rbkhan007/ollama-emulator-desktop-ultimate";
 export const NPM_URL =
   "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/pkgs/npm/ollama-emulator-desktop-ultimate";
 
-// Your hosted free-tier gateway. Deploy the landing pages to a free
-// Cloudflare Pages domain, then point this at it (or set
-// NEXT_PUBLIC_FREETIER_DOMAIN at build time).
+// Your hosted free-tier gateway. By default this points at the live public
+// GitHub Pages site. Override with NEXT_PUBLIC_FREETIER_DOMAIN at build time
+// (e.g. your own custom domain) if you deploy a dedicated hosted gateway.
 export const FREETIER_DOMAIN =
-  process.env.NEXT_PUBLIC_FREETIER_DOMAIN || "ollamaemu.pages.dev";
+  process.env.NEXT_PUBLIC_FREETIER_DOMAIN || "rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate";
 export const FREETIER_URL = `https://${FREETIER_DOMAIN}`;
 
 // Public base URL of the deployed marketing site (used for SEO: sitemap, robots, canonical, OG).

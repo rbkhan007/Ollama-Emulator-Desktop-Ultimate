@@ -60,9 +60,22 @@ export default function Home() {
     url: SITE_URL,
     downloadUrl: EXE_URL,
   };
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { question: "What is OllamaEmu?", answer: "OllamaEmu is a free, open-source local server that emulates the Ollama API and silently routes your prompts to real, 100% free LLMs from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more." },
+      { question: "Is OllamaEmu really free?", answer: "Yes. OllamaEmu is 100% free and open source. It connects to free model tiers (such as OpenRouter's free models) so you can code and chat without paying for a subscription." },
+      { question: "Which AI coding tools work with OllamaEmu?", answer: "Any Ollama- or OpenAI-compatible tool works, including Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI SDK." },
+      { question: "Does OllamaEmu keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in SQLite on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
+      { question: "Do I need to install anything to try it?", answer: "You can download the single-file Windows EXE, or run it from source with run.bat / run.sh. On macOS and Linux use run.sh. No Docker required." },
+    ],
+  };
+
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       {/* Hero */}
       <section style={{
         padding: "88px 24px 64px", textAlign: "center",
@@ -101,7 +114,7 @@ export default function Home() {
           analytics, and a polished dashboard.
         </p>
 
-        <div style={{
+        <div className="hero-cta" style={{
           display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 14,
         }}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
@@ -230,9 +243,8 @@ export default function Home() {
           {compares.map((c) => {
             const isUs = c.name === "OllamaEmu";
             return (
-              <div key={c.name} className={isUs ? "spidey-panel" : ""} style={{
+              <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
                 padding: "16px 22px", borderRadius: 14,
-                display: "grid", gridTemplateColumns: "160px 90px 1fr", gap: 16, alignItems: "center",
                 background: isUs ? "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.10))" : "var(--surface)",
                 border: isUs ? "1px solid rgba(108,92,231,0.35)" : "1px solid var(--glass-border)",
               }}>
