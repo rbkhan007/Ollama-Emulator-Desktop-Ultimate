@@ -324,8 +324,14 @@ desktop/server running `ollama_emu_desktop.py` (same Wi-Fi) and proxies chats to
 the configured LLM provider. On first launch the app prompts for the server URL
 (e.g. `http://192.168.1.50:11434`).
 
+The app ships with a **proper branded identity** — a custom app icon, Android
+adaptive icon (foreground mark on a brand gradient), monochrome notification
+icon, and a full-bleed splash screen — all generated from `brand-mark.svg`. It is
+**locked to portrait** (no auto-rotation) and the layout is responsive (centered
+on tablets, scaled padding on small phones).
+
 Run it instantly with **Expo Go** (scan the QR from `npx expo start`) — no build
-needed — or produce a standalone APK/AAB with `eas build -p android`.
+needed — or produce a branded standalone APK/AAB with `eas build -p android`.
 
 ```bash
 cd mobile

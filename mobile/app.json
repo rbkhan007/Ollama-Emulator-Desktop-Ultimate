@@ -6,21 +6,29 @@
     "orientation": "portrait",
     "scheme": "ollamaemu",
     "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
     "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#0d0d1a"
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#06060e"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ollamaemu.app"
+      "bundleIdentifier": "com.ollamaemu.app",
+      "icon": "./assets/icon.png"
     },
     "android": {
       "package": "com.ollamaemu.app",
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon-foreground.png",
+        "backgroundImage": "./assets/adaptive-icon-background.png",
         "backgroundColor": "#0d0d1a"
+      },
+      "notification": {
+        "icon": "./assets/notification-icon.png"
       }
     },
     "web": {

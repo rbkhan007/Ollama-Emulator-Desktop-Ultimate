@@ -71,7 +71,11 @@ the artifact from the EAS dashboard and install it.
 | `lib/api.ts` | Typed client for the desktop REST + streaming API |
 | `lib/AppContext.tsx` | Server URL + auth state (AsyncStorage) |
 | `theme.ts` | Shared dark palette |
-| `app.json` | Expo config (scheme, dark UI, bundle id) |
+| `app.json` | Expo config (scheme, dark UI, bundle id, **branded icon + adaptive icon + splash + notification icon, portrait lock**) |
+| `assets/icon.png` | Branded app icon (1024², used as `expo.icon` + iOS icon) |
+| `assets/adaptive-icon-foreground.png` · `adaptive-icon-background.png` | Android adaptive-icon layers (mark on brand gradient) |
+| `assets/notification-icon.png` | Monochrome white notification icon |
+| `assets/splash.png` | Full-bleed branded splash (1242×2436) |
 
 ## API contract
 
@@ -93,5 +97,26 @@ The app talks to the same endpoints the web dashboard uses:
   tunnel/VPN rather than a public open port.
 - Auth is optional: the app works with just the server URL (the server already
   holds the provider API key). Signing in links a local account on the server.
+- **Orientation is locked to portrait** (`"orientation": "portrait"` in
+  `app.json`) so the app never auto-rotates.
+- **Responsive layout:** content is centered with a 760px max-width on tablets
+  and the padding scales down on small phones (`mobile/lib/layout.ts`).
 - The bundle was validated with `expo export` (Android, ~900 modules) and
   `tsc --noEmit` passes.
+
+## Branding / assets
+
+All app artwork is generated from the `brand-mark.svg` hex+bolt logo
+(`mobile/assets/*.png`). The generator script is `mobile/gen-assets.js`
+(runs with the `sharp` package from `frontend/node_modules`):
+
+```bash
+cd frontend
+$env:NODE_PATH="$PWD/../frontend/node_modules"   # so node can resolve 'sharp'
+node ../mobile/gen-assets.js
+```
+
+It produces the app icon, Android adaptive-icon foreground/background, the
+white notification icon, the splash screen, and the web PWA icons
+(`frontend/public/icon-192.png`, `icon-512.png`, `apple-touch-icon.png`) plus
+the Open Graph share image (`frontend/public/og-image.png`).

@@ -69,16 +69,19 @@ export const metadata: Metadata = {
     siteName: "OllamaEmu",
     title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator that silently routes your prompts to real, 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file.",
-    images: [{ url: `${ASSET_BASE}/neural-proxy.svg`, width: 800, height: 500, alt: "OllamaEmu neural proxy" }],
+    images: [{ url: `${ASSET_BASE}/og-image.png`, width: 1200, height: 630, alt: "OllamaEmu — free local LLM proxy" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator routing prompts to 100% free LLMs. RAG, memory, analytics in one file.",
-    images: [`${ASSET_BASE}/neural-proxy.svg`],
+    images: [`${ASSET_BASE}/og-image.png`],
     creator: "@rbkhan007",
   },
-  icons: { icon: `${ASSET_BASE}/favicon.ico`, apple: `${ASSET_BASE}/brand-mark.ico` },
+  icons: {
+    icon: [`${ASSET_BASE}/favicon.ico`, { url: `${ASSET_BASE}/icon-192.png`, type: "image/png", sizes: "192x192" }],
+    apple: `${ASSET_BASE}/apple-touch-icon.png`,
+  },
 };
 
 export const viewport: Viewport = {
