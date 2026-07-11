@@ -13,4 +13,4 @@ jobs:
       - name: Make npm package public
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh api --method PATCH "/user/packages/npm/ollama-emulator-desktop-ultimate/visibility" -f visibility=public
+        run: gh api --method PATCH "/repos/rbkhan007/Ollama-Emulator-Desktop-Ultimate/packages/npm/ollama-emulator-desktop-ultimate/visibility" -f visibility=public
