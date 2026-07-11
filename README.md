@@ -84,24 +84,24 @@ Live model list: [openrouter.ai/models](https://openrouter.ai/models)
 ```mermaid
 flowchart LR
     subgraph Tools["Your AI Coding Tools"]
-        CC[Claude Code]
-        CU[Cursor]
-        OC[OpenCode]
-        CD[Continue.dev]
+        direction TB
+        CC["Claude Code"]
+        CU["Cursor"]
+        OC["OpenCode"]
+        CD["Continue.dev"]
     end
 
-    subgraph YourPC["Your PC"]
-        OE["OllamaEmu<br/>localhost:11434"]
+    subgraph YourPC["Your PC — OllamaEmu"]
+        direction TB
+        OE["OllamaEmu Server<br/>localhost:11434"]
         RAG["RAG Engine"]
         MEM["Memory System"]
         USAGE["Usage Analytics"]
     end
 
-    subgraph FreeCloud["Free Cloud LLMs (26 Models)"]
+    subgraph Cloud["Free Cloud LLMs — 26 Models"]
+        direction TB
         OR["OpenRouter Free Tier"]
-    end
-
-    subgraph TopModels["Top Free Models"]
         QW["Qwen3 Coder 480B"]
         OA["GPT-OSS 120B"]
         NN["Nemotron Ultra 550B"]
@@ -110,20 +110,39 @@ flowchart LR
         GM["Gemma 4 31B"]
     end
 
-    CC --> OE
-    CU --> OE
-    OC --> OE
-    CD --> OE
+    CC -->|HTTP| OE
+    CU -->|HTTP| OE
+    OC -->|HTTP| OE
+    CD -->|HTTP| OE
     OE --> RAG
     OE --> MEM
     OE --> USAGE
-    OE --> OR
+    OE -->|API| OR
     OR --> QW
     OR --> OA
     OR --> NN
     OR --> NH
     OR --> LL
     OR --> GM
+
+    style Tools fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b
+    style YourPC fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#064e3b
+    style Cloud fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+    style CC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CU fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style OC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CD fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style OE fill:#d1fae5,stroke:#059669,color:#064e3b
+    style RAG fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style MEM fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style USAGE fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style OR fill:#fef3c7,stroke:#d97706,color:#78350f
+    style QW fill:#fff,stroke:#059669,color:#064e3b
+    style OA fill:#fff,stroke:#059669,color:#064e3b
+    style NN fill:#fff,stroke:#059669,color:#064e3b
+    style NH fill:#fff,stroke:#059669,color:#064e3b
+    style LL fill:#fff,stroke:#059669,color:#064e3b
+    style GM fill:#fff,stroke:#059669,color:#064e3b
 ```
 
 **OllamaEmu** pretends to be Ollama (`localhost:11434`) but routes your prompts to **free cloud LLMs**. Your coding tools (Claude Code, Cursor, OpenCode) don't know the difference — they think they're talking to a local model, but you're getting cloud-quality responses for free.
@@ -202,17 +221,28 @@ Every AI coding tool needs a subscription:
 ```mermaid
 flowchart TD
     subgraph Paid["You Pay $60+/Month"]
+        direction LR
         CC1["Claude Code"] -->|$20/mo| A1["Anthropic"]
         CU1["Cursor Pro"] -->|$20/mo| A2["OpenAI GPT-4"]
         OC1["OpenCode"] -->|$20/mo| A3["Any Provider"]
         CD1["Continue.dev"] -->|$20/mo| A4["Various"]
     end
-    A1 --> $$$["$$$ Wasted"]
-    A2 --> $$$
-    A3 --> $$$
-    A4 --> $$$
-    style Paid fill:#fee2e2,stroke:#dc2626
-    style $$$ fill:#fef2f2,stroke:#dc2626
+
+    A1 -->|$$$| OUT["$$$ Wasted"]
+    A2 -->|$$$| OUT
+    A3 -->|$$$| OUT
+    A4 -->|$$$| OUT
+
+    style Paid fill:#fef2f2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d
+    style OUT fill:#fef2f2,stroke:#dc2626,stroke-width:3px,color:#991b1b
+    style CC1 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style CU1 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style OC1 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style CD1 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style A1 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style A2 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style A3 fill:#fff,stroke:#dc2626,color:#7f1d1d
+    style A4 fill:#fff,stroke:#dc2626,color:#7f1d1d
 ```
 
 That's **$60+/month** just to use different tools.
@@ -222,18 +252,21 @@ That's **$60+/month** just to use different tools.
 
 ```mermaid
 flowchart LR
-    subgraph Tools["Your Tools (FREE)"]
+    subgraph Tools["Your Tools — FREE"]
+        direction TB
         CC["Claude Code"]
         CU["Cursor"]
         OC["OpenCode"]
         CD["Continue.dev"]
     end
 
-    subgraph Emu["OllamaEmu ($0)"]
+    subgraph Emu["OllamaEmu — $0"]
+        direction TB
         OE["localhost:11434"]
     end
 
-    subgraph Providers["Free Cloud LLMs (26 Models)"]
+    subgraph Providers["Free Cloud LLMs — 26 Models"]
+        direction TB
         OR["OpenRouter Free Tier"]
         QW["Qwen3 Coder 480B"]
         OA["GPT-OSS 120B"]
@@ -242,19 +275,31 @@ flowchart LR
         GM["Gemma 4 31B"]
     end
 
-    CC --> OE
-    CU --> OE
-    OC --> OE
-    CD --> OE
-    OE --> OR
+    CC -->|HTTP| OE
+    CU -->|HTTP| OE
+    OC -->|HTTP| OE
+    CD -->|HTTP| OE
+    OE -->|API| OR
     OR --> QW
     OR --> OA
     OR --> NN
     OR --> LL
     OR --> GM
 
-    style Emu fill:#d1fae5,stroke:#059669
-    style Providers fill:#dbeafe,stroke:#2563eb
+    style Tools fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b
+    style Emu fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#064e3b
+    style Providers fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+    style CC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CU fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style OC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CD fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style OE fill:#d1fae5,stroke:#059669,color:#064e3b
+    style OR fill:#fef3c7,stroke:#d97706,color:#78350f
+    style QW fill:#fff,stroke:#059669,color:#064e3b
+    style OA fill:#fff,stroke:#059669,color:#064e3b
+    style NN fill:#fff,stroke:#059669,color:#064e3b
+    style LL fill:#fff,stroke:#059669,color:#064e3b
+    style GM fill:#fff,stroke:#059669,color:#064e3b
 ```
 
 **You save $240+/year.** The same quality. Zero cost. Full privacy.
@@ -310,6 +355,7 @@ OLLAMA_HOST=http://localhost:11434 ollama list
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant Tool as AI Coding Tool
     participant Emu as OllamaEmu
     participant Router as Provider Router
@@ -317,13 +363,19 @@ sequenceDiagram
     participant DB as Local SQLite
 
     Tool->>Emu: POST /api/chat (model, messages)
+    activate Emu
     Emu->>DB: Track usage (tokens, latency)
     Emu->>Router: Route to active provider
+    activate Router
     Router->>Cloud: POST /v1/chat/completions
+    activate Cloud
     Cloud-->>Router: Stream response (ndjson)
+    deactivate Cloud
     Router-->>Emu: Forward stream
+    deactivate Router
     Emu->>DB: Save to memory (auto-flush)
     Emu-->>Tool: Stream response (Ollama ndjson)
+    deactivate Emu
 ```
 
 ### Ollama-Compatible
@@ -379,7 +431,16 @@ sequenceDiagram
 
 ```mermaid
 flowchart TB
-    subgraph Desktop["Desktop (EXE / Source)"]
+    subgraph Clients["AI Coding Tools"]
+        direction LR
+        CC["Claude Code"]
+        CU["Cursor"]
+        OC["OpenCode"]
+        CD["Continue.dev"]
+    end
+
+    subgraph Desktop["Desktop — EXE / Source"]
+        direction TB
         API["FastAPI Server<br/>:11434"]
         RAG["RAG Engine<br/>FTS5 + TF-IDF"]
         MEM["Memory System<br/>SQLite + Auto-flush"]
@@ -389,7 +450,8 @@ flowchart TB
     end
 
     subgraph Providers["Cloud Providers"]
-        OR["OpenRouter<br/>(26 free models)"]
+        direction TB
+        OR["OpenRouter<br/>26 free models"]
         OAI["OpenAI"]
         ANTH["Anthropic"]
         GEM["Google Gemini"]
@@ -400,28 +462,23 @@ flowchart TB
     end
 
     subgraph Frontend["Web Dashboard"]
+        direction TB
         NEXT["Next.js<br/>Static Export"]
         PAGES["~15 Pages<br/>Playground, RAG, Memory<br/>Usage, Settings, About"]
     end
 
     subgraph Mobile["Mobile App"]
+        direction TB
         RN["React Native<br/>Expo"]
         MSCREENS["8 Screens<br/>Full Parity"]
     end
 
-    subgraph Clients["AI Coding Tools"]
-        CC["Claude Code"]
-        CU["Cursor"]
-        OC["OpenCode"]
-        CD["Continue.dev"]
-    end
-
-    CC --> API
-    CU --> API
-    OC --> API
-    CD --> API
-    NEXT --> API
-    RN --> API
+    CC -->|HTTP| API
+    CU -->|HTTP| API
+    OC -->|HTTP| API
+    CD -->|HTTP| API
+    NEXT -->|HTTP| API
+    RN -->|HTTP| API
     API --> RAG
     API --> MEM
     API --> AUTH
@@ -430,7 +487,7 @@ flowchart TB
     MEM --> DB
     AUTH --> DB
     ROUTER --> DB
-    ROUTER --> OR
+    ROUTER -->|API| OR
     ROUTER --> OAI
     ROUTER --> ANTH
     ROUTER --> GEM
@@ -439,11 +496,33 @@ flowchart TB
     ROUTER --> MST
     ROUTER --> TGH
 
-    style Desktop fill:#f0fdf4,stroke:#16a34a
-    style Providers fill:#eff6ff,stroke:#2563eb
-    style Frontend fill:#fefce8,stroke:#ca8a04
-    style Mobile fill:#fdf2f8,stroke:#db2777
-    style Clients fill:#f5f3ff,stroke:#7c3aed
+    style Clients fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b
+    style Desktop fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#064e3b
+    style Providers fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#78350f
+    style Frontend fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#713f12
+    style Mobile fill:#fdf2f8,stroke:#db2777,stroke-width:2px,color:#831843
+    style CC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CU fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style OC fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style CD fill:#fff,stroke:#6366f1,color:#1e1b4b
+    style API fill:#d1fae5,stroke:#059669,color:#064e3b
+    style RAG fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style MEM fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style AUTH fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style ROUTER fill:#fef3c7,stroke:#d97706,color:#78350f
+    style DB fill:#f3f4f6,stroke:#6b7280,color:#374151
+    style OR fill:#fef3c7,stroke:#d97706,color:#78350f
+    style OAI fill:#fff,stroke:#6b7280,color:#374151
+    style ANTH fill:#fff,stroke:#6b7280,color:#374151
+    style GEM fill:#fff,stroke:#6b7280,color:#374151
+    style DS fill:#fff,stroke:#6b7280,color:#374151
+    style GRQ fill:#fff,stroke:#6b7280,color:#374151
+    style MST fill:#fff,stroke:#6b7280,color:#374151
+    style TGH fill:#fff,stroke:#6b7280,color:#374151
+    style NEXT fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style PAGES fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style RN fill:#fdf2f8,stroke:#db2777,color:#831843
+    style MSCREENS fill:#fdf2f8,stroke:#db2777,color:#831843
 ```
 
 ---
@@ -510,6 +589,7 @@ A **React Native (Expo)** app with 8 screens:
 ```mermaid
 flowchart LR
     subgraph Screens["8 Screens"]
+        direction TB
         CONNECT["Connect<br/>Server URL"]
         CHAT["Chat<br/>Streaming"]
         KNOW["Knowledge<br/>RAG"]
@@ -521,6 +601,7 @@ flowchart LR
     end
 
     subgraph Features["Built-in Features"]
+        direction TB
         MODEL["Model Picker"]
         SEARCH["Doc Search"]
         FACTS["Stored Facts"]
@@ -529,7 +610,7 @@ flowchart LR
         THEME["Dark/Light Theme"]
     end
 
-    CONNECT --> CHAT
+    CONNECT -->|Select| CHAT
     CHAT --> MODEL
     KNOW --> SEARCH
     MEM --> FACTS
@@ -537,8 +618,22 @@ flowchart LR
     USE --> STATS
     SET --> THEME
 
-    style Screens fill:#fdf2f8,stroke:#db2777
-    style Features fill:#f0fdf4,stroke:#16a34a
+    style Screens fill:#fdf2f8,stroke:#db2777,stroke-width:2px,color:#831843
+    style Features fill:#ecfdf5,stroke:#059669,stroke-width:2px,color:#064e3b
+    style CONNECT fill:#fff,stroke:#db2777,color:#831843
+    style CHAT fill:#fff,stroke:#db2777,color:#831843
+    style KNOW fill:#fff,stroke:#db2777,color:#831843
+    style MEM fill:#fff,stroke:#db2777,color:#831843
+    style PROV fill:#fff,stroke:#db2777,color:#831843
+    style USE fill:#fff,stroke:#db2777,color:#831843
+    style SET fill:#fff,stroke:#db2777,color:#831843
+    style ABOUT fill:#fff,stroke:#db2777,color:#831843
+    style MODEL fill:#fff,stroke:#059669,color:#064e3b
+    style SEARCH fill:#fff,stroke:#059669,color:#064e3b
+    style FACTS fill:#fff,stroke:#059669,color:#064e3b
+    style KEY fill:#fff,stroke:#059669,color:#064e3b
+    style STATS fill:#fff,stroke:#059669,color:#064e3b
+    style THEME fill:#fff,stroke:#059669,color:#064e3b
 ```
 
 | Screen | What It Does |
@@ -590,11 +685,26 @@ graph TB
     CI --> RELEASE["release.yml<br/>EXE + APK"]
     CI --> LIGHTHOUSE["lighthouse.yml<br/>Audit"]
 
-    style ROOT fill:#f0fdf4,stroke:#16a34a
-    style PY fill:#dbeafe,stroke:#2563eb
-    style FE fill:#fefce8,stroke:#ca8a04
-    style MOB fill:#fdf2f8,stroke:#db2777
-    style CI fill:#f5f3ff,stroke:#7c3aed
+    style ROOT fill:#ecfdf5,stroke:#059669,stroke-width:3px,color:#064e3b
+    style PY fill:#eef2ff,stroke:#4f46e5,stroke-width:2px,color:#1e1b4b
+    style FE fill:#fefce8,stroke:#ca8a04,stroke-width:2px,color:#713f12
+    style MOB fill:#fdf2f8,stroke:#db2777,stroke-width:2px,color:#831843
+    style CI fill:#f5f3ff,stroke:#7c3aed,stroke-width:2px,color:#4c1d95
+    style SERVER fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    style RAG fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    style MEM fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    style REQ fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    style APP fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style COMP fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style LIB fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style NC fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style MAPP fill:#fdf2f8,stroke:#db2777,color:#831843
+    style MCOMP fill:#fdf2f8,stroke:#db2777,color:#831843
+    style MLIB fill:#fdf2f8,stroke:#db2777,color:#831843
+    style MJ fill:#fdf2f8,stroke:#db2777,color:#831843
+    style DEPLOY fill:#f5f3ff,stroke:#7c3aed,color:#4c1d95
+    style RELEASE fill:#f5f3ff,stroke:#7c3aed,color:#4c1d95
+    style LIGHTHOUSE fill:#f5f3ff,stroke:#7c3aed,color:#4c1d95
 ```
 
 ---
