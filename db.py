@@ -15,14 +15,20 @@ Or set OLLAMA_EMU_DATABASE_URL for a single connection string.
 """
 import os
 import json
+import hashlib
+import hmac
+import secrets
 import logging
-import datetime
 from contextlib import contextmanager
 from typing import Any, Dict, List, Optional, Tuple
+
+from dotenv import load_dotenv
+load_dotenv()
 
 import psycopg2
 import psycopg2.pool
 import psycopg2.extras
+import psycopg2.errors
 
 log = logging.getLogger("ollama-emu.db")
 
@@ -31,6 +37,7 @@ log = logging.getLogger("ollama-emu.db")
 # ============================================================
 
 _pool: Optional[psycopg2.pool.ThreadedConnectionPool] = None
+_connected: bool = False
 
 
 def get_dsn() -> str:
@@ -45,30 +52,44 @@ def get_dsn() -> str:
     return f"host={host} port={port} user={user} password={password} dbname={dbname}"
 
 
-def init_pool(minconn: int = 1, maxconn: int = 10):
-    global _pool
+def is_connected() -> bool:
+    return _connected and _pool is not None
+
+
+def init_pool(minconn: int = 1, maxconn: int = 10) -> bool:
+    global _pool, _connected
     if _pool is not None:
-        return
+        return True
     dsn = get_dsn()
     try:
         _pool = psycopg2.pool.ThreadedConnectionPool(minconn, maxconn, dsn)
+        _connected = True
         log.info("PostgreSQL pool created (min=%d, max=%d)", minconn, maxconn)
+        return True
     except Exception as e:
-        log.error("Failed to create PostgreSQL pool: %s", e)
-        raise
+        _connected = False
+        log.error("PostgreSQL connection failed: %s", e)
+        log.warning("Server will start but database features (RAG, Memory, Auth) will be unavailable.")
+        return False
 
 
 def close_pool():
-    global _pool
+    global _pool, _connected
     if _pool:
-        _pool.closeall()
+        try:
+            _pool.closeall()
+        except Exception:
+            pass
         _pool = None
+        _connected = False
         log.info("PostgreSQL pool closed.")
 
 
 @contextmanager
 def get_conn():
     """Yield a connection from the pool. Auto-commits on success, rolls back on error."""
+    if not _pool:
+        raise RuntimeError("PostgreSQL pool not initialized")
     conn = _pool.getconn()
     try:
         yield conn
@@ -82,12 +103,37 @@ def get_conn():
 
 @contextmanager
 def get_cursor(commit: bool = True):
-    """Yield a cursor from a pooled connection."""
+    """Yield a RealDictCursor from a pooled connection."""
     with get_conn() as conn:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         yield cur
         if commit:
             conn.commit()
+
+
+# ============================================================
+# PASSWORD HASHING (PBKDF2-HMAC-SHA256)
+# ============================================================
+
+def hash_password(email: str, password: str) -> str:
+    salt = secrets.token_hex(16)
+    dk = hashlib.pbkdf2_hmac(
+        "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
+    )
+    return f"pbkdf2${salt}${dk.hex()}"
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    try:
+        algo, salt, dk = stored_hash.split("$")
+        if algo != "pbkdf2":
+            return False
+        expected = hashlib.pbkdf2_hmac(
+            "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
+        ).hex()
+        return hmac.compare_digest(expected, dk)
+    except Exception:
+        return False
 
 
 # ============================================================
@@ -111,17 +157,29 @@ CREATE TABLE IF NOT EXISTS providers (
     api_key     TEXT DEFAULT ''
 );
 
+-- ── Model Catalog ─────────────────────────────────────
+CREATE TABLE IF NOT EXISTS model_catalog (
+    id          SERIAL PRIMARY KEY,
+    provider    TEXT NOT NULL,
+    model_name  TEXT NOT NULL,
+    free        BOOLEAN DEFAULT false,
+    active      BOOLEAN DEFAULT true,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(provider, model_name)
+);
+
 -- ── Auth ───────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS users (
     email         TEXT PRIMARY KEY,
     password_hash TEXT NOT NULL,
-    created_at    TEXT NOT NULL
+    role          TEXT DEFAULT 'user',
+    created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
     token      TEXT PRIMARY KEY,
     email      TEXT NOT NULL REFERENCES users(email),
-    created_at TEXT NOT NULL
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- ── RAG ────────────────────────────────────────────────
@@ -145,7 +203,6 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_chunks_doc ON rag_chunks(doc_id);
-CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON rag_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 
 -- Full-text search on chunks
 CREATE TABLE IF NOT EXISTS rag_fts (
@@ -196,30 +253,173 @@ CREATE TABLE IF NOT EXISTS memory_sessions (
     created_at    TIMESTAMPTZ DEFAULT NOW(),
     updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ── Schema Version (for frontend/backend sync) ──
+CREATE TABLE IF NOT EXISTS schema_version (
+    version     INTEGER PRIMARY KEY,
+    prisma_hash TEXT NOT NULL DEFAULT '',
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ── ACL (Access Control List) ─────────────────────────
+CREATE TABLE IF NOT EXISTS api_keys (
+    id         TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    key_hash   TEXT NOT NULL,
+    role       TEXT DEFAULT 'user',
+    email      TEXT,
+    scopes     JSONB DEFAULT '["read","write"]',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_used  TIMESTAMPTZ,
+    active     BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS audit_log (
+    id         SERIAL PRIMARY KEY,
+    timestamp  TIMESTAMPTZ DEFAULT NOW(),
+    event      TEXT NOT NULL,
+    email      TEXT,
+    ip         TEXT,
+    success    BOOLEAN DEFAULT TRUE,
+    details    JSONB DEFAULT '{}'
+);
+CREATE INDEX IF NOT EXISTS idx_audit_event ON audit_log(event);
+CREATE INDEX IF NOT EXISTS idx_audit_email ON audit_log(email);
+CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp);
+
+CREATE TABLE IF NOT EXISTS ip_blocklist (
+    ip         TEXT PRIMARY KEY,
+    reason     TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ip_allowlist (
+    ip         TEXT PRIMARY KEY,
+    reason     TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id           TEXT PRIMARY KEY,
+    key          TEXT NOT NULL,
+    count        INTEGER DEFAULT 1,
+    window_start TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_rate_key ON rate_limits(key);
+
+-- ── IVFFlat index for pgvector (requires data to exist) ──
+-- Created after first documents are inserted.
 """
 
 
 def migrate_schema():
     """Create all tables and indexes if they don't exist."""
+    if not is_connected():
+        return
     with get_conn() as conn:
         cur = conn.cursor()
         cur.execute(SCHEMA_SQL)
         conn.commit()
+    # ALTER TABLE for existing databases that predate new columns
+    ALTER_SQL = """
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS last_activity TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE sessions ADD COLUMN IF NOT EXISTS ip TEXT DEFAULT '';
+    """
+    try:
+        with get_conn() as conn:
+            cur = conn.cursor()
+            cur.execute(ALTER_SQL)
+            conn.commit()
+    except Exception as e:
+        log.debug("ALTER TABLE migrations skipped: %s", e)
     log.info("Database schema migrated (PostgreSQL + pgvector).")
+
+
+def create_embedding_index():
+    """Create IVFFlat index after data exists (can't be in migration if table is empty)."""
+    if not is_connected():
+        return
+    try:
+        with get_conn() as conn:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT COUNT(*) FROM rag_chunks WHERE embedding IS NOT NULL
+            """)
+            count = cur.fetchone()[0]
+            if count >= 100:
+                cur.execute("""
+                    CREATE INDEX IF NOT EXISTS idx_chunks_embedding
+                    ON rag_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100)
+                """)
+                conn.commit()
+                log.info("IVFFlat embedding index created (%d vectors).", count)
+    except Exception as e:
+        log.debug("Could not create embedding index: %s", e)
+
+
+# ============================================================
+# SCHEMA VERSION (for frontend/backend sync)
+# ============================================================
+
+# Increment this when the schema changes. Must match frontend PRISMA_VERSION.
+PRISMA_VERSION = 1
+
+
+def get_schema_version() -> dict:
+    """Return the current schema version from the database."""
+    if not is_connected():
+        return {"version": 0, "prisma_hash": "", "connected": False}
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT version, prisma_hash, updated_at FROM schema_version ORDER BY version DESC LIMIT 1")
+        row = cur.fetchone()
+    if row:
+        return {"version": row["version"], "prisma_hash": row["prisma_hash"], "updated_at": str(row["updated_at"]), "connected": True}
+    return {"version": 0, "prisma_hash": "", "connected": True}
+
+
+def set_schema_version(version: int, prisma_hash: str = ""):
+    """Update the schema version in the database."""
+    if not is_connected():
+        return
+    with get_cursor() as cur:
+        cur.execute(
+            "INSERT INTO schema_version (version, prisma_hash) VALUES (%s, %s) ON CONFLICT (version) DO UPDATE SET prisma_hash=%s, updated_at=NOW()",
+            (version, prisma_hash, prisma_hash),
+        )
+
+
+def check_schema_sync() -> dict:
+    """Check if the database schema matches the expected version."""
+    info = get_schema_version()
+    if not info["connected"]:
+        return {"synced": False, "reason": "database_not_connected", **info}
+    if info["version"] == 0:
+        set_schema_version(PRISMA_VERSION)
+        info["version"] = PRISMA_VERSION
+    synced = info["version"] >= PRISMA_VERSION
+    return {
+        "synced": synced,
+        "db_version": info["version"],
+        "expected_version": PRISMA_VERSION,
+        "reason": "ok" if synced else "schema_outdated",
+        "prisma_hash": info.get("prisma_hash", ""),
+    }
 
 
 def seed_demo_user():
     """Insert the demo account if it doesn't exist."""
-    email = "example@gmail.com"
-    password = "12345678"
-    # Import here to avoid circular import
-    from ollama_emu_desktop import hash_password
+    if not is_connected():
+        return
+    email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
+    password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
     pw_hash = hash_password(email, password)
-    now = datetime.datetime.now(datetime.UTC).isoformat()
     with get_cursor() as cur:
         cur.execute(
-            "INSERT INTO users (email, password_hash, created_at) VALUES (%s, %s, %s) ON CONFLICT (email) DO UPDATE SET password_hash=%s",
-            (email, pw_hash, now, pw_hash),
+            "INSERT INTO users (email, password_hash, role) VALUES (%s, %s, 'admin') ON CONFLICT (email) DO UPDATE SET password_hash=%s, role='admin'",
+            (email, pw_hash, pw_hash),
         )
 
 
@@ -228,17 +428,26 @@ def seed_demo_user():
 # ============================================================
 
 def load_providers() -> Tuple[Dict, Dict]:
+    if not is_connected():
+        return {}, {}
     with get_cursor(commit=False) as cur:
         cur.execute("SELECT name, url, models_url, auth_type, default_model, free_heuristic, type, api_key FROM providers")
         rows = cur.fetchall()
     pc, keys = {}, {}
     for r in rows:
+        fh = r["free_heuristic"]
+        if fh == "api":
+            fh_val = "api"
+        elif str(fh).lower() == "true":
+            fh_val = True
+        else:
+            fh_val = False
         pc[r["name"]] = {
             "url": r["url"],
             "models_url": r["models_url"],
             "auth_type": r["auth_type"],
             "default_model": r["default_model"],
-            "free_heuristic": str(r["free_heuristic"]).lower() == "true" if r["free_heuristic"] else False,
+            "free_heuristic": fh_val,
             "type": r["type"],
         }
         if r["api_key"]:
@@ -247,6 +456,8 @@ def load_providers() -> Tuple[Dict, Dict]:
 
 
 def save_provider(name: str, cfg: dict, api_key: str = ""):
+    if not is_connected():
+        return
     with get_cursor() as cur:
         cur.execute(
             """INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key)
@@ -261,12 +472,16 @@ def save_provider(name: str, cfg: dict, api_key: str = ""):
 
 
 def delete_provider(name: str):
+    if not is_connected():
+        return
     with get_cursor() as cur:
         cur.execute("DELETE FROM providers WHERE name=%s", (name,))
 
 
 def seed_default_providers(defaults: dict):
     """Insert default providers only if the table is empty."""
+    if not is_connected():
+        return
     with get_cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM providers")
         count = cur.fetchone()["count"]
@@ -281,42 +496,107 @@ def seed_default_providers(defaults: dict):
 
 
 # ============================================================
+# MODEL CATALOG DB OPERATIONS
+# ============================================================
+
+def save_model_catalog(catalog: dict):
+    """Save model catalog to database. catalog = {provider: [{name, free}, ...]}"""
+    if not is_connected():
+        return
+    with get_cursor() as cur:
+        for provider, models in catalog.items():
+            for m in models:
+                cur.execute(
+                    """INSERT INTO model_catalog (provider, model_name, free)
+                       VALUES (%s, %s, %s)
+                       ON CONFLICT (provider, model_name) DO UPDATE SET free=%s, active=true""",
+                    (provider, m["name"], m["free"], m["free"]),
+                )
+
+
+def load_model_catalog() -> dict:
+    """Load model catalog from database. Returns {provider: [{name, free}, ...]}"""
+    if not is_connected():
+        return {}
+    catalog = {}
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT provider, model_name, free FROM model_catalog WHERE active=true ORDER BY provider, model_name")
+        for r in cur.fetchall():
+            p = r["provider"]
+            if p not in catalog:
+                catalog[p] = []
+            catalog[p].append({"name": r["model_name"], "free": r["free"]})
+    return catalog
+
+
+def get_all_api_keys() -> dict:
+    """Get all API keys from providers table. Returns {provider_name: api_key}"""
+    if not is_connected():
+        return {}
+    keys = {}
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT name, api_key FROM providers WHERE api_key != ''")
+        for r in cur.fetchall():
+            keys[r["name"]] = r["api_key"]
+    return keys
+
+
+# ============================================================
 # AUTH DB OPERATIONS
 # ============================================================
 
 def create_user(email: str, pw_hash: str) -> bool:
-    now = datetime.datetime.now(datetime.UTC).isoformat()
+    if not is_connected():
+        return False
     with get_cursor() as cur:
         try:
-            cur.execute("INSERT INTO users (email, password_hash, created_at) VALUES (%s,%s,%s)", (email, pw_hash, now))
+            cur.execute("INSERT INTO users (email, password_hash) VALUES (%s,%s)", (email, pw_hash))
             return True
         except psycopg2.errors.UniqueViolation:
             return False
 
 
+def update_password(email: str, new_hash: str) -> bool:
+    """Update a user's password hash. Returns True if updated."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET password_hash=%s WHERE email=%s", (new_hash, email))
+        return cur.rowcount > 0
+
+
 def get_user(email: str) -> Optional[dict]:
+    if not is_connected():
+        return None
     with get_cursor(commit=False) as cur:
         cur.execute("SELECT email, password_hash, created_at FROM users WHERE email=%s", (email,))
         return cur.fetchone()
 
 
 def create_session(email: str, token: str):
-    now = datetime.datetime.now(datetime.UTC).isoformat()
+    if not is_connected():
+        return
     with get_cursor() as cur:
-        cur.execute("INSERT INTO sessions (token, email, created_at) VALUES (%s,%s,%s)", (token, email, now))
+        cur.execute("INSERT INTO sessions (token, email) VALUES (%s,%s)", (token, email))
 
 
 def get_session(token: str) -> Optional[dict]:
+    if not is_connected():
+        return None
     with get_cursor(commit=False) as cur:
         cur.execute("SELECT email, created_at FROM sessions WHERE token=%s", (token,))
         return cur.fetchone()
 
 
 def delete_session(token: str):
+    if not is_connected():
+        return
     with get_cursor() as cur:
         cur.execute("DELETE FROM sessions WHERE token=%s", (token,))
 
 
 def logout_all_sessions(email: str):
+    if not is_connected():
+        return
     with get_cursor() as cur:
         cur.execute("DELETE FROM sessions WHERE email=%s", (email,))

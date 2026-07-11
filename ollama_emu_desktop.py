@@ -29,6 +29,7 @@ import hmac
 import ipaddress
 import urllib.parse
 import argparse
+import acl as _acl
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", stream=sys.stdout)
 log = logging.getLogger("ollama-emu")
@@ -165,6 +166,80 @@ DEFAULT_PROVIDERS: Dict[str, Dict[str, Any]] = {
     },
 }
 
+# Comprehensive model catalog - used as fallback when API calls fail or no key is set
+MODEL_CATALOG: Dict[str, List[Dict[str, Any]]] = {
+    "openrouter": [
+        {"name": "tencent/hy3:free", "free": True},
+        {"name": "deepseek/deepseek-chat-v3-0324:free", "free": True},
+        {"name": "deepseek/deepseek-r1-0528:free", "free": True},
+        {"name": "google/gemma-3-12b-it:free", "free": True},
+        {"name": "meta-llama/llama-4-maverick:free", "free": True},
+        {"name": "meta-llama/llama-4-scout:free", "free": True},
+        {"name": "microsoft/mai-ds-r1:free", "free": True},
+        {"name": "qwen/qwen3-235b-a22b:free", "free": True},
+        {"name": "qwen/qwen3-coder:free", "free": True},
+        {"name": "nvidia/llama-3.1-nemotron-ultra-253b-v1:free", "free": True},
+        {"name": "mistralai/mistral-small-3.2-24b-instruct:free", "free": True},
+        {"name": "openai/gpt-4o-mini", "free": False},
+        {"name": "anthropic/claude-3.5-sonnet", "free": False},
+        {"name": "google/gemini-2.5-flash", "free": False},
+    ],
+    "groq": [
+        {"name": "llama3-70b-8192", "free": True},
+        {"name": "llama3-8b-8192", "free": True},
+        {"name": "mixtral-8x7b-32768", "free": True},
+        {"name": "gemma2-9b-it", "free": True},
+        {"name": "llama-3.3-70b-versatile", "free": True},
+        {"name": "llama-3.1-8b-instant", "free": True},
+        {"name": "deepseek-r1-distill-llama-70b", "free": True},
+    ],
+    "deepseek": [
+        {"name": "deepseek-chat", "free": True},
+        {"name": "deepseek-reasoner", "free": True},
+    ],
+    "gemini": [
+        {"name": "gemini-1.5-flash", "free": True},
+        {"name": "gemini-1.5-pro", "free": True},
+        {"name": "gemini-2.0-flash", "free": True},
+        {"name": "gemini-2.5-flash", "free": True},
+        {"name": "gemini-2.5-pro", "free": False},
+    ],
+    "openai": [
+        {"name": "gpt-3.5-turbo", "free": False},
+        {"name": "gpt-4o", "free": False},
+        {"name": "gpt-4o-mini", "free": False},
+        {"name": "gpt-4-turbo", "free": False},
+        {"name": "o1-mini", "free": False},
+        {"name": "o1-preview", "free": False},
+    ],
+    "anthropic": [
+        {"name": "claude-3-sonnet-20240229", "free": False},
+        {"name": "claude-3-5-sonnet-20241022", "free": False},
+        {"name": "claude-3-5-haiku-20241022", "free": False},
+        {"name": "claude-3-opus-20240229", "free": False},
+    ],
+    "claude": [
+        {"name": "claude-3-5-sonnet-20241022", "free": False},
+        {"name": "claude-3-5-haiku-20241022", "free": False},
+        {"name": "claude-3-opus-20240229", "free": False},
+    ],
+    "mistral": [
+        {"name": "mistral-tiny", "free": False},
+        {"name": "mistral-small-latest", "free": False},
+        {"name": "mistral-medium-latest", "free": False},
+        {"name": "mistral-large-latest", "free": False},
+        {"name": "open-mixtral-8x7b", "free": False},
+        {"name": "open-mixtral-8x22b", "free": False},
+    ],
+    "together": [
+        {"name": "meta-llama/Llama-3-70b-chat-hf", "free": False},
+        {"name": "meta-llama/Llama-3-8b-chat-hf", "free": False},
+        {"name": "mistralai/Mixtral-8x7B-Instruct-v0.1", "free": False},
+        {"name": "deepseek-ai/DeepSeek-V3", "free": False},
+        {"name": "Qwen/Qwen2.5-72B-Instruct-Turbo", "free": False},
+    ],
+}
+
 # Thread-safe state
 state_lock = threading.Lock()
 API_KEYS: Dict[str, str] = {}
@@ -184,6 +259,7 @@ def init_db():
     _db.migrate_schema()
     _db.seed_default_providers(DEFAULT_PROVIDERS)
     _db.seed_demo_user()
+    _db.save_model_catalog(MODEL_CATALOG)
 
 
 def load_providers_from_db():
@@ -199,34 +275,21 @@ def delete_provider_db(name):
     _db.delete_provider(name)
 
 
-def hash_password(email: str, password: str) -> str:
-    salt = secrets.token_hex(16)
-    dk = hashlib.pbkdf2_hmac(
-        "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
-    )
-    return f"pbkdf2${salt}${dk.hex()}"
-
-
-def verify_password(password: str, stored_hash: str) -> bool:
-    try:
-        algo, salt, dk = stored_hash.split("$")
-        if algo != "pbkdf2":
-            return False
-        expected = hashlib.pbkdf2_hmac(
-            "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
-        ).hex()
-        return hmac.compare_digest(expected, dk)
-    except Exception:
-        return False
+hash_password = _db.hash_password
+verify_password = _db.verify_password
 
 
 def create_session(email: str) -> str:
-    token = secrets.token_hex(32)
+    role = "admin" if email == _acl.ADMIN_EMAIL else "user"
+    token = _acl.session_manager.create(email, role=role)
     _db.create_session(email, token)
     return token
 
 
 def verify_session(token: str) -> Optional[str]:
+    session_info = _acl.session_manager.verify(token)
+    if session_info:
+        return session_info["email"]
     row = _db.get_session(token)
     if not row:
         return None
@@ -241,6 +304,7 @@ def verify_session(token: str) -> Optional[str]:
 
 
 def delete_session(token: str):
+    _acl.session_manager.destroy(token)
     _db.delete_session(token)
 
 
@@ -287,6 +351,7 @@ def configure_cors(application):
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    application.middleware("http")(_acl.create_acl_middleware(application))
 
 # ============================================================
 # RAG & MEMORY
@@ -321,43 +386,169 @@ class AuthRequest(BaseModel):
     password: str
 
 @app.post("/api/auth/register")
-async def auth_register(req: AuthRequest):
+async def auth_register(request: Request, req: AuthRequest):
+    ip = _acl._get_client_ip(request)
+    if not _acl.rate_limit(request, "auth_register", max_requests=5, window=300):
+        _acl.audit_log("rate_limited", ip=ip, details={"endpoint": "register"}, success=False)
+        return _acl.rate_limit_response(request, "auth_register")
     email = req.email.strip().lower()
-    if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email):
+    if not _acl.validate_email(email):
+        _acl.audit_log("register_failed", email=email, ip=ip, details={"reason": "invalid_email"}, success=False)
         raise HTTPException(status_code=400, detail="Invalid email address")
-    if len(req.password) < 6:
-        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    valid, msg = _acl.validate_password(req.password)
+    if not valid:
+        _acl.audit_log("register_failed", email=email, ip=ip, details={"reason": msg}, success=False)
+        raise HTTPException(status_code=400, detail=msg)
     pw_hash = hash_password(email, req.password)
     if not _db.create_user(email, pw_hash):
+        _acl.audit_log("register_failed", email=email, ip=ip, details={"reason": "email_exists"}, success=False)
         raise HTTPException(status_code=409, detail="Email already registered")
-    token = create_session(email)
-    return {"success": True, "token": token, "email": email}
+    role = "admin" if email == _acl.ADMIN_EMAIL else "user"
+    token = _acl.session_manager.create(email, role=role)
+    _db.create_session(email, token)
+    _acl.audit_log("register_success", email=email, ip=ip)
+    return {"success": True, "token": token, "email": email, "role": role}
 
 @app.post("/api/auth/login")
-async def auth_login(req: AuthRequest):
+async def auth_login(request: Request, req: AuthRequest):
+    ip = _acl._get_client_ip(request)
+    if not _acl.rate_limit(request, "auth_login", max_requests=10, window=300):
+        _acl.audit_log("rate_limited", ip=ip, details={"endpoint": "login"}, success=False)
+        return _acl.rate_limit_response(request, "auth_login")
     email = req.email.strip().lower()
     user = _db.get_user(email)
     if not user or not verify_password(req.password, user["password_hash"]):
+        _acl.audit_log("login_failed", email=email, ip=ip, details={"reason": "invalid_credentials"}, success=False)
         raise HTTPException(status_code=401, detail="Invalid email or password")
-    token = create_session(email)
-    return {"success": True, "token": token, "email": email}
+    role = "admin" if email == _acl.ADMIN_EMAIL else "user"
+    token = _acl.session_manager.create(email, role=role)
+    _db.create_session(email, token)
+    _acl.audit_log("login_success", email=email, ip=ip, details={"role": role})
+    return {"success": True, "token": token, "email": email, "role": role}
 
 @app.post("/api/auth/logout")
 async def auth_logout(request: Request):
     data = await request.json()
     token = data.get("token", "")
+    ip = _acl._get_client_ip(request)
     if token:
-        delete_session(token)
+        session_info = _acl.session_manager.verify(token)
+        email = session_info.get("email") if session_info else None
+        _acl.session_manager.destroy(token)
+        _db.delete_session(token)
+        _acl.audit_log("logout", email=email, ip=ip)
     return {"success": True}
 
 @app.get("/api/auth/verify")
-async def auth_verify(token: str = ""):
+async def auth_verify(request: Request, token: str = ""):
     if not token:
         raise HTTPException(status_code=401, detail="No token provided")
-    email = verify_session(token)
-    if not email:
+    session_info = _acl.session_manager.verify(token)
+    if not session_info:
+        db_session = _db.get_session(token)
+        if db_session:
+            email = db_session["email"]
+            role = "admin" if email == _acl.ADMIN_EMAIL else "user"
+            return {"valid": True, "email": email, "role": role}
         raise HTTPException(status_code=401, detail="Invalid or expired session")
-    return {"valid": True, "email": email}
+    return {"valid": True, "email": session_info["email"], "role": session_info.get("role", "user")}
+
+@app.post("/api/auth/change-password")
+async def auth_change_password(request: Request):
+    data = await request.json()
+    old_password = data.get("old_password", "")
+    new_password = data.get("new_password", "")
+    ip = _acl._get_client_ip(request)
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    email = auth["email"]
+    user = _db.get_user(email)
+    if not user or not verify_password(old_password, user["password_hash"]):
+        _acl.audit_log("password_change_failed", email=email, ip=ip, success=False)
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+    valid, msg = _acl.validate_password(new_password)
+    if not valid:
+        raise HTTPException(status_code=400, detail=msg)
+    new_hash = hash_password(email, new_password)
+    if not _db.update_password(email, new_hash):
+        raise HTTPException(status_code=404, detail="User not found")
+    _acl.session_manager.destroy_all(email)
+    _acl.audit_log("password_changed", email=email, ip=ip)
+    return {"success": True, "message": "Password changed. Please login again."}
+
+# ============================================================
+# API KEY MANAGEMENT
+# ============================================================
+
+class ApiKeyRequest(BaseModel):
+    name: str
+    role: str = "user"
+    scopes: List[str] = ["read", "write"]
+
+@app.post("/api/auth/api-keys")
+async def create_api_key(request: Request, req: ApiKeyRequest):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    result = _acl.create_api_key(name=req.name, role=req.role, email=auth.get("email"), scopes=req.scopes)
+    _acl.audit_log("api_key_created", email=auth.get("email"), ip=_acl._get_client_ip(request), details={"key_id": result["id"]})
+    return result
+
+@app.get("/api/auth/api-keys")
+async def list_api_keys(request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    return _acl.list_api_keys()
+
+@app.delete("/api/auth/api-keys/{key_id}")
+async def revoke_api_key(request: Request, key_id: str):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    if _acl.revoke_api_key(key_id):
+        _acl.audit_log("api_key_revoked", email=auth.get("email"), ip=_acl._get_client_ip(request), details={"key_id": key_id})
+        return {"success": True}
+    raise HTTPException(status_code=404, detail="API key not found")
+
+# ============================================================
+# ACL & SECURITY STATS
+# ============================================================
+
+@app.get("/api/acl/stats")
+async def acl_stats(request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    return _acl.get_acl_stats()
+
+@app.get("/api/acl/audit-log")
+async def audit_log_endpoint(request: Request, limit: int = 100, event: str = "", email: str = ""):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    return _acl.get_audit_log(limit=limit, event=event or None, email=email or None)
+
+@app.get("/api/acl/roles")
+async def acl_roles(request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    return {
+        "roles": list(_acl.ROLE_HIERARCHY.keys()),
+        "permissions": {role: sorted(perms) for role, perms in _acl.ROLE_HIERARCHY.items()},
+    }
 
 # ============================================================
 # PYDANTIC MODELS
@@ -576,7 +767,6 @@ def get_parameter_size(model_name: str) -> str:
     model_lower = model_name.lower()
     
     # Look for explicit size patterns
-    import re
     size_patterns = [
         (r'(\d+\.?\d*)b', lambda m: f"{m.group(1)}B"),  # 7b, 13b, 70b, etc.
         (r'(\d+\.?\d*)m', lambda m: f"{m.group(1)}m"),  # For small models
@@ -1113,6 +1303,16 @@ async def api_version():
     return {"version": VERSION}
 
 
+@app.get("/api/db/schema")
+async def api_db_schema():
+    """Return schema version and sync status for frontend verification."""
+    return {
+        "version": VERSION,
+        "schema": _db.check_schema_sync(),
+        "database": {"connected": _db.is_connected()},
+    }
+
+
 @app.get("/api/status")
 async def api_status():
     with state_lock:
@@ -1155,6 +1355,55 @@ async def save_config(body: ConfigRequest):
     if body.provider in PROVIDER_CONFIGS:
         save_provider_db(body.provider, PROVIDER_CONFIGS[body.provider], body.api_key)
     return {"status": "saved"}
+
+
+@app.post("/api/auth/auto-detect")
+async def auto_detect_api_key(body: dict):
+    """Auto-detect provider from API key and configure it."""
+    api_key = body.get("api_key", "").strip()
+    if not api_key:
+        return JSONResponse({"error": "No API key provided"}, status_code=400)
+
+    detected_provider = None
+    test_results = {}
+
+    # Test each provider's API with the key
+    for pname, cfg in PROVIDER_CONFIGS.items():
+        if not cfg.get("models_url"):
+            continue
+        try:
+            url = cfg["models_url"].replace("{key}", api_key) if "{key}" in cfg["models_url"] else cfg["models_url"]
+            headers = get_headers(pname, api_key)
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(url, headers=headers, timeout=8.0)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    models = data.get("data", data.get("models", []))
+                    if models:
+                        detected_provider = pname
+                        test_results[pname] = {"status": "ok", "models_count": len(models)}
+                        break
+                else:
+                    test_results[pname] = {"status": "failed", "code": resp.status_code}
+        except Exception as e:
+            test_results[pname] = {"status": "error", "error": str(e)[:100]}
+
+    if detected_provider:
+        with state_lock:
+            API_KEYS[detected_provider] = api_key
+            ACTIVE_PROVIDER = detected_provider
+        save_provider_db(detected_provider, PROVIDER_CONFIGS[detected_provider], api_key)
+        return {
+            "detected": True,
+            "provider": detected_provider,
+            "message": f"API key verified and configured for {detected_provider}",
+        }
+
+    return {
+        "detected": False,
+        "message": "Could not verify API key with any provider",
+        "results": test_results,
+    }
 
 
 @app.get("/api/providers/list")
@@ -1226,9 +1475,16 @@ async def get_models():
     with state_lock:
         provider = ACTIVE_PROVIDER
         api_key = API_KEYS.get(provider, "")
+    cfg = PROVIDER_CONFIGS.get(provider, {})
+    catalog = MODEL_CATALOG.get(provider, [])
+
     if not api_key:
+        if catalog:
+            with state_lock:
+                MODEL_CACHE = [{"name": m["name"], "free": m["free"]} for m in catalog]
+            return {"models": MODEL_CACHE[:]}
         return {"models": []}
-    cfg = PROVIDER_CONFIGS[provider]
+
     if not cfg.get("models_url"):
         return {"models": [{"name": cfg["default_model"], "free": cfg["free_heuristic"]}]}
     try:
@@ -1248,10 +1504,78 @@ async def get_models():
                 MODEL_CACHE = models
         return {"models": models}
     except Exception as e:
+        if catalog:
+            with state_lock:
+                MODEL_CACHE = [{"name": m["name"], "free": m["free"]} for m in catalog]
+            return {"models": MODEL_CACHE[:]}
         return {"models": [], "error": str(e)}
 
 
-# ============================================================
+@app.get("/api/models/all")
+async def get_all_models():
+    """Fetch models from ALL configured providers. Uses catalog as fallback."""
+    results = []
+    seen = set()
+    with state_lock:
+        providers = dict(PROVIDER_CONFIGS)
+        keys = dict(API_KEYS)
+        active = ACTIVE_PROVIDER
+
+    for pname, cfg in providers.items():
+        api_key = keys.get(pname, "")
+        catalog = MODEL_CATALOG.get(pname, [])
+
+        if not api_key and not cfg.get("free_heuristic") and not catalog:
+            continue
+
+        live_models = []
+        if cfg.get("models_url") and (api_key or cfg.get("free_heuristic")):
+            try:
+                url = cfg["models_url"].replace("{key}", api_key) if "{key}" in cfg["models_url"] else cfg["models_url"]
+                headers = get_headers(pname, api_key)
+                async with httpx.AsyncClient() as client:
+                    resp = await client.get(url, headers=headers, timeout=10.0)
+                    data = resp.json()
+                    for m in data.get("data", data.get("models", [])):
+                        mid = m.get("id", m.get("name", ""))
+                        is_free = bool(cfg["free_heuristic"]) if cfg["free_heuristic"] != "api" else m.get("pricing", {}).get("prompt", "1") == "0"
+                        if "free" in mid.lower():
+                            is_free = True
+                        live_models.append({"name": mid, "free": is_free})
+            except Exception:
+                pass
+
+        if live_models:
+            for m in live_models:
+                key = f"{pname}:{m['name']}"
+                if key not in seen:
+                    seen.add(key)
+                    results.append({
+                        "name": m["name"],
+                        "free": m["free"],
+                        "provider": pname,
+                        "type": cfg["type"],
+                    })
+        elif catalog:
+            for m in catalog:
+                key = f"{pname}:{m['name']}"
+                if key not in seen:
+                    seen.add(key)
+                    results.append({
+                        "name": m["name"],
+                        "free": m["free"],
+                        "provider": pname,
+                        "type": cfg["type"],
+                    })
+        elif cfg.get("models_url") is None:
+            results.append({
+                "name": cfg["default_model"],
+                "free": bool(cfg["free_heuristic"]),
+                "provider": pname,
+                "type": cfg["type"],
+            })
+
+    return {"models": results, "active_provider": active}# ============================================================
 # OLLAMA-NATIVE COMPATIBLE ENDPOINTS
 # ============================================================
 
@@ -1471,7 +1795,10 @@ async def v1_messages(request: Request):
 
 @app.get("/api/rag/stats")
 async def rag_stats():
-    return RAG.stats()
+    stats = RAG.stats()
+    from rag import vector_stats
+    stats["vector"] = vector_stats()
+    return stats
 
 
 @app.get("/api/rag/documents")
@@ -1492,7 +1819,7 @@ async def rag_upload(file: UploadFile = File(...), collection: str = Form("defau
     if len(content) > MAX_FILE_SIZE:
         return JSONResponse({"error": f"File too large (max {MAX_FILE_SIZE // (1024*1024)}MB)"}, status_code=400)
     safe_name = sanitize_filename(file.filename)
-    tmp_dir = os.path.join(os.path.dirname(RAG.db_path), "_rag_tmp")
+    tmp_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_rag_tmp")
     os.makedirs(tmp_dir, exist_ok=True)
     tmp_path = os.path.join(tmp_dir, f"{secrets.token_hex(8)}_{safe_name}")
     try:
@@ -1519,12 +1846,26 @@ async def rag_add_text(body: RagAddTextRequest):
 async def rag_search(body: RagSearchRequest):
     if not body.query.strip():
         return JSONResponse({"error": "query is required"}, status_code=400)
-    return RAG.search(body.query, top_k=body.top_k, collection=body.collection)
+    return RAG.search(body.query, top_k=body.top_k, collection=body.collection, hybrid=True)
+
+
+@app.post("/api/rag/search/vector")
+async def rag_search_vector(body: RagSearchRequest):
+    if not body.query.strip():
+        return JSONResponse({"error": "query is required"}, status_code=400)
+    return RAG.search_vector(body.query, top_k=body.top_k, collection=body.collection)
+
+
+@app.post("/api/rag/search/fts")
+async def rag_search_fts(body: RagSearchRequest):
+    if not body.query.strip():
+        return JSONResponse({"error": "query is required"}, status_code=400)
+    return RAG.search_fts(body.query, top_k=body.top_k, collection=body.collection)
 
 
 @app.get("/api/rag/context")
-async def rag_context(query: str, max_tokens: int = 3000, collection: str = None):
-    ctx = RAG.build_context(query, max_tokens=max_tokens, collection=collection)
+async def rag_context(query: str, max_tokens: int = 3000, collection: str = None, hybrid: bool = True):
+    ctx = RAG.build_context(query, max_tokens=max_tokens, collection=collection, hybrid=hybrid)
     return {"context": ctx, "has_context": bool(ctx)}
 
 
@@ -1533,10 +1874,29 @@ async def rag_delete_document(doc_id: str):
     return RAG.delete_document(doc_id)
 
 
+@app.post("/api/rag/reindex/{doc_id}")
+async def rag_reindex(doc_id: str):
+    return RAG.reindex_document(doc_id)
+
+
 @app.post("/api/rag/clear")
 async def rag_clear(body: RagClearRequest = None):
     collection = body.collection if body else None
     return RAG.clear(collection)
+
+
+@app.get("/api/rag/vector-stats")
+async def rag_vector_stats():
+    from rag import vector_stats
+    return vector_stats()
+
+
+@app.post("/api/rag/rebuild-index")
+async def rag_rebuild_index():
+    from rag import drop_embedding_index, create_embedding_index
+    drop_embedding_index()
+    create_embedding_index()
+    return {"success": True, "message": "Vector index rebuilt"}
 
 
 @app.post("/api/rag/context-inject")

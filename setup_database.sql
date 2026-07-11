@@ -1,49 +1,90 @@
+-- ================================================================
 -- OllamaEmu — PostgreSQL + pgvector Database Setup
--- Run this in pgAdmin4 or psql to create the database and user.
+-- ================================================================
+-- Copyright (c) 2024-2026 Rhasan@dev. All rights reserved.
 --
--- Usage:
---   1. Open pgAdmin4
---   2. Open Query Tool
---   3. Paste this entire file
---   4. Execute (F5)
+-- IMPORTANT: Run in TWO steps in pgAdmin4:
+--   Step 1: Run this script on your default "postgres" database
+--           (or any database) to create the user.
+--   Step 2: Disconnect, connect to "ollamaemu" database, run again.
+--
+-- Or run from psql which handles CREATE DATABASE outside transactions.
+-- ================================================================
 
--- ── Create user and database ──────────────────────────
-CREATE USER ollamaemu WITH PASSWORD 'ollamaemu' SUPERUSER;
-CREATE DATABASE ollamaemu OWNER ollamaemu;
+-- ── Create user (skip if exists) ──────────────────────
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'ollamaemu') THEN
+        CREATE USER ollamaemu WITH PASSWORD 'ollamaemu' SUPERUSER;
+        RAISE NOTICE 'User ollamaemu created.';
+    ELSE
+        RAISE NOTICE 'User ollamaemu already exists.';
+    END IF;
+END
+$$;
 
--- ── Connect to the new database ───────────────────────
--- (Run these after connecting to ollamaemu database)
+-- ── Create database (skip if exists) ──────────────────
+-- NOTE: If you get "CREATE DATABASE cannot run inside a transaction block",
+-- run this line directly in a separate query window:
+--   CREATE DATABASE ollamaemu OWNER ollamaemu;
+-- Then reconnect to ollamaemu and run the rest of this script.
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_database WHERE datname = 'ollamaemu') THEN
+        -- This will fail inside a transaction in pgAdmin4.
+        -- If it fails, run: CREATE DATABASE ollamaemu OWNER ollamaemu; separately.
+        EXECUTE 'CREATE DATABASE ollamaemu OWNER ollamaemu';
+        RAISE NOTICE 'Database ollamaemu created.';
+    ELSE
+        RAISE NOTICE 'Database ollamaemu already exists.';
+    END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Could not create database inside transaction. Run manually: CREATE DATABASE ollamaemu OWNER ollamaemu;';
+END
+$$;
+
+-- ================================================================
+-- From here on, you should be connected to the "ollamaemu" database.
+-- ================================================================
 
 -- Enable extensions
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
--- ── Providers ──────────────────────────────────────────
+-- ================================================================
+-- PROVIDERS
+-- ================================================================
 CREATE TABLE IF NOT EXISTS providers (
-    name        TEXT PRIMARY KEY,
-    url         TEXT,
-    models_url  TEXT,
-    auth_type   TEXT,
+    name          TEXT PRIMARY KEY,
+    url           TEXT,
+    models_url    TEXT,
+    auth_type     TEXT,
     default_model TEXT,
     free_heuristic TEXT,
-    type        TEXT,
-    api_key     TEXT DEFAULT ''
+    type          TEXT,
+    api_key       TEXT DEFAULT ''
 );
 
--- ── Auth ───────────────────────────────────────────────
+-- ================================================================
+-- AUTH (users + sessions)
+-- ================================================================
 CREATE TABLE IF NOT EXISTS users (
     email         TEXT PRIMARY KEY,
     password_hash TEXT NOT NULL,
-    created_at    TEXT NOT NULL
+    created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
-    token      TEXT PRIMARY KEY,
-    email      TEXT NOT NULL REFERENCES users(email),
-    created_at TEXT NOT NULL
+    token         TEXT PRIMARY KEY,
+    email         TEXT NOT NULL REFERENCES users(email) ON DELETE CASCADE,
+    created_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── RAG (Retrieval-Augmented Generation) ───────────────
+CREATE INDEX IF NOT EXISTS idx_sessions_email ON sessions(email);
+
+-- ================================================================
+-- RAG (Retrieval-Augmented Generation) + pgvector
+-- ================================================================
 CREATE TABLE IF NOT EXISTS rag_documents (
     id          TEXT PRIMARY KEY,
     filename    TEXT NOT NULL,
@@ -53,6 +94,9 @@ CREATE TABLE IF NOT EXISTS rag_documents (
     metadata    JSONB DEFAULT '{}',
     created_at  TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_rag_docs_collection ON rag_documents(collection);
+CREATE INDEX IF NOT EXISTS idx_rag_docs_hash ON rag_documents(file_hash);
 
 CREATE TABLE IF NOT EXISTS rag_chunks (
     id           TEXT PRIMARY KEY,
@@ -64,9 +108,11 @@ CREATE TABLE IF NOT EXISTS rag_chunks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_chunks_doc ON rag_chunks(doc_id);
-CREATE INDEX IF NOT EXISTS idx_chunks_embedding ON rag_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 
--- Full-text search on chunks
+-- Vector index created conditionally (needs 100+ vectors).
+-- The app creates it automatically. To create manually:
+--   SELECT create_vector_index('hnsw');
+
 CREATE TABLE IF NOT EXISTS rag_fts (
     id      SERIAL PRIMARY KEY,
     doc_id  TEXT NOT NULL,
@@ -74,7 +120,9 @@ CREATE TABLE IF NOT EXISTS rag_fts (
 );
 CREATE INDEX IF NOT EXISTS idx_rag_fts_gin ON rag_fts USING gin(content);
 
--- ── Memory System ──────────────────────────────────────
+-- ================================================================
+-- MEMORY SYSTEM
+-- ================================================================
 CREATE TABLE IF NOT EXISTS memory_messages (
     id         TEXT PRIMARY KEY,
     role       TEXT NOT NULL,
@@ -97,6 +145,7 @@ CREATE TABLE IF NOT EXISTS memory_facts (
     session_id TEXT DEFAULT 'default',
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+CREATE INDEX IF NOT EXISTS idx_facts_session ON memory_facts(session_id);
 
 CREATE TABLE IF NOT EXISTS memory_summaries (
     id            TEXT PRIMARY KEY,
@@ -116,9 +165,100 @@ CREATE TABLE IF NOT EXISTS memory_sessions (
     updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ── Seed default providers ─────────────────────────────
+-- ================================================================
+-- SCHEMA VERSION (frontend/backend sync)
+-- ================================================================
+CREATE TABLE IF NOT EXISTS schema_version (
+    version     INTEGER PRIMARY KEY,
+    prisma_hash TEXT NOT NULL DEFAULT '',
+    updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ================================================================
+-- ACL (Access Control List)
+-- ================================================================
+CREATE TABLE IF NOT EXISTS api_keys (
+    id         TEXT PRIMARY KEY,
+    name       TEXT NOT NULL,
+    key_hash   TEXT NOT NULL,
+    role       TEXT DEFAULT 'user',
+    email      TEXT,
+    scopes     JSONB DEFAULT '["read","write"]',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_used  TIMESTAMPTZ,
+    active     BOOLEAN DEFAULT TRUE
+);
+CREATE INDEX IF NOT EXISTS idx_api_keys_hash ON api_keys(key_hash);
+CREATE INDEX IF NOT EXISTS idx_api_keys_email ON api_keys(email);
+
+CREATE TABLE IF NOT EXISTS audit_log (
+    id         SERIAL PRIMARY KEY,
+    timestamp  TIMESTAMPTZ DEFAULT NOW(),
+    event      TEXT NOT NULL,
+    email      TEXT,
+    ip         TEXT,
+    success    BOOLEAN DEFAULT TRUE,
+    details    JSONB DEFAULT '{}'
+);
+CREATE INDEX IF NOT EXISTS idx_audit_event ON audit_log(event);
+CREATE INDEX IF NOT EXISTS idx_audit_email ON audit_log(email);
+CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_log(timestamp);
+
+CREATE TABLE IF NOT EXISTS ip_blocklist (
+    ip         TEXT PRIMARY KEY,
+    reason     TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS ip_allowlist (
+    ip         TEXT PRIMARY KEY,
+    reason     TEXT DEFAULT '',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS rate_limits (
+    id           TEXT PRIMARY KEY,
+    key          TEXT NOT NULL,
+    count        INTEGER DEFAULT 1,
+    window_start TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_rate_key ON rate_limits(key);
+
+-- ================================================================
+-- HELPER FUNCTION: Create vector index
+-- ================================================================
+CREATE OR REPLACE FUNCTION create_vector_index(index_type TEXT DEFAULT 'hnsw')
+RETURNS void AS $$
+DECLARE
+    vec_count INTEGER;
+BEGIN
+    SELECT COUNT(*) INTO vec_count FROM rag_chunks WHERE embedding IS NOT NULL;
+
+    IF vec_count = 0 THEN
+        RAISE NOTICE 'No embeddings found. Index will be created after documents are inserted.';
+        RETURN;
+    END IF;
+
+    IF index_type = 'hnsw' THEN
+        EXECUTE format(
+            'CREATE INDEX IF NOT EXISTS idx_chunks_embedding_hnsw ON rag_chunks USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 200)'
+        );
+        RAISE NOTICE 'HNSW index created (% vectors)', vec_count;
+    ELSE
+        EXECUTE format(
+            'CREATE INDEX IF NOT EXISTS idx_chunks_embedding_ivfflat ON rag_chunks USING ivfflat (embedding vector_cosine_ops) WITH (lists = %s)',
+            GREATEST(100, vec_count / 10)
+        );
+        RAISE NOTICE 'IVFFlat index created (% vectors, lists=%s)', vec_count, GREATEST(100, vec_count / 10);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ================================================================
+-- SEED DATA (must match DEFAULT_PROVIDERS in ollama_emu_desktop.py)
+-- ================================================================
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('openrouter', 'https://openrouter.ai/api/v1/chat/completions', 'https://openrouter.ai/api/v1/models', 'bearer', 'openrouter/auto', 'true', 'openai', '')
+    ('openrouter', 'https://openrouter.ai/api/v1/chat/completions', 'https://openrouter.ai/api/v1/models', 'bearer', 'tencent/hy3:free', 'api', 'openai', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
@@ -126,30 +266,36 @@ INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heu
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('anthropic', 'https://api.anthropic.com/v1/messages', 'https://api.anthropic.com/v1/models', 'x-api-key', 'claude-3-5-sonnet-20241022', 'false', 'anthropic', '')
+    ('anthropic', 'https://api.anthropic.com/v1/messages', NULL, 'header', 'claude-3-sonnet-20240229', 'false', 'anthropic', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('gemini', 'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent', 'https://generativelanguage.googleapis.com/v1beta/models', 'bearer', 'gemini-2.0-flash', 'false', 'gemini', '')
+    ('claude', 'https://api.anthropic.com/v1/messages', NULL, 'header', 'claude-3-5-sonnet-20241022', 'false', 'anthropic', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('groq', 'https://api.groq.com/openai/v1/chat/completions', 'https://api.groq.com/openai/v1/models', 'bearer', 'llama-3.3-70b-versatile', 'false', 'openai', '')
+    ('gemini', 'https://generativelanguage.googleapis.com/v1beta/models/{model}:streamGenerateContent?key={key}&alt=sse', 'https://generativelanguage.googleapis.com/v1/models?key={key}', 'query', 'gemini-1.5-flash', 'true', 'gemini', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('deepseek', 'https://api.deepseek.com/chat/completions', 'https://api.deepseek.com/models', 'bearer', 'deepseek-chat', 'false', 'openai', '')
+    ('groq', 'https://api.groq.com/openai/v1/chat/completions', 'https://api.groq.com/openai/v1/models', 'bearer', 'llama3-70b-8192', 'true', 'openai', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('mistral', 'https://api.mistral.ai/v1/chat/completions', 'https://api.mistral.ai/v1/models', 'bearer', 'mistral-small-latest', 'false', 'openai', '')
+    ('deepseek', 'https://api.deepseek.com/chat/completions', 'https://api.deepseek.com/v1/models', 'bearer', 'deepseek-chat', 'true', 'openai', '')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
-    ('together', 'https://api.together.xyz/v1/chat/completions', 'https://api.together.xyz/v1/models', 'bearer', 'meta-llama/Llama-3.3-70B-Instruct-Turbo', 'false', 'openai', '')
+    ('mistral', 'https://api.mistral.ai/v1/chat/completions', 'https://api.mistral.ai/v1/models', 'bearer', 'mistral-tiny', 'false', 'openai', '')
 ON CONFLICT (name) DO NOTHING;
 
--- ── Seed demo user ─────────────────────────────────────
--- Password: 12345678 (PBKDF2-HMAC-SHA256 hash)
--- NOTE: The app will overwrite this hash on first run.
--- This is just a placeholder so you can inspect the table.
+INSERT INTO providers (name, url, models_url, auth_type, default_model, free_heuristic, type, api_key) VALUES
+    ('together', 'https://api.together.xyz/v1/chat/completions', 'https://api.together.xyz/v1/models', 'bearer', 'meta-llama/Llama-3-70b-chat-hf', 'false', 'openai', '')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO schema_version (version, prisma_hash) VALUES (1, '')
+ON CONFLICT (version) DO NOTHING;
+
+-- ================================================================
+-- DONE! Now run: python ollama_emu_desktop.py
+-- ================================================================

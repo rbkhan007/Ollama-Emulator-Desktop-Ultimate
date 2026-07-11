@@ -8,6 +8,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 *.egg
+*.whl
 dist/
 build/
 *.spec
@@ -15,6 +16,7 @@ build/
 *.sqlite
 *.sqlite3
 _rag_tmp/
+*.pyc
 
 # =====================
 # Node / Frontend
@@ -25,6 +27,7 @@ frontend/.next/
 frontend/next-env.d.ts
 frontend/next.log
 frontend/*.tsbuildinfo
+frontend/src/generated/
 .expo/
 .expo-shared/
 npm-debug.*
@@ -63,12 +66,12 @@ ehthumbs.db
 # =====================
 # Build Artifacts
 # =====================
-*.pyc
-*.pyo
 *.manifest
 *.log
 *.tmp
 *.temp
+*.err
+*.out
 
 # =====================
 # Notebook checkpoints
@@ -79,8 +82,12 @@ ehthumbs.db
 # Temp / Logs
 # =====================
 temp/
-*.err
-*.out
+curl*
+
+# =====================
+# IDE / Editor
+# =====================
+.opencode/
 
 # =====================
 # Release binaries (distributed via GitHub Releases)
@@ -90,3 +97,7 @@ OllamaEmu.exe
 Ollama_Emulator.exe
 *.apk
 
+# =====================
+# Platform tools (Android SDK)
+# =====================
+platform-tools/

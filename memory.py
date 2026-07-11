@@ -12,7 +12,7 @@ import logging
 from typing import List, Dict, Optional
 from collections import deque
 
-from db import get_cursor, get_conn
+from db import get_cursor, is_connected
 
 log = logging.getLogger("ollama-emu.memory")
 
@@ -26,7 +26,10 @@ class MemorySystem:
         self._running = True
         self._flusher = threading.Thread(target=self._flush_loop, daemon=True)
         self._flusher.start()
-        log.info("Memory system initialized (PostgreSQL). Auto-flush every %.1fs.", FLUSH_INTERVAL)
+        if is_connected():
+            log.info("Memory system initialized (PostgreSQL). Auto-flush every %.1fs.", FLUSH_INTERVAL)
+        else:
+            log.warning("Memory system: PostgreSQL not connected — memory features unavailable.")
 
     def _flush_loop(self):
         while self._running:
@@ -34,7 +37,7 @@ class MemorySystem:
             self._flush()
 
     def _flush(self):
-        if not self._buffer:
+        if not self._buffer or not is_connected():
             return
         with self._lock:
             batch = list(self._buffer)
@@ -42,9 +45,8 @@ class MemorySystem:
         if not batch:
             return
         try:
+            from psycopg2.extras import execute_values
             with get_cursor() as cur:
-                psycopg2_extras = __import__("psycopg2.extras", fromlist=["execute_values"])
-                from psycopg2.extras import execute_values
                 execute_values(
                     cur,
                     "INSERT INTO memory_messages (id, role, content, model, provider, session_id, tokens, created_at) VALUES %s ON CONFLICT (id) DO NOTHING",
@@ -67,6 +69,8 @@ class MemorySystem:
         self._ensure_session(session_id, model, provider)
 
     def _ensure_session(self, session_id: str, model: str, provider: str):
+        if not is_connected():
+            return
         try:
             with get_cursor() as cur:
                 cur.execute("SELECT id FROM memory_sessions WHERE id=%s", (session_id,))
@@ -85,6 +89,8 @@ class MemorySystem:
 
     def get_messages(self, session_id: str = None, limit: int = 100, offset: int = 0) -> List[dict]:
         self._flush()
+        if not is_connected():
+            return []
         with get_cursor(commit=False) as cur:
             if session_id:
                 cur.execute(
@@ -109,11 +115,13 @@ class MemorySystem:
 
     def search(self, query: str, limit: int = 20, session_id: str = None) -> List[dict]:
         self._flush()
+        if not is_connected():
+            return []
         terms = [t for t in query.lower().split() if len(t) > 1]
         if not terms:
             return []
         with get_cursor(commit=False) as cur:
-            conditions = " AND ".join(["content ILIKE %s"] * len(terms))
+            conditions = " OR ".join(["content ILIKE %s"] * len(terms))
             params = [f"%{t}%" for t in terms]
             if session_id:
                 conditions += " AND session_id = %s"
@@ -135,6 +143,8 @@ class MemorySystem:
         ]
 
     def add_fact(self, fact: str, source: str = "", importance: str = "normal", session_id: str = "default"):
+        if not is_connected():
+            return None
         fid = f"fact_{uuid.uuid4().hex[:12]}"
         with get_cursor() as cur:
             cur.execute(
@@ -144,6 +154,8 @@ class MemorySystem:
         return fid
 
     def get_facts(self, session_id: str = None, limit: int = 50) -> List[dict]:
+        if not is_connected():
+            return []
         with get_cursor(commit=False) as cur:
             if session_id:
                 cur.execute(
@@ -166,12 +178,16 @@ class MemorySystem:
         ]
 
     def delete_fact(self, fact_id: str) -> bool:
+        if not is_connected():
+            return False
         with get_cursor() as cur:
             cur.execute("DELETE FROM memory_facts WHERE id=%s", (fact_id,))
             return cur.rowcount > 0
 
     def get_sessions(self) -> List[dict]:
         self._flush()
+        if not is_connected():
+            return []
         with get_cursor(commit=False) as cur:
             cur.execute("SELECT id, name, model, provider, message_count, created_at, updated_at FROM memory_sessions ORDER BY updated_at DESC")
             rows = cur.fetchall()
@@ -186,6 +202,8 @@ class MemorySystem:
 
     def stats(self) -> dict:
         self._flush()
+        if not is_connected():
+            return {"messages": 0, "facts": 0, "sessions": 0, "buffered": len(self._buffer)}
         with get_cursor(commit=False) as cur:
             cur.execute("SELECT COUNT(*) FROM memory_messages")
             messages = cur.fetchone()["count"]
@@ -197,6 +215,8 @@ class MemorySystem:
 
     def clear(self, session_id: str = None):
         self._flush()
+        if not is_connected():
+            return
         with get_cursor() as cur:
             if session_id:
                 cur.execute("DELETE FROM memory_messages WHERE session_id=%s", (session_id,))
