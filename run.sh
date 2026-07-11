@@ -4,7 +4,7 @@
 set -e
 
 echo "============================================"
-echo "  Ollama Emulator Desktop Ultimate v0.6.0"
+echo "  Ollama Emulator Desktop Ultimate v1.0.0"
 echo "  Auto-start: Backend + Frontend + Database"
 echo "  Copyright (c) 2024-2026 Rhasan@dev"
 echo "============================================"

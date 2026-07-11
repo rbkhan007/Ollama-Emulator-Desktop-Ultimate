@@ -4,7 +4,7 @@ chcp 65001 >nul
 cd /d "%~dp0"
 
 echo [95m============================================[0m
-echo [95m  Ollama Emulator Desktop Ultimate v0.6.0[0m
+echo [95m  Ollama Emulator Desktop Ultimate v1.0.0[0m
 echo [95m  Auto-start: Backend + Frontend + Database[0m
 echo [95m  Copyright (c) 2024-2026 Rhasan@dev[0m
 echo [95m============================================[0m

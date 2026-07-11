@@ -5,7 +5,7 @@ cd /d "%~dp0"
 
 echo ============================================
 echo  Building Ollama Emulator Desktop EXE
-echo  v0.6.0 - Copyright (c) 2024-2026 Rhasan@dev
+echo  v1.0.0 - Copyright (c) 2024-2026 Rhasan@dev
 echo ============================================
 echo.
 
@@ -51,6 +51,7 @@ python -m PyInstaller --onefile --console ^
     --workpath "build" ^
     --specpath "." ^
     --clean ^
+    --icon "brand-mark.ico" ^
     ollama_emu_desktop.py 2>&1
 
 if %errorlevel% neq 0 (

@@ -1,5 +1,5 @@
 ﻿"""
-Ollama Emulator Desktop â€“ Ultimate Edition v0.6.0
+Ollama Emulator Desktop â€“ Ultimate Edition v1.0.0
 ================================================
 Copyright (c) 2024-2026 Rhasan@dev.
 
@@ -84,7 +84,7 @@ from rag import RAGEngine
 from memory import MemorySystem
 from device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
 
-VERSION = "0.6.0"
+VERSION = "1.0.0"
 
 # ============================================================
 # CONFIGURATION & PROVIDER DATABASE
