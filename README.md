@@ -91,26 +91,21 @@ npm install @rbkhan007/ollama-emulator-desktop-ultimate
 
 ---
 
-## Architecture
+## Server Layout
 
-```
-┌────────────────────────────────────────────────┐
-│  Next.js Static Export (frontend/out/)         │
-│  /  /login  /playground  /usage  /settings     │
-│  /rag  /memory  /_not-found                    │
-└──────────────────┬─────────────────────────────┘
-                   │ served on same port
-┌──────────────────▼─────────────────────────────┐
-│  FastAPI Server (ollama_emu_desktop.py)         │
-│  Port 11434 — single-process                   │
-│                                                 │
-│  /api/*          → Provider proxy + RAG/Memory  │
-│  /v1/*           → OpenAI/Anthropic compatible  │
-│  /{page}         → SPA fallback (static HTML)   │
-│                                                 │
-│  Providers DB   RAG Engine    Memory System     │
-│  (SQLite)       (FTS5+NumPy)  (SQLite+autoflush)│
-└─────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph S["FastAPI Server — ollama_emu_desktop.py"]
+        direction TB
+        R1["/api/* — Provider proxy + RAG/Memory"]
+        R2["/v1/* — OpenAI / Anthropic compatible"]
+        R3["/{page} — SPA fallback (static HTML)"]
+        R1 --> DB[("Providers DB<br/>SQLite")]
+        R1 --> RE["RAG Engine<br/>FTS5 + NumPy"]
+        R1 --> MS["Memory System<br/>SQLite + autoflush"]
+    end
+    FE["Next.js Static Export<br/>frontend/out/"] -->|same port 11434| S
+    M["React Native (Expo) App<br/>mobile/"] -->|HTTP, same Wi-Fi| S
 ```
 
 ---
