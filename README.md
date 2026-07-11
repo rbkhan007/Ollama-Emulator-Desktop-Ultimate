@@ -1,4 +1,8 @@
-# Ollama Emulator Desktop Ultimate v0.6.0
+# Ollama Emulator Desktop Ultimate v1.0.0
+
+<p align="center">
+  <img src="logo.svg" alt="Ollama Emulator Desktop Ultimate" width="320" />
+</p>
 
 **Run a fake Ollama server locally that routes to real free LLM models** via OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, and more. Built-in RAG knowledge base, persistent memory, usage analytics, and a polished Next.js dashboard.
 

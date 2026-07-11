@@ -1,6 +1,5 @@
 <svg width="500" height="140" viewBox="0 0 500 140" fill="none" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
   <defs>
-    <!-- Brand Gradients -->
     <linearGradient id="brandCyan" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#00f0ff" />
       <stop offset="100%" stop-color="#00bcd4" />
@@ -10,14 +9,12 @@
       <stop offset="100%" stop-color="#6366f1" />
     </linearGradient>
     <linearGradient id="wordmarkGrad" x1="0" y1="0" x2="300" y2="0">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="55%" stop-color="#ffffff" />
-      <stop offset="55.1%" stop-color="#8b5cf6" />
+      <stop offset="0%" stop-color="#00f0ff" />
+      <stop offset="55%" stop-color="#8b5cf6" />
       <stop offset="75%" stop-color="#00f0ff" />
-      <stop offset="100%" stop-color="#00f0ff" />
+      <stop offset="100%" stop-color="#6366f1" />
     </linearGradient>
-    
-    <!-- Glow Filters -->
+
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="4" result="blur" />
       <feMerge>
@@ -32,29 +29,42 @@
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
+
+    <!-- Theme-aware colors: dark text on light backgrounds, gradient/light on dark -->
+    <style>
+      .wm       { fill: #0b1220; }
+      .tag      { fill: #475569; }
+      .badge-bg { fill: rgba(15,23,42,0.04); stroke: rgba(15,23,42,0.12); }
+      .badge-tx { fill: #475569; }
+      @media (prefers-color-scheme: dark) {
+        .wm       { fill: url(#wordmarkGrad); }
+        .tag      { fill: #94a3b8; }
+        .badge-bg { fill: rgba(255,255,255,0.06); stroke: rgba(255,255,255,0.10); }
+        .badge-tx { fill: #94a3b8; }
+      }
+    </style>
   </defs>
 
   <!-- ===== LEFT: BRAND MARK (ICON) ===== -->
   <g transform="translate(70, 70)">
     <!-- Ambient glow behind the mark -->
     <circle cx="0" cy="0" r="48" fill="url(#brandCyan)" opacity="0.1" filter="url(#softGlow)" />
-    
-    <!-- Outer Hexagon -->
-    <polygon points="0,-48 41,-24 41,24 0,48 -41,24 -41,-24" fill="rgba(12, 12, 26, 0.9)" stroke="url(#brandCyan)" stroke-width="3" filter="url(#glow)" />
-    <!-- Inner Hexagon Outline -->
+
+    <!-- Outer Hexagon (transparent fill) -->
+    <polygon points="0,-48 41,-24 41,24 0,48 -41,24 -41,-24" fill="none" stroke="url(#brandCyan)" stroke-width="3" filter="url(#glow)" />
     <polygon points="0,-36 31,-18 31,18 0,36 -31,18 -31,-18" fill="none" stroke="url(#brandPurple)" stroke-width="1.5" opacity="0.6" />
-    
-    <!-- The Lightning Bolt (Core) -->
+
+    <!-- Lightning bolt -->
     <path d="M -10,-20 L 10,-20 L 5,-4 L 15,-4 L -10,24 L -5,6 L -15,6 Z" fill="url(#wordmarkGrad)" filter="url(#glow)" />
-    
-    <!-- Network Nodes (Corners) -->
+
+    <!-- Network Nodes -->
     <circle cx="0" cy="-48" r="3.5" fill="url(#brandCyan)" filter="url(#glow)" />
     <circle cx="41" cy="-24" r="3.5" fill="url(#brandPurple)" filter="url(#glow)" />
     <circle cx="41" cy="24" r="3.5" fill="url(#brandCyan)" filter="url(#glow)" />
     <circle cx="0" cy="48" r="3.5" fill="url(#brandPurple)" filter="url(#glow)" />
     <circle cx="-41" cy="24" r="3.5" fill="url(#brandCyan)" filter="url(#glow)" />
     <circle cx="-41" cy="-24" r="3.5" fill="url(#brandPurple)" filter="url(#glow)" />
-    
+
     <!-- Connecting Data Lines -->
     <line x1="0" y1="-45" x2="38" y2="-22" stroke="url(#brandCyan)" stroke-width="1.5" opacity="0.5" />
     <line x1="38" y1="-22" x2="38" y2="22" stroke="url(#brandPurple)" stroke-width="1.5" opacity="0.5" />
@@ -62,30 +72,26 @@
     <line x1="0" y1="45" x2="-38" y2="22" stroke="url(#brandPurple)" stroke-width="1.5" opacity="0.5" />
     <line x1="-38" y1="22" x2="-38" y2="-22" stroke="url(#brandCyan)" stroke-width="1.5" opacity="0.5" />
     <line x1="-38" y1="-22" x2="0" y2="-45" stroke="url(#brandPurple)" stroke-width="1.5" opacity="0.5" />
-    
-    <!-- Central core glow -->
+
     <circle cx="0" cy="0" r="6" fill="url(#brandCyan)" opacity="0.8" filter="url(#glow)" />
   </g>
 
   <!-- ===== RIGHT: WORDMARK & TAGLINE ===== -->
   <g transform="translate(150, 0)">
-    <!-- Brand Name: OllamaEmu -->
-    <text x="0" y="62" fill="url(#wordmarkGrad)" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.5">
+    <!-- Brand Name: OllamaEmu (theme-aware) -->
+    <text class="wm" x="0" y="62" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.5">
       Ollama<tspan fill="url(#brandCyan)">Emu</tspan>
     </text>
-    
-    <!-- Tagline: Emulate Local · Route Any -->
-    <text x="0" y="90" fill="#94a3b8" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" letter-spacing="2.5">
+
+    <!-- Tagline -->
+    <text class="tag" x="0" y="90" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" letter-spacing="2.5">
       Emulate Local · Route Any
     </text>
-    
-    <!-- Developer Badge (Small & Subtle) -->
-    <rect x="0" y="108" width="70" height="16" rx="8" fill="rgba(255, 255, 255, 0.06)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="0.5"/>
-    <text x="35" y="120" fill="#64748b" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="9" font-weight="600" text-anchor="middle" letter-spacing="1">
+
+    <!-- Developer Badge -->
+    <rect class="badge-bg" x="0" y="108" width="70" height="16" rx="8" stroke-width="0.5"/>
+    <text class="badge-tx" x="35" y="120" font-family="'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif" font-size="9" font-weight="600" text-anchor="middle" letter-spacing="1">
       BY RHASAN
     </text>
   </g>
-
-  <!-- Background Subtle Pattern (Optional for dark mode visibility) -->
-  <rect x="0" y="0" width="500" height="140" rx="20" fill="#0d0d1a" opacity="0.05" />
 </svg>
