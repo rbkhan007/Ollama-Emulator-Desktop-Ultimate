@@ -101,7 +101,8 @@ The app talks to the same endpoints the web dashboard uses:
 |----------|----------|
 | `GET  /api/status` | Active provider, key status, model count |
 | `GET  /api/providers/list` | Configured providers |
-| `GET  /api/models` | Available models |
+| `GET  /api/models` | Available models (catalog fallback) |
+| `GET  /api/models/all` | All models (catalog + live) with provider stats |
 | `POST /api/chat` | Streaming chat (`application/x-ndjson`, Ollama shape) |
 | `POST /api/providers/activate` | Switch the active provider (key-safe) |
 | `POST /api/providers/add` | Add a custom provider |
@@ -112,6 +113,11 @@ The app talks to the same endpoints the web dashboard uses:
 | `POST /api/auth/login` | Login (email + password) |
 | `POST /api/auth/register` | Register new account |
 | `POST /api/auth/verify` | Verify token validity |
+| `POST /api/auth/change-password` | Change password |
+| `POST /api/auth/auto-detect` | Auto-detect provider from API key |
+| `GET  /api/acl/stats` | ACL statistics |
+| `GET  /api/acl/roles` | Role definitions |
+| `GET  /api/audit/log` | Audit log (admin only) |
 
 ## Notes
 

@@ -202,12 +202,16 @@ Opens `http://localhost:11434` automatically. Add your API key in **Settings** a
 | **OpenAI API** | `/v1/models`, `/v1/chat/completions` — works with any OpenAI client |
 | **Anthropic API** | `/v1/messages` — works with Claude Code via `ANTHROPIC_BASE_URL` |
 | **26 Free Models** | Qwen3 Coder 480B, GPT-OSS 120B, Nemotron Ultra 550B, Llama 3.3, Gemma 4 |
+| **Model Catalog** | 9 providers with fallback models stored in PostgreSQL — works without API keys |
+| **Auto-Detect API Key** | Paste any provider's key, OllamaEmu detects which provider it belongs to |
+| **Models Browser** | Search, filter (free/paid), provider stats at `/models` |
 | **Multi-Provider** | OpenRouter, OpenAI, Anthropic, Gemini, Groq, DeepSeek, Mistral, Together |
-| **RAG Knowledge Base** | Upload docs, paste text, FTS5 + TF-IDF search |
-| **Persistent Memory** | Auto-saves conversations, facts, sessions to SQLite |
+| **RAG Knowledge Base** | Upload docs, paste text, PostgreSQL full-text search + pgvector cosine similarity |
+| **Persistent Memory** | Auto-saves conversations, facts, sessions to PostgreSQL |
 | **Usage Analytics** | Real-time token tracking, resonance, accuracy, hourly activity |
+| **RBAC & Rate Limiting** | Role-based access control, per-user rate limits, audit logging |
 | **Local Auth** | Email/password login, all data stays on your machine |
-| **Dark/Light Theme** | System preference detection, manual toggle |
+| **Dark/Light Theme** | System preference detection, manual toggle, high-contrast light mode |
 | **Mobile App** | 8-screen React Native app (EXPO) with full parity |
 | **One-Click Launch** | `run.bat` / `run.sh` — live in 2 seconds |
 
@@ -360,7 +364,7 @@ sequenceDiagram
     participant Emu as OllamaEmu
     participant Router as Provider Router
     participant Cloud as Free Cloud LLM
-    participant DB as Local SQLite
+    participant DB as PostgreSQL + pgvector
 
     Tool->>Emu: POST /api/chat (model, messages)
     activate Emu
@@ -424,6 +428,19 @@ sequenceDiagram
 | `/api/providers/add` | POST | Add custom provider |
 | `/api/providers/{name}` | DELETE | Remove provider |
 | `/api/config` | POST | Save provider config |
+| `/api/models/all` | GET | All models (catalog + live) with fallback |
+| `/api/auth/auto-detect` | POST | Detect provider from API key |
+
+### RBAC & Security
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/auth/login` | POST | Email/password login |
+| `/api/auth/register` | POST | Register new account |
+| `/api/auth/verify` | POST | Verify token |
+| `/api/auth/change-password` | POST | Change password |
+| `/api/acl/stats` | GET | ACL statistics |
+| `/api/acl/roles` | GET | Role definitions |
+| `/api/audit/log` | GET | Audit log (admin only) |
 
 ---
 
@@ -442,11 +459,12 @@ flowchart TB
     subgraph Desktop["Desktop — EXE / Source"]
         direction TB
         API["FastAPI Server<br/>:11434"]
-        RAG["RAG Engine<br/>FTS5 + TF-IDF"]
-        MEM["Memory System<br/>SQLite + Auto-flush"]
+        RAG["RAG Engine<br/>pgvector + FTS"]
+        MEM["Memory System<br/>PostgreSQL + Auto-flush"]
         AUTH["Auth System<br/>PBKDF2 + Salt"]
+        ACL["RBAC + Rate Limiter<br/>IP Filter + Audit"]
         ROUTER["Provider Router"]
-        DB[("providers.db<br/>rag.db<br/>memory.db<br/>auth.db")]
+        DB[("PostgreSQL<br/>providers | users | sessions<br/>rag | memory | acl<br/>model_catalog | api_keys")]
     end
 
     subgraph Providers["Cloud Providers"]
@@ -482,10 +500,12 @@ flowchart TB
     API --> RAG
     API --> MEM
     API --> AUTH
+    API --> ACL
     API --> ROUTER
     RAG --> DB
     MEM --> DB
     AUTH --> DB
+    ACL --> DB
     ROUTER --> DB
     ROUTER -->|API| OR
     ROUTER --> OAI
@@ -531,6 +551,11 @@ flowchart TB
 
 - **All data is local** — credentials, keys, and documents never leave your machine
 - **Password hashing** — PBKDF2-HMAC-SHA256 with per-user random salt
+- **RBAC** — role-based access control (admin/user) with per-route permission checks
+- **Rate limiting** — per-user request throttling (configurable limits)
+- **Session management** — 30-day token expiry, max 5 active sessions per user
+- **IP filtering** — allowlist/blocklist for network-level access control
+- **Audit logging** — all mutations logged with user, IP, and timestamp
 - **SSRF protection** — provider URLs are scheme-checked and blocked from private/loopback addresses
 - **Secure binding** — server binds to `127.0.0.1` by default; use `--host 0.0.0.0` for LAN
 - **Error masking** — internal paths and stack traces never exposed
@@ -545,9 +570,18 @@ flowchart TB
 |----------|-------------|
 | `OLLAMA_EMU_API_KEY` | Pre-set API key on startup |
 | `OLLAMA_EMU_PROVIDER` | Active provider name (default: `openrouter`) |
+| `OLLAMA_EMU_ADMIN_EMAIL` | Admin account email (default: `admin@localhost`) |
+| `OLLAMA_EMU_DEMO_PASSWORD` | Demo account password (default: `changeme123`) |
+| `OLLAMA_EMU_JWT_SECRET` | JWT signing secret (auto-generated if not set) |
+| `OLLAMA_EMU_RATE_LIMIT` | Max requests per 15-min window (default: `60`) |
+| `PGPASSWORD` | PostgreSQL password (default: `postgres`) |
+| `DATABASE_URL` | PostgreSQL connection string (frontend env) |
+
+### Model Catalog
+On startup, OllamaEmu saves a curated catalog of 9 providers with their models to PostgreSQL (`model_catalog` table). When no API key is configured for a provider, the catalog serves as a fallback so the Models Browser always shows available models. This means you can browse and discover models before adding any API keys.
 
 ### Provider Database
-Provider configs are persisted in `providers.db` (SQLite). On first run, 8 providers are seeded automatically. Add custom providers through the Settings page or mobile app.
+Provider configs are persisted in PostgreSQL (`providers` table). On first run, 8 providers are seeded automatically. Add custom providers through the Settings page or mobile app.
 
 ---
 
@@ -669,10 +703,12 @@ graph TB
     PY --> SERVER["ollama_emu_desktop.py<br/>FastAPI Server"]
     PY --> RAG["rag.py<br/>RAG Engine"]
     PY --> MEM["memory.py<br/>Memory System"]
+    PY --> DBMOD["db.py<br/>PostgreSQL Pool + Schema"]
+    PY --> ACLMOD["acl.py<br/>RBAC + Rate Limiter"]
     PY --> REQ["requirements.txt"]
 
-    FE --> APP["src/app/<br/>~15 Pages"]
-    FE --> COMP["src/components/<br/>Navbar, Icons"]
+    FE --> APP["src/app/<br/>~16 Pages"]
+    FE --> COMP["src/components/<br/>Navbar, Icons, Footer"]
     FE --> LIB["src/lib/<br/>API, Auth, Theme"]
     FE --> NC["next.config.js<br/>Static Export"]
 
@@ -728,7 +764,8 @@ If this saves you a subscription, **share it**:
 2. Create a feature branch
 3. Make your changes
 4. Run `tsc --noEmit` (frontend) and `python -m py_compile ollama_emu_desktop.py` (backend)
-5. Submit a PR
+5. Ensure `python test.py` passes (requires PostgreSQL running)
+6. Submit a PR
 
 ---
 
