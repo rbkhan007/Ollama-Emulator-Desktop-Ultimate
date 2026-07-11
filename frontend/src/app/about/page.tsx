@@ -19,7 +19,7 @@ const pages = [
   { href: "/usage", title: "Usage", desc: "Requests, tokens, per-model stats, and recent activity analytics." },
   { href: "/settings", title: "Settings", desc: "Pick a provider, paste a free API key, configure the gateway." },
   { href: "/rag", title: "Knowledge", desc: "Upload documents or paste text; get answers grounded in your data via TF-IDF." },
-  { href: "/memory", title: "Memory", desc: "Browse every saved conversation and fact from the persistent SQLite store." },
+  { href: "/memory", title: "Memory", desc: "Browse every saved conversation and fact from the persistent PostgreSQL store." },
   { href: "/login", title: "Sign In", desc: "Log into your local account (optional — the server already holds the key)." },
   { href: "/register", title: "Get Started", desc: "Create a local account to sync identity across devices." },
 ];

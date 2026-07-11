@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
+import { useDb } from "@/lib/DbContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
 
@@ -13,6 +14,7 @@ type Session = { id: string; name: string; model: string; provider: string; mess
 
 export default function MemoryPage() {
   const { isAuthenticated } = useAuth();
+  const { databaseConnected, schema } = useDb();
   const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -117,6 +119,16 @@ export default function MemoryPage() {
         <div>
           <h1>Memory</h1>
           <p>Conversation history, stored facts, and session management</p>
+          {!databaseConnected && (
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(255,107,107,0.1)", borderRadius: 6, fontSize: 12, color: "#ff6b6b" }}>
+              PostgreSQL not connected — memory features are unavailable
+            </div>
+          )}
+          {databaseConnected && schema && !schema.synced && (
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(255,193,7,0.1)", borderRadius: 6, fontSize: 12, color: "#ffc107" }}>
+              Schema out of date (v{schema.db_version} vs v{schema.expected_version}) — run migration
+            </div>
+          )}
         </div>
       </div>
 

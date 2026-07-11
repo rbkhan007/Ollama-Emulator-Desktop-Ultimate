@@ -57,9 +57,23 @@ python -m PyInstaller --onefile --console ^
     --add-data "frontend\out;frontend\out" ^
     --add-data "rag.py;." ^
     --add-data "memory.py;." ^
+    --add-data "acl.py;." ^
+    --add-data "db.py;." ^
     --add-data "README.md;." ^
     --hidden-import numpy ^
     --collect-data numpy ^
+    --hidden-import psycopg2 ^
+    --hidden-import psycopg2._psycopg ^
+    --hidden-import psycopg2.extensions ^
+    --hidden-import psycopg2.pool ^
+    --hidden-import psycopg2.extras ^
+    --hidden-import psycopg2.errors ^
+    --collect-submodules psycopg2 ^
+    --hidden-import pgvector ^
+    --hidden-import pgvector.psycopg2 ^
+    --collect-submodules pgvector ^
+    --hidden-import dotenv ^
+    --collect-data dotenv ^
     --hidden-import python_multipart ^
     --hidden-import multipart ^
     --hidden-import uvicorn.workers ^

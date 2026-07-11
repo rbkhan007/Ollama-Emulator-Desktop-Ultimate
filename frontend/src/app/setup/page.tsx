@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/AuthContext";
 import { LogoSvg } from "@/components/Icons";
 import { ProviderIcon } from "@/components/BrandIcon";
-import { toast } from "@/lib/api";
-import { apiJson } from "@/lib/api";
+import { toast, apiJson } from "@/lib/api";
 
 export default function SetupPage() {
   const { user, isAuthenticated } = useAuth();

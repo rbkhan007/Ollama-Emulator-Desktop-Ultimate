@@ -66,14 +66,54 @@ def test_dependencies():
     except ImportError: deps.append(("httpx", False, "not installed"))
 
     try:
-        import sqlite3; deps.append(("sqlite3", True, "ok"))
-    except ImportError: deps.append(("sqlite3", False, "missing — Python builtin"))
+        import psycopg2; deps.append(("psycopg2", True, "ok"))
+    except ImportError: deps.append(("psycopg2", False, "not installed — pip install psycopg2-binary"))
+
+    try:
+        from pgvector.psycopg2 import register_vector; deps.append(("pgvector", True, "ok"))
+    except ImportError: deps.append(("pgvector", False, "not installed — pip install pgvector"))
+
+    try:
+        import dotenv; deps.append(("python-dotenv", True, "ok"))
+    except ImportError: deps.append(("python-dotenv", False, "not installed — pip install python-dotenv"))
 
     all_ok = all(d[1] for d in deps)
     for name, ok_status, msg in deps:
         if ok_status: ok(f"{name}: {msg}")
         else: fail(f"{name}: {msg}")
     return all_ok
+
+
+def test_postgres_connection():
+    print("\n[1b] PostgreSQL Connection")
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+        import psycopg2
+        host = os.environ.get("PGHOST", "127.0.0.1")
+        port = os.environ.get("PGPORT", "5432")
+        user = os.environ.get("PGUSER", "ollamaemu")
+        password = os.environ.get("PGPASSWORD", "postgres")
+        dbname = os.environ.get("PGDATABASE", "ollamaemu")
+        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=dbname)
+        cur = conn.cursor()
+        cur.execute("SELECT current_user, current_database()")
+        row = cur.fetchone()
+        ok(f"Connected as {row[0]} to {row[1]}")
+        cur.execute("SELECT extname FROM pg_extension WHERE extname = 'vector'")
+        vec = cur.fetchone()
+        if vec:
+            ok(f"pgvector extension: {vec[0]}")
+        else:
+            fail("pgvector extension not installed")
+        cur.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'")
+        tables = cur.fetchone()[0]
+        ok(f"Database has {tables} tables")
+        conn.close()
+        return True
+    except Exception as e:
+        fail(f"PostgreSQL connection failed: {e}")
+        return False
 
 def test_frontend_build():
     print("\n[2] Checking Frontend Build")
@@ -152,9 +192,11 @@ def test_auth():
         ok(f"Post-logout token rejected (401)")
 
     # Seeded user login
-    r = request("POST", "/api/auth/login", {"email": "example@gmail.com", "password": "12345678"}, expect=200)
+    demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
+    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    r = request("POST", "/api/auth/login", {"email": demo_email, "password": demo_password}, expect=200)
     if r.get("success"):
-        ok(f"Seeded user login: example@gmail.com / 12345678")
+        ok(f"Seeded user login: {demo_email}")
     else:
         fail(f"Seeded user login failed: {r}")
 
@@ -315,6 +357,7 @@ def main():
 
     try:
         test_dependencies()
+        test_postgres_connection()
         test_frontend_build()
         test_server_online()
         test_auth()

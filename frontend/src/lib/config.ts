@@ -6,9 +6,6 @@ export const REPO_URL = "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ul
 export const REPO_RAW = "https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main";
 export const RELEASES_URL = `${REPO_URL}/releases/latest`;
 export const DOWNLOAD_URL = `${REPO_URL}/releases/latest/download/OllamaEmu.exe`;
-export const NPM_PACKAGE = "@rbkhan007/ollama-emulator-desktop-ultimate";
-export const NPM_URL =
-  "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/pkgs/npm/ollama-emulator-desktop-ultimate";
 
 export const FREETIER_DOMAIN =
   process.env.NEXT_PUBLIC_FREETIER_DOMAIN || "rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate";

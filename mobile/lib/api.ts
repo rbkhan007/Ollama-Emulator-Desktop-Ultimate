@@ -106,10 +106,10 @@ export async function ragAddText(text: string, collection?: string) {
   });
 }
 
-export async function ragSearch(query: string, collection?: string, k = 5) {
+export async function ragSearch(query: string, collection?: string, top_k = 5) {
   return apiJson("/api/rag/search", {
     method: "POST",
-    body: JSON.stringify({ query, collection: collection || "default", k }),
+    body: JSON.stringify({ query, collection: collection || "default", top_k }),
   });
 }
 
@@ -158,6 +158,14 @@ export async function memoryClear() {
 
 export async function memoryDeleteFact(id: string) {
   return apiJson(`/api/memory/facts/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+// ---------- Auto-Detect API Key ----------
+export async function autoDetectApiKey(apiKey: string) {
+  return apiJson<{ detected: boolean; provider?: string; message: string }>("/api/auth/auto-detect", {
+    method: "POST",
+    body: JSON.stringify({ api_key: apiKey }),
+  });
 }
 
 export async function login(email: string, password: string) {
@@ -214,6 +222,51 @@ export function extractContent(ev: any): string {
     ""
   );
 }
+
+// ---------- Database & Schema ----------
+export const getDbSchema = () => apiJson<{ version: string; schema: { synced: boolean; db_version: number; expected_version: number }; database: { connected: boolean } }>("/api/db/schema");
+
+// ---------- RAG Advanced ----------
+export async function ragClear(collection?: string) {
+  return apiJson("/api/rag/clear", {
+    method: "POST",
+    body: JSON.stringify({ collection: collection || undefined }),
+  });
+}
+
+export const getRagVectorStats = () => apiJson("/api/rag/vector-stats");
+
+export async function ragRebuildIndex() {
+  return apiJson("/api/rag/rebuild-index", { method: "POST" });
+}
+
+export async function ragReindex(docId: string) {
+  return apiJson(`/api/rag/reindex/${encodeURIComponent(docId)}`, { method: "POST" });
+}
+
+// ---------- Memory Advanced ----------
+export async function memoryAddFact(fact: string, source?: string) {
+  return apiJson("/api/memory/facts", {
+    method: "POST",
+    body: JSON.stringify({ fact, source: source || "manual" }),
+  });
+}
+
+export const getMemoryContext = (query?: string) =>
+  apiJson(`/api/memory/context${query ? `?query=${encodeURIComponent(query)}` : ""}`);
+
+// ---------- Auth Advanced ----------
+export async function changePassword(oldPassword: string, newPassword: string) {
+  return apiJson("/api/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+  });
+}
+
+// ---------- ACL ----------
+export const getAclStats = () => apiJson("/api/acl/stats");
+export const getAuditLog = (limit = 100) => apiJson(`/api/acl/audit-log?limit=${limit}`);
+export const getAclRoles = () => apiJson("/api/acl/roles");
 
 /** Stream a chat completion from the emulator. Yields Ollama-style ndjson events. */
 export async function* streamChat(

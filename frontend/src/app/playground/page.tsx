@@ -232,8 +232,6 @@ export default function PlaygroundPage() {
           {loading ? "Thinking..." : "Send"}
         </button>
       </div>
-
-      <style>{`@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }`}</style>
     </div>
   );
 }

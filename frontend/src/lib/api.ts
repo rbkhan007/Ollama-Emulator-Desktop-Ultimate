@@ -47,6 +47,13 @@ export async function apiJson<T = unknown>(path: string, opts?: RequestInit): Pr
   return res.json();
 }
 
+export async function autoDetectApiKey(apiKey: string) {
+  return apiJson<{ detected: boolean; provider?: string; message: string }>("/api/auth/auto-detect", {
+    method: "POST",
+    body: JSON.stringify({ api_key: apiKey }),
+  });
+}
+
 export function toast(msg: string, isError = false) {
   const el = document.createElement("div");
   el.className = "toast" + (isError ? " toast-error" : "");

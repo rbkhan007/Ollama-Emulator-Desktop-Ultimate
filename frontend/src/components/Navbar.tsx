@@ -10,6 +10,7 @@ import { BrandIcon } from "./BrandIcon";
 const links = [
   { href: "/", label: "Home", icon: "home" },
   { href: "/playground", label: "Playground", icon: "chat" },
+  { href: "/models", label: "Models", icon: "models" },
   { href: "/usage", label: "Usage", icon: "usage" },
   { href: "/settings", label: "Settings", icon: "settings" },
   { href: "/rag", label: "Knowledge", icon: "book" },
@@ -29,6 +30,14 @@ function NavIcon({ type }: { type: string }) {
     chat: (
       <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+    models: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="8" height="8" rx="1" />
+        <rect x="14" y="2" width="8" height="8" rx="1" />
+        <rect x="2" y="14" width="8" height="8" rx="1" />
+        <rect x="14" y="14" width="8" height="8" rx="1" />
       </svg>
     ),
     settings: (
@@ -56,11 +65,6 @@ function NavIcon({ type }: { type: string }) {
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
-      </svg>
-    ),
-    star: (
-      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
       </svg>
     ),
     info: (

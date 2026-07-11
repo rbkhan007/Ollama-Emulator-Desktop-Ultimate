@@ -10,7 +10,7 @@ const SITE = "https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate";
 const FEATURES = [
   ["💸", "100% free tier", "Routes to real free LLMs via OpenRouter, Groq, DeepSeek and more."],
   ["🧩", "Drop-in replacement", "Speaks Ollama, OpenAI and Anthropic APIs from one port."],
-  ["🧠", "RAG + Memory", "Local knowledge base and persistent SQLite memory."],
+  ["🧠", "RAG + Memory", "Local knowledge base and persistent PostgreSQL memory with pgvector."],
   ["📊", "Analytics", "Token usage, per-model stats and recent activity."],
   ["🔒", "Private by design", "Keys and docs never leave your machine."],
   ["📱", "Mobile client", "This app — full parity with the desktop, on any device."],

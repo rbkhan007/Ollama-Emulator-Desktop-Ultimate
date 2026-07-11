@@ -56,7 +56,7 @@ fi
 echo ""
 
 # ── Start server ─────────────────────────────────────
-echo "  [3/4] Database engine ready (SQLite, auto-created)."
+echo "  [3/4] Database engine ready (PostgreSQL + pgvector)."
 echo ""
 echo "  [4/4] Starting server..."
 echo ""

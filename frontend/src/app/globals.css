@@ -1,46 +1,41 @@
 :root {
   --bg: #f8f9fc;
   --bg-2: #f0f1f5;
-  --surface: rgba(0,0,0,0.03);
-  --surface-2: rgba(0,0,0,0.05);
-  --border: rgba(0,0,0,0.08);
-  --text: #1a1a2e;
-  --text-muted: #5a5f88;
+  --surface: rgba(255,255,255,0.85);
+  --surface-2: rgba(255,255,255,0.92);
+  --border: rgba(0,0,0,0.10);
+  --text: #111827;
+  --text-muted: #4b5563;
   --accent: #6c5ce7;
-  --accent-2: #00b4b3;
+  --accent-2: #0891b2;
   --accent-3: #e84393;
   --accent-4: #d4a017;
-  --green: #00a884;
-  --red: #d63031;
-  --gradient-1: linear-gradient(135deg, #6c5ce7, #00b4b3);
+  --green: #059669;
+  --red: #dc2626;
+  --gradient-1: linear-gradient(135deg, #6c5ce7, #0891b2);
   --gradient-2: linear-gradient(135deg, #e84393, #6c5ce7);
-  --gradient-3: linear-gradient(135deg, #00b4b3, #d4a017);
-  --glass: rgba(255,255,255,0.7);
-  --glass-border: rgba(0,0,0,0.06);
-  --glass-hover: rgba(255,255,255,0.9);
-  --shadow: 0 8px 32px rgba(0,0,0,0.08);
-  --shadow-glow: 0 0 60px rgba(108,92,231,0.08);
-  --nav-bg: rgba(248,249,252,0.85);
-  --toast-bg: #5a4bd1;
-  --skeleton: linear-gradient(90deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.03) 75%);
+  --gradient-3: linear-gradient(135deg, #0891b2, #d4a017);
+  --glass: rgba(255,255,255,0.92);
+  --glass-border: rgba(0,0,0,0.08);
+  --glass-hover: rgba(255,255,255,1);
+  --shadow: 0 4px 24px rgba(0,0,0,0.06);
+  --shadow-glow: 0 0 40px rgba(108,92,231,0.06);
+  --nav-bg: rgba(248,249,252,0.92);
+  --toast-bg: #4f46e5;
+  --skeleton: linear-gradient(90deg, rgba(0,0,0,0.04) 25%, rgba(0,0,0,0.08) 50%, rgba(0,0,0,0.04) 75%);
   color-scheme: light;
-  /* Theme-aware background orbs (light = water ripples, dark = comic glow) */
-  --orb-1: rgba(56,189,248,0.12);
-  --orb-2: rgba(34,211,238,0.10);
-  --orb-3: rgba(103,232,249,0.08);
-  /* Ben-Day comic halftone dots */
-  --comic-dot: rgba(56,189,248,0.05);
-  --comic-dot-2: rgba(34,211,238,0.04);
+  --orb-1: rgba(56,189,248,0.08);
+  --orb-2: rgba(34,211,238,0.06);
+  --orb-3: rgba(103,232,249,0.05);
+  --comic-dot: rgba(56,189,248,0.03);
+  --comic-dot-2: rgba(34,211,238,0.02);
   --comic-bg: rgba(255,255,255,0);
-  /* Poster accent outline */
-  --ink: #1a1a2e;
-  --ink-soft: rgba(26,26,46,0.08);
-  /* Water ripple accent */
-  --water-1: rgba(56,189,248,0.15);
-  --water-2: rgba(34,211,238,0.12);
-  --water-3: rgba(103,232,249,0.10);
-  --water-4: rgba(14,165,233,0.08);
-  /* Self-hosted fonts (next/font) with system fallbacks */
+  --ink: #111827;
+  --ink-soft: rgba(17,24,39,0.06);
+  --water-1: rgba(56,189,248,0.10);
+  --water-2: rgba(34,211,238,0.08);
+  --water-3: rgba(103,232,249,0.06);
+  --water-4: rgba(14,165,233,0.05);
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
@@ -599,7 +594,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   .code-grid { grid-template-columns: 1fr !important; }
   .page-container { padding: 20px 16px; }
   .page-header { flex-direction: column; text-align: center; gap: 12px; }
-  .page-header h1 { fontSize: 22px; }
+  .page-header h1 { font-size: 22px; }
   .usage-hourly-labels { display: none; }
 }
 @media (max-width: 560px) {
@@ -663,9 +658,4 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 .nav-mobile .nav-mobile-auth {
   margin-top: 6px;
   display: flex; gap: 8px;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
 }

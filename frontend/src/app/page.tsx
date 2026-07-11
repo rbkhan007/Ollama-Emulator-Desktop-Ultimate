@@ -23,8 +23,9 @@ export const metadata: Metadata = {
 
 const features = [
   { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "#6c5ce7" },
-  { icon: "brain", title: "RAG Knowledge Base", desc: "Upload docs or paste text and get answers grounded in your own data via TF-IDF search.", color: "#fd79a8" },
-  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to SQLite. Facts, sessions & context survive restarts.", color: "#00cec9" },
+  { icon: "models", title: "Models Browser", desc: "Browse and search all available models across connected providers. Filter by free or paid, search by name.", color: "#6366f1" },
+  { icon: "brain", title: "RAG Knowledge Base", desc: "Upload docs or paste text and get answers grounded in your own data via pgvector cosine similarity.", color: "#fd79a8" },
+  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to PostgreSQL. Facts, sessions & context survive restarts.", color: "#00cec9" },
   { icon: "infinity", title: "Multi-Provider", desc: "OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, Mistral, Together — one box.", color: "#fdcb6e" },
   { icon: "lightning", title: "Zero Config", desc: "One Python file. Run it, paste a free API key, and point Claude Code or OpenCode at it.", color: "#e17055" },
   { icon: "terminal", title: "Full Compatibility", desc: "Ollama, OpenAI, and Anthropic API formats — works with every major AI coding tool.", color: "#00b894" },
@@ -51,6 +52,7 @@ function FeatureGlyph({ type, color }: { type: string; color: string }) {
   const common = { width: s, height: s, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   const map: Record<string, React.JSX.Element> = {
     chat: <svg {...common}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>,
+    models: <svg {...common}><rect x="2" y="2" width="8" height="8" rx="1" /><rect x="14" y="2" width="8" height="8" rx="1" /><rect x="2" y="14" width="8" height="8" rx="1" /><rect x="14" y="14" width="8" height="8" rx="1" /></svg>,
     brain: <svg {...common}><path d="M12 2a4 4 0 0 0-4 4v1a3 3 0 0 0-3 3 3 3 0 0 0 1 2.24V15a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4v-2.76A3 3 0 0 0 23 11a3 3 0 0 0-3-3V6a4 4 0 0 0-4-4z" /></svg>,
     shield: <svg {...common}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
     infinity: <svg {...common}><path d="M18 9a4 4 0 1 0-3 6.6" /><path d="M6 15a4 4 0 1 0 3-6.6" /></svg>,
@@ -79,7 +81,7 @@ export default function Home() {
       { question: "What is OllamaEmu?", answer: "OllamaEmu is a free, open-source local server that emulates the Ollama API and silently routes your prompts to real, 100% free LLMs from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more." },
       { question: "Is OllamaEmu really free?", answer: "Yes. OllamaEmu is 100% free and open source. It connects to free model tiers (such as OpenRouter's free models) so you can code and chat without paying for a subscription." },
       { question: "Which AI coding tools work with OllamaEmu?", answer: "Any Ollama- or OpenAI-compatible tool works, including Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI SDK." },
-      { question: "Does OllamaEmu keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in SQLite on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
+      { question: "Does OllamaEmu keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in PostgreSQL on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
       { question: "Do I need to install anything to try it?", answer: "You can download the single-file Windows EXE, or run it from source with run.bat / run.sh. On macOS and Linux use run.sh. No Docker required." },
     ],
   };

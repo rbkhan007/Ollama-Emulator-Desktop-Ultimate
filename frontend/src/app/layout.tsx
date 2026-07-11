@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Particles, GradientOrbs, MeshGrid, ComicHalftone, WaterRipple, WaterCaustics, WaveOverlay } from "@/components/Background";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
+import { DbProvider } from "@/lib/DbContext";
 import MobileSetup from "@/components/MobileSetup";
 import { SITE_URL, ASSET_BASE } from "@/lib/config";
 
@@ -37,14 +38,14 @@ export const metadata: Metadata = {
     default: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     template: "%s · OllamaEmu",
   },
-  description: "OllamaEmu emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent SQLite memory, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
+  description: "OllamaEmu emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent PostgreSQL memory with pgvector, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
   applicationName: "OllamaEmu",
   keywords: [
     "ollama emulator", "ollama alternative", "local LLM", "free AI models", "free LLM proxy",
     "free AI coding assistant", "RAG knowledge base", "retrieval augmented generation",
     "TF-IDF search", "vector search", "AI coding assistant", "Claude Code", "OpenCode", "Cursor", "Continue.dev",
     "multi-provider AI", "OpenRouter free models", "OpenAI compatible", "Anthropic compatible",
-    "local AI proxy", "AI chat playground", "persistent memory", "SQLite AI memory",
+    "local AI proxy", "AI chat playground", "persistent memory", "PostgreSQL AI memory",
     "LM Studio alternative", "run free models locally", "open source AI gateway",
     "fake ollama server", "ollama api emulator", "local gpt proxy", "free chatgpt alternative",
     "private AI", "self-hosted LLM", "offline AI proxy", "free github copilot alternative",
@@ -108,20 +109,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MobileSetup />
         <ThemeProvider>
           <AuthProvider>
-            <Particles count={12} />
-            <GradientOrbs />
-            <ComicHalftone />
-            <MeshGrid />
-            <WaterRipple />
-            <WaterCaustics />
-            <WaveOverlay />
-            <div style={{ position: "relative", zIndex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-              <Navbar />
-              <main style={{ flex: 1 }}>
-                {children}
-              </main>
-              <Footer />
-            </div>
+            <DbProvider>
+              <GradientOrbs />
+              <MeshGrid />
+              <div style={{ position: "relative", zIndex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+                <Navbar />
+                <main style={{ flex: 1 }}>
+                  {children}
+                </main>
+                <Footer />
+              </div>
+            </DbProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

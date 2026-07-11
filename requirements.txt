@@ -9,6 +9,7 @@ numpy>=1.26.0
 # Database (PostgreSQL + pgvector)
 psycopg2-binary>=2.9.9
 pgvector>=0.3.0
+python-dotenv>=1.0.0
 
 # Optional: Build executable
 # pyinstaller>=6.0.0
