@@ -330,6 +330,11 @@ icon, and a full-bleed splash screen — all generated from `brand-mark.svg`. It
 **locked to portrait** (no auto-rotation) and the layout is responsive (centered
 on tablets, scaled padding on small phones).
 
+It has **full parity with the desktop app** — every page is available on your
+phone: **Chat (Playground)**, **Knowledge (RAG)** upload/search, **Memory**
+facts/sessions, **Providers**, **Usage**, **Settings**, and **About** — so any
+device on your network can do the same work as the EXE, not just one.
+
 Run it instantly with **Expo Go** (scan the QR from `npx expo start`) — no build
 needed — or produce a branded standalone APK/AAB with `eas build -p android`.
 

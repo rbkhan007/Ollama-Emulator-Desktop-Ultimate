@@ -21,9 +21,12 @@ export default function RootLayout() {
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="chat" options={{ title: "Chat" }} />
+            <Stack.Screen name="knowledge" options={{ title: "Knowledge" }} />
+            <Stack.Screen name="memory" options={{ title: "Memory" }} />
             <Stack.Screen name="providers" options={{ title: "Providers" }} />
             <Stack.Screen name="usage" options={{ title: "Usage" }} />
             <Stack.Screen name="settings" options={{ title: "Settings" }} />
+            <Stack.Screen name="about" options={{ title: "About" }} />
           </Stack>
         </View>
       </SafeAreaView>

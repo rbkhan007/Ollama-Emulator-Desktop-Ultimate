@@ -63,10 +63,13 @@ the artifact from the EAS dashboard and install it.
 |------|---------|
 | `app/_layout.tsx` | Root stack + `AppProvider` + dark status bar |
 | `app/index.tsx` | Connect screen (enter server URL, test, save) |
-| `app/chat.tsx` | Streaming chat playground (Ollama ndjson) |
+| `app/chat.tsx` | Streaming chat playground (Ollama ndjson) — full Playground parity |
+| `app/knowledge.tsx` | RAG knowledge base: upload docs, add text, search, manage documents/collections |
+| `app/memory.tsx` | Persistent memory: facts, sessions, recent messages, search, clear |
 | `app/providers.tsx` | Active provider, configured providers, models |
 | `app/usage.tsx` | Requests, tokens, per-model stats, recent activity |
 | `app/settings.tsx` | Server URL, account, device/identity info |
+| `app/about.tsx` | App overview, supported tools, link to free web app |
 | `components/` | `ui.tsx` (Card/Input/Button/Chip), `MessageBubble`, `BottomNav` |
 | `lib/api.ts` | Typed client for the desktop REST + streaming API |
 | `lib/AppContext.tsx` | Server URL + auth state (AsyncStorage) |

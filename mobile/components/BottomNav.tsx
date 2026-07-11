@@ -6,6 +6,8 @@ import { useResponsive } from "../lib/layout";
 
 const TABS = [
   { name: "Chat", path: "/chat", icon: "💬" },
+  { name: "Knowledge", path: "/knowledge", icon: "📚" },
+  { name: "Memory", path: "/memory", icon: "🧠" },
   { name: "Providers", path: "/providers", icon: "🔌" },
   { name: "Usage", path: "/usage", icon: "📊" },
   { name: "Settings", path: "/settings", icon: "⚙️" },

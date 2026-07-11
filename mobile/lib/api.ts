@@ -57,6 +57,72 @@ export const getModels = () => apiJson("/api/models");
 export const getUsage = () => apiJson("/api/usage/stats");
 export const getDevice = () => apiJson("/api/device");
 
+// ---------- RAG (Knowledge Base) ----------
+export const getRagStats = () => apiJson("/api/rag/stats");
+export const getRagDocuments = () => apiJson("/api/rag/documents");
+export const getRagCollections = () => apiJson("/api/rag/collections");
+
+export async function ragAddText(text: string, collection?: string) {
+  return apiJson("/api/rag/add-text", {
+    method: "POST",
+    body: JSON.stringify({ text, collection: collection || "default" }),
+  });
+}
+
+export async function ragSearch(query: string, collection?: string, k = 5) {
+  return apiJson("/api/rag/search", {
+    method: "POST",
+    body: JSON.stringify({ query, collection: collection || "default", k }),
+  });
+}
+
+export async function ragDeleteDoc(id: string) {
+  return apiJson(`/api/rag/documents/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
+export async function ragUpload(uri: string, name: string, collection?: string) {
+  const base = await getBase();
+  const token = await getToken();
+  const form: any = new FormData();
+  form.append("file", { uri, name, type: "application/octet-stream" });
+  if (collection) form.append("collection", collection);
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${base}/api/rag/upload`, { method: "POST", headers, body: form });
+  if (!res.ok) {
+    let msg = res.statusText;
+    try {
+      const j = await res.json();
+      msg = j.detail || j.error || msg;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(`${res.status}: ${msg}`);
+  }
+  return res.json();
+}
+
+// ---------- Memory ----------
+export const getMemoryStats = () => apiJson("/api/memory/stats");
+export const getMemoryMessages = () => apiJson("/api/memory/messages");
+export const getMemoryFacts = () => apiJson("/api/memory/facts");
+export const getMemorySessions = () => apiJson("/api/memory/sessions");
+
+export async function memorySearch(query: string) {
+  return apiJson("/api/memory/search", {
+    method: "POST",
+    body: JSON.stringify({ query }),
+  });
+}
+
+export async function memoryClear() {
+  return apiJson("/api/memory/clear", { method: "POST" });
+}
+
+export async function memoryDeleteFact(id: string) {
+  return apiJson(`/api/memory/facts/${encodeURIComponent(id)}`, { method: "DELETE" });
+}
+
 export async function login(email: string, password: string) {
   const r = await req("/api/auth/login", {
     method: "POST",

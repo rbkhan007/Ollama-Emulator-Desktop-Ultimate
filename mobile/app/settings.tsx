@@ -144,6 +144,7 @@ export default function Settings() {
             React Native client for the Ollama Emulator Desktop. Point it at your
             desktop server to chat with any configured provider from your phone.
           </Text>
+          <PrimaryButton title="Learn more" color={COLORS.surface2} onPress={() => router.push("/about")} />
         </Card>
         </View>
       </ScrollView>
