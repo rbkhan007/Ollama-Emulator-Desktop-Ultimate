@@ -59,7 +59,8 @@ Opens `http://localhost:11434` automatically. Add your API key in **Settings** a
 
 | Option | What you get | Link |
 |--------|--------------|------|
-| **Windows EXE** | Single-file `OllamaEmu.exe` (embedded frontend, no install) | [📦 Releases → `software.exe`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
+| **Windows EXE** | Single-file `OllamaEmu.exe` (embedded frontend, no install) | [📦 Releases → `OllamaEmu.exe` / `software.exe`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
+| **Android APK** | Branded standalone `OllamaEmu.apk` (portrait-locked, full parity) | [📦 Releases → `OllamaEmu.apk`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
 | **From source** | `run.bat` / `run.sh` | clone + run (see below) |
 | **npm (GitHub Packages)** | `@rbkhan007/ollama-emulator-desktop-ultimate` | see [Install from GitHub Packages](#-install-from-github-packages) |
 
@@ -174,6 +175,7 @@ npm install @rbkhan007/ollama-emulator-desktop-ultimate
 | `/api/providers` | GET | List provider configs |
 | `/api/providers/list` | GET | Detailed provider list |
 | `/api/providers/add` | POST | Add custom provider |
+| `/api/providers/activate` | POST | Switch active provider (key-safe) |
 | `/api/providers/{name}` | DELETE | Remove provider |
 | `/api/config` | POST | Save active provider config |
 
@@ -330,13 +332,19 @@ icon, and a full-bleed splash screen — all generated from `brand-mark.svg`. It
 **locked to portrait** (no auto-rotation) and the layout is responsive (centered
 on tablets, scaled padding on small phones).
 
-It has **full parity with the desktop app** — every page is available on your
-phone: **Chat (Playground)**, **Knowledge (RAG)** upload/search, **Memory**
-facts/sessions, **Providers**, **Usage**, **Settings**, and **About** — so any
-device on your network can do the same work as the EXE, not just one.
+It has **full parity with the desktop app** — all 8 screens are available on your
+phone and fully workable: **Connect**, **Chat (Playground)** with model picker,
+**Knowledge (RAG)** upload/search, **Memory** facts/sessions, **Providers**
+(set active provider, paste API keys, add & delete providers), **Usage**,
+**Settings**, and **About**. Any device on your network can do the same work as
+the EXE — chat with the same free models, manage providers, search RAG, and
+inspect usage — not just one locked machine.
 
-Run it instantly with **Expo Go** (scan the QR from `npx expo start`) — no build
-needed — or produce a branded standalone APK/AAB with `eas build -p android`.
+The branded standalone **`OllamaEmu.apk`** is attached to every
+[GitHub Release](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest),
+built automatically by EAS. You can also run it instantly with **Expo Go** (scan
+the QR from `npx expo start`) — no build needed — or produce a local APK/AAB with
+`eas build -p android`.
 
 ```bash
 cd mobile

@@ -77,9 +77,15 @@ jobs:
         working-directory: mobile
         run: |
           npm ci
-          APK_URL=$(eas build -p android --profile apk --non-interactive --wait | grep -oE 'https://[^ ]+\.apk' | tail -1)
-          echo "Artifact URL: $APK_URL"
-          curl -L -o OllamaEmu.apk "$APK_URL"
+          BUILD_JSON=$(eas build -p android --profile apk --non-interactive --wait --json)
+          echo "$BUILD_JSON"
+          ARTIFACT_URL=$(echo "$BUILD_JSON" | jq -r '.buildArtifact.url // empty')
+          if [ -z "$ARTIFACT_URL" ]; then
+            echo "::error::No APK artifact URL returned by EAS"
+            exit 1
+          fi
+          echo "Artifact URL: $ARTIFACT_URL"
+          curl -L -o OllamaEmu.apk "$ARTIFACT_URL"
 
       - name: Upload APK to GitHub Release
         if: ${{ success() }}

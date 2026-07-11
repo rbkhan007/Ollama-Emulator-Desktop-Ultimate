@@ -54,6 +54,43 @@ export async function apiJson<T = any>(path: string, opts?: RequestInit): Promis
 export const getStatus = () => apiJson("/api/status");
 export const getProviders = () => apiJson("/api/providers/list");
 export const getModels = () => apiJson("/api/models");
+
+// ---------- Provider management (mirrors desktop Settings) ----------
+export async function setActiveProvider(name: string) {
+  return apiJson("/api/providers/activate", {
+    method: "POST",
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function addProvider(cfg: {
+  name: string;
+  url: string;
+  type: string;
+  models_url?: string;
+  auth_type?: string;
+  default_model?: string;
+  free_heuristic?: boolean;
+  api_key?: string;
+}) {
+  return apiJson("/api/providers/add", {
+    method: "POST",
+    body: JSON.stringify(cfg),
+  });
+}
+
+export async function deleteProvider(name: string) {
+  return apiJson(`/api/providers/${encodeURIComponent(name)}`, {
+    method: "DELETE",
+  });
+}
+
+export async function saveProviderKey(provider: string, apiKey: string) {
+  return apiJson("/api/config", {
+    method: "POST",
+    body: JSON.stringify({ provider, api_key: apiKey }),
+  });
+}
 export const getUsage = () => apiJson("/api/usage/stats");
 export const getDevice = () => apiJson("/api/device");
 

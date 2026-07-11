@@ -49,8 +49,30 @@ eas build -p android --profile apk   # standalone APK (assembleRelease)
 The build runs in Expo's cloud, so **no local Android SDK is required**. Download
 the artifact from the EAS dashboard and install it.
 
-> **Already built:** a standalone Android APK (**v1.0.0**) was produced with
-> `eas build -p android --profile apk` under the EAS project
+## Automated release (GitHub Actions → GitHub Releases)
+
+Pushing a tag `v*` (or `workflow_dispatch`) runs
+[`.github/workflows/release.yml`](.github/workflows/release.yml), which:
+
+1. **Builds the Windows EXE** with PyInstaller (embedded `frontend/out`, branded
+   `brand-mark.ico` icon) and uploads `OllamaEmu.exe` + `software.exe` to the
+   GitHub Release (uses the automatic `GITHUB_TOKEN`).
+2. **Builds the Android APK** with EAS and uploads `OllamaEmu.apk` — **only when
+   the repo secret `EXPO_TOKEN` (an Expo access token) is set**, otherwise that
+   job is skipped.
+
+To cut a release:
+
+```bash
+git tag v1.0.x
+git push origin v1.0.x
+```
+
+The EXE is attached automatically. For the APK, add the `EXPO_TOKEN` repo secret
+(Settings → Secrets → Actions) under the Expo account `rhavex`, then re-run the
+workflow (or re-push the tag) and `OllamaEmu.apk` will be attached too.
+
+> **Note:** a standalone Android APK is produced under the EAS project
 > `@rhavex/ollama-emu-mobile`. For CI/robot builds, export `EXPO_TOKEN` and run
 > `eas init --force` once before the first build.
 
@@ -66,7 +88,7 @@ the artifact from the EAS dashboard and install it.
 | `app/chat.tsx` | Streaming chat playground (Ollama ndjson) — full Playground parity |
 | `app/knowledge.tsx` | RAG knowledge base: upload docs, add text, search, manage documents/collections |
 | `app/memory.tsx` | Persistent memory: facts, sessions, recent messages, search, clear |
-| `app/providers.tsx` | Active provider, configured providers, models |
+| `app/providers.tsx` | Providers: set active provider, paste API keys, add & delete providers, list models |
 | `app/usage.tsx` | Requests, tokens, per-model stats, recent activity |
 | `app/settings.tsx` | Server URL, account, device/identity info |
 | `app/about.tsx` | App overview, supported tools, link to free web app |
@@ -90,6 +112,10 @@ The app talks to the same endpoints the web dashboard uses:
 | `GET  /api/providers/list` | Configured providers |
 | `GET  /api/models` | Available models |
 | `POST /api/chat` | Streaming chat (`application/x-ndjson`, Ollama shape) |
+| `POST /api/providers/activate` | Switch the active provider (key-safe) |
+| `POST /api/providers/add` | Add a custom provider |
+| `POST /api/config` | Save an API key + set that provider active |
+| `DELETE /api/providers/{name}` | Remove a provider |
 | `GET  /api/usage/stats` | Usage analytics |
 | `GET  /api/device` | Device identity / local time |
 | `POST /api/auth/login` · `/register` · `/verify` | Optional account |

@@ -499,12 +499,30 @@ class ProviderAddRequest(BaseModel):
 
     @field_validator("name")
     @classmethod
-    def validate_name(cls, v):
+    def validate_add_name(cls, v):
         v = v.strip()
         if not v or len(v) > 100:
             raise ValueError("Provider name must be 1-100 chars")
-        if not re.match(r'^[\w\- ]+$', v):
-            raise ValueError("Provider name can only contain letters, numbers, spaces, hyphens, underscores")
+        if not re.match(r"^[\w\- ]+$", v):
+            raise ValueError(
+                "Provider name can only contain letters, numbers, spaces, hyphens, underscores"
+            )
+        return v
+
+
+class ProviderActivateRequest(BaseModel):
+    name: str
+
+    @field_validator("name")
+    @classmethod
+    def validate_activate_name(cls, v):
+        v = v.strip()
+        if not v or len(v) > 100:
+            raise ValueError("Provider name must be 1-100 chars")
+        if not re.match(r"^[\w\- ]+$", v):
+            raise ValueError(
+                "Provider name can only contain letters, numbers, spaces, hyphens, underscores"
+            )
         return v
 
 class RagAddTextRequest(BaseModel):
@@ -1302,6 +1320,16 @@ async def del_provider(name: str):
             ACTIVE_PROVIDER = next(iter(PROVIDER_CONFIGS), "")
     delete_provider_db(name)
     return {"status": "deleted", "name": name}
+
+
+@app.post("/api/providers/activate")
+async def activate_provider(body: ProviderActivateRequest):
+    global ACTIVE_PROVIDER
+    with state_lock:
+        if body.name not in PROVIDER_CONFIGS:
+            return JSONResponse({"error": "provider not found"}, status_code=404)
+        ACTIVE_PROVIDER = body.name
+    return {"status": "activated", "active_provider": ACTIVE_PROVIDER}
 
 
 @app.get("/api/models")

@@ -45,6 +45,21 @@
         "projectId": "6eda916e-e96f-4a29-8e38-e8605b42b56c"
       }
     },
+    "build": {
+      "apk": {
+        "android": {
+          "buildType": "apk"
+        }
+      },
+      "development": {
+        "developmentClient": true,
+        "distribution": "internal"
+      },
+      "preview": {
+        "distribution": "internal"
+      },
+      "production": {}
+    },
     "owner": "rhavex"
   }
 }
