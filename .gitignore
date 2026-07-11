@@ -30,6 +30,7 @@ frontend/*.tsbuildinfo
 npm-debug.*
 mobile/.expo/
 mobile/node_modules/
+mobile/dist/
 
 # =====================
 # Environment & Secrets

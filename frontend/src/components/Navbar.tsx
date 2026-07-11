@@ -129,7 +129,7 @@ export default function Navbar() {
           color: "#6c5ce7",
           fontWeight: 600,
           letterSpacing: "0.05em",
-        }}>v0.6</span>
+        }}>v1.0.0</span>
       </Link>
       <div style={{ flex: 1 }} />
       {links.map((l) => {

@@ -69,7 +69,7 @@ export default function Home() {
           fontSize: 13, color: "var(--text-muted)", marginBottom: 32, fontWeight: 500,
         }}>
           <span className={`status-dot ${status?.api_key_set ? "status-dot-green" : "status-dot-red"}`} />
-          v0.6.0 &middot; Free &amp; Open Source
+          v1.0.0 &middot; Free &amp; Open Source
         </div>
 
         <h1 className="hero-title" style={{
