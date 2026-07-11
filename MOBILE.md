@@ -11,7 +11,7 @@ chats to whichever LLM provider the server has configured.
 
 ## Why Use the Mobile App?
 
-- **Same free models** — chat with Gemini Flash, DeepSeek R1, Llama 3.1 on your phone
+- **Same free models** — chat with Qwen3 Coder 480B, GPT-OSS 120B, Nemotron Ultra 550B, Llama 3.3, Gemma 4 on your phone
 - **Full parity** — all 8 screens work identically to the desktop EXE
 - **Manage providers** — switch active provider, paste API keys, add/delete providers
 - **RAG on the go** — upload docs, search your knowledge base from anywhere

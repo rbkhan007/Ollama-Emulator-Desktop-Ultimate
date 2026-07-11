@@ -48,18 +48,34 @@ xychart-beta
 | Rank | Model | Provider | Size | Best For |
 |------|-------|----------|------|----------|
 | 1 | **Qwen3 Coder** | Alibaba | 480B A35B | Code generation, complex tasks |
-| 2 | **OpenAI GPT-OSS** | OpenAI | 120B | General purpose, reasoning |
-| 3 | **NVIDIA Nemotron 3 Ultra** | NVIDIA | 550B A55B | High-quality reasoning |
-| 4 | **NVIDIA Nemotron 3 Super** | NVIDIA | 120B A12B | Fast, capable |
-| 5 | **Nous Hermes 3** | Nous Research | 405B | Creative, roleplay |
-| 6 | **Meta Llama 3.3** | Meta | 70B | General purpose |
-| 7 | **Qwen3 Next 80B** | Alibaba | 80B A3B | Fast inference |
-| 8 | **Google Gemma 4** | Google | 31B | General chat, code |
-| 9 | **Tencent Hy3** | Tencent | - | Multilingual |
-| 10 | **Venice Uncensored** | CognitiveComputations | 24B | Uncensored chat |
+| 2 | **NVIDIA Nemotron 3 Ultra** | NVIDIA | 550B A55B | High-quality reasoning |
+| 3 | **Nous Hermes 3** | Nous Research | 405B | Creative, roleplay |
+| 4 | **OpenAI GPT-OSS** | OpenAI | 120B | General purpose, reasoning |
+| 5 | **NVIDIA Nemotron 3 Super** | NVIDIA | 120B A12B | Fast, capable |
+| 6 | **Qwen3 Next 80B** | Alibaba | 80B A3B | Fast inference |
+| 7 | **Meta Llama 3.3** | Meta | 70B | General purpose |
+| 8 | **Google Gemma 4 31B** | Google | 31B | General chat, code |
+| 9 | **Venice Uncensored** | CognitiveComputations | 24B | Uncensored chat |
+| 10 | **Google Gemma 4 26B** | Google | 26B A4B | Fast, efficient |
+| 11 | **NVIDIA Nemotron 3 Nano** | NVIDIA | 30B A3B | Fast reasoning |
+| 12 | **NVIDIA Nemotron Nano 12B VL** | NVIDIA | 12B | Vision + language |
+| 13 | **NVIDIA Nemotron Nano 9B** | NVIDIA | 9B | Ultra-fast |
+| 14 | **Cohere North Mini Code** | Cohere | - | Code generation |
+| 15 | **Tencent Hy3** | Tencent | - | Multilingual |
+| 16 | **Poolside Laguna M.1** | Poolside | - | Code generation |
+| 17 | **Poolside Laguna XS 2.1** | Poolside | - | Fast code |
+| 18 | **OpenAI GPT-OSS 20B** | OpenAI | 20B | Fast general |
+| 19 | **Meta Llama 3.2 3B** | Meta | 3B | Ultra-fast |
+| 20 | **LiquidAI LFM2.5 1.2B Thinking** | LiquidAI | 1.2B | Reasoning |
+| 21 | **LiquidAI LFM2.5 1.2B Instruct** | LiquidAI | 1.2B | Chat |
+| 22 | **NVIDIA Nemotron 3.5 Content Safety** | NVIDIA | - | Safety filtering |
+| 23 | **Free Models Router** | OpenRouter | - | Auto-selects best free model |
+| 24 | **Google Lyria 3 Pro Preview** | Google | - | Music generation |
+| 25 | **Google Lyria 3 Clip Preview** | Google | - | Music clips |
+| 26 | **NVIDIA Nemotron 3 Nano Omni** | NVIDIA | 30B A3B | Multimodal reasoning |
 
 **All 100% free through OpenRouter's free tier.** No credit card. No limits. No catches.
-Live model list: [openrouter.ai/models?supported_parameters=tools](https://openrouter.ai/models?supported_parameters=tools)
+Live model list: [openrouter.ai/models](https://openrouter.ai/models)
 
 ---
 
