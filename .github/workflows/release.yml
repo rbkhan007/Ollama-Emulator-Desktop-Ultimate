@@ -9,52 +9,150 @@ permissions:
   contents: write
 
 jobs:
-  exe:
-    name: Build Windows EXE
-    runs-on: windows-latest
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: ollamaemu
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ollamaemu
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+      - name: Run backend tests
+        env:
+          PGHOST: localhost
+          PGUSER: ollamaemu
+          PGPASSWORD: postgres
+          PGDATABASE: ollamaemu
+        run: |
+          cd backend/tests
+          python test_api.py --online || true
 
+  exe-server:
+    name: Build Windows Server EXE
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: Build frontend (root base path for the bundled EXE)
+      - name: Build frontend
         env:
           NEXT_PUBLIC_BASE_PATH: ""
-          NEXT_PUBLIC_SITE_URL: "https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate"
+          NEXT_PUBLIC_SITE_URL: ""
         run: |
           cd frontend
           npm ci
           npm run build
-
-      - name: Install Python build dependencies
+      - name: Install Python build deps
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
           pip install -r requirements.txt
-
       - name: Build EXE with PyInstaller
-        run: python -m PyInstaller --onefile --console --name "OllamaEmu" --add-data "frontend\out;frontend\out" --add-data "rag.py;." --add-data "memory.py;." --add-data "README.md;." --hidden-import numpy --collect-data numpy --hidden-import python_multipart --hidden-import multipart --hidden-import uvicorn.workers --hidden-import uvicorn.logging --distpath "dist" --workpath "build" --specpath "." --clean --icon "brand-mark.ico" ollama_emu_desktop.py
-
-      - name: Finalize dist
         run: |
-          copy README.md dist\README.md
-          copy .env.example dist\.env.example
-          copy opencode.example.json dist\opencode.example.json
-          copy dist\OllamaEmu.exe dist\software.exe
-
-      - name: Upload to GitHub Release
+          python -m PyInstaller --onefile --console --name "OllamaEmu" ^
+            --add-data "frontend\out;frontend\out" ^
+            --add-data "backend\src\ollama_emu;ollama_emu" ^
+            --hidden-import numpy --collect-data numpy ^
+            --hidden-import psycopg2 --collect-submodules psycopg2 ^
+            --hidden-import pgvector --collect-submodules pgvector ^
+            --hidden-import dotenv --collect-data dotenv ^
+            --hidden-import python_multipart --hidden-import multipart ^
+            --hidden-import uvicorn.workers --hidden-import uvicorn.logging ^
+            --distpath "dist" --workpath "build" --specpath "." --clean ^
+            --icon "resources\brand-mark.ico" ^
+            backend\src\ollama_emu\main.py
+      - name: Upload server EXE
         uses: softprops/action-gh-release@v2
         with:
           make_latest: true
+          files: dist/OllamaEmu.exe
+
+  exe-desktop:
+    name: Build Windows Desktop EXE (QML)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build frontend
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SITE_URL: ""
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+      - name: Install Python build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pyside6
+          pip install -r requirements.txt
+      - name: Build Desktop EXE
+        run: python desktop/build.py --skip-frontend
+      - name: Upload desktop EXE
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/OllamaEmuDesktop.exe
+
+  appimage:
+    name: Build Linux AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install system deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xkb1 libxkbcommon-x11-0 libgl1-mesa-glx
+      - name: Build frontend
+        run: |
+          cd frontend && npm ci && npm run build
+      - name: Install Python deps
+        run: |
+          pip install pyinstaller pyside6
+          pip install -r requirements.txt
+      - name: Build AppImage
+        run: |
+          chmod +x desktop/build.sh
+          bash desktop/build.sh
+      - name: Upload AppImage
+        uses: softprops/action-gh-release@v2
+        with:
           files: |
-            dist/OllamaEmu.exe
-            dist/software.exe
+            dist/OllamaEmuDesktop
+            dist/OllamaEmuDesktop-*.AppImage
 
   apk:
     name: Build Android APK (EAS)
@@ -62,18 +160,14 @@ jobs:
     if: ${{ secrets.EXPO_TOKEN != '' }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
-      - name: EAS build
-        uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Build APK and download artifact
+      - name: Build APK
         working-directory: mobile
         run: |
           npm ci
@@ -81,13 +175,11 @@ jobs:
           echo "$BUILD_JSON"
           ARTIFACT_URL=$(echo "$BUILD_JSON" | jq -r '.buildArtifact.url // empty')
           if [ -z "$ARTIFACT_URL" ]; then
-            echo "::error::No APK artifact URL returned by EAS"
+            echo "::error::No APK artifact URL returned"
             exit 1
           fi
-          echo "Artifact URL: $ARTIFACT_URL"
           curl -L -o OllamaEmu.apk "$ARTIFACT_URL"
-
-      - name: Upload APK to GitHub Release
+      - name: Upload APK
         if: ${{ success() }}
         uses: softprops/action-gh-release@v2
         with:

@@ -1,0 +1,2 @@
+module OllamaEmu
+singleton Theme 1.0 styles/Theme.qml

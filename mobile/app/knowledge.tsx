@@ -31,6 +31,10 @@ export default function Knowledge() {
   const [searched, setSearched] = useState(false);
   const [busy, setBusy] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [docChunks, setDocChunks] = useState<any[] | null>(null);
+  const [chunkDocId, setChunkDocId] = useState<string | null>(null);
+  const [editingChunk, setEditingChunk] = useState<string | null>(null);
+  const [editText, setEditText] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -120,6 +124,104 @@ export default function Knowledge() {
       },
     ]);
 
+  const viewChunks = async (docId: string) => {
+    try {
+      setBusy(true);
+      const chunks: any = await api.getRagChunks(docId);
+      setDocChunks(Array.isArray(chunks) ? chunks : chunks?.chunks || []);
+      setChunkDocId(docId);
+    } catch {
+      Alert.alert("Error", "Could not load chunks for this document.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const saveChunkEdit = async (chunkId: string) => {
+    try {
+      setBusy(true);
+      await api.updateRagChunk(chunkId, editText);
+      setEditingChunk(null);
+      setEditText("");
+      if (chunkDocId) await viewChunks(chunkDocId);
+    } catch {
+      Alert.alert("Error", "Could not update chunk.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doReembed = async (chunkId: string) => {
+    try {
+      setBusy(true);
+      await api.reembedChunk(chunkId);
+      Alert.alert("Re-embedded", "Chunk has been re-embedded.");
+    } catch {
+      Alert.alert("Error", "Could not re-embed chunk.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (docChunks !== null && chunkDocId) {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} removeClippedSubviews>
+          <View style={responsive.inner}>
+            <Pressable onPress={() => { setDocChunks(null); setChunkDocId(null); setEditingChunk(null); }}>
+              <Text style={[styles.muted, { marginBottom: 12 }]}>← Back to documents</Text>
+            </Pressable>
+            <SectionTitle>Chunks ({docChunks.length})</SectionTitle>
+            {docChunks.map((c: any, i: number) => (
+              <Card key={c.id ?? i} style={styles.mini}>
+                {editingChunk === c.id ? (
+                  <>
+                    <TextInput
+                      style={[styles.textarea, { minHeight: 80 }]}
+                      value={editText}
+                      onChangeText={setEditText}
+                      multiline
+                      placeholderTextColor={COLORS.muted}
+                    />
+                    <View style={styles.chunkActions}>
+                      <PrimaryButton title="Save" onPress={() => saveChunkEdit(c.id)} loading={busy} />
+                      <PrimaryButton
+                        title="Cancel"
+                        color={COLORS.surface2}
+                        onPress={() => { setEditingChunk(null); setEditText(""); }}
+                      />
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.muted} numberOfLines={6}>
+                      {c.text || c.content || JSON.stringify(c)}
+                    </Text>
+                    <Text style={styles.tiny}>
+                      {c.score != null ? `score ${c.score.toFixed(3)} · ` : ""}
+                      {c.token_count ?? ""} tokens
+                    </Text>
+                    <View style={styles.chunkActions}>
+                      <Pressable
+                        onPress={() => { setEditingChunk(c.id); setEditText(c.text || c.content || ""); }}
+                      >
+                        <Text style={styles.editLink}>Edit</Text>
+                      </Pressable>
+                      <Pressable onPress={() => doReembed(c.id)}>
+                        <Text style={styles.editLink}>Re-embed</Text>
+                      </Pressable>
+                    </View>
+                  </>
+                )}
+              </Card>
+            ))}
+          </View>
+        </ScrollView>
+        <BottomNav />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -208,17 +310,19 @@ export default function Knowledge() {
           )}
           {documents.map((d: any) => (
             <Card key={d.id} style={styles.mini}>
-              <View style={styles.rowBetween}>
-                <Text style={styles.name} numberOfLines={1}>
-                  {d.filename || d.name || d.id}
+              <Pressable onPress={() => viewChunks(d.id)}>
+                <View style={styles.rowBetween}>
+                  <Text style={styles.name} numberOfLines={1}>
+                    {d.filename || d.name || d.id}
+                  </Text>
+                  <Pressable onPress={() => delDoc(d.id)}>
+                    <Text style={styles.del}>Delete</Text>
+                  </Pressable>
+                </View>
+                <Text style={styles.tiny}>
+                  {d.chunks ?? d.chunk_count ?? ""} chunks · {d.collection || "default"}
                 </Text>
-                <Pressable onPress={() => delDoc(d.id)}>
-                  <Text style={styles.del}>Delete</Text>
-                </Pressable>
-              </View>
-              <Text style={styles.tiny}>
-                {d.chunks ?? d.chunk_count ?? ""} chunks · {d.collection || "default"}
-              </Text>
+              </Pressable>
             </Card>
           ))}
         </View>
@@ -288,4 +392,6 @@ const styles = StyleSheet.create({
   tiny: { color: COLORS.muted, fontSize: 11, marginTop: 6 },
   name: { color: COLORS.text, fontSize: FONT_SIZE.md, fontWeight: "700", flex: 1, marginRight: 8 },
   mini: { paddingVertical: 12, paddingHorizontal: 14 },
+  chunkActions: { flexDirection: "row", gap: 16, marginTop: 10 },
+  editLink: { color: COLORS.accent, fontSize: FONT_SIZE.sm, fontWeight: "600" },
 });

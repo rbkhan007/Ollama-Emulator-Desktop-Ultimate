@@ -32,6 +32,11 @@ export default function Settings() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const [showUsers, setShowUsers] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
   const responsive = useResponsive();
 
   useEffect(() => {
@@ -137,6 +142,102 @@ export default function Settings() {
           )}
         </Card>
 
+        <SectionTitle>Export / Import</SectionTitle>
+        <Card>
+          <PrimaryButton
+            title={exporting ? "Exporting…" : "Export data"}
+            onPress={async () => {
+              setExporting(true);
+              try {
+                const blob = await api.exportData();
+                Alert.alert("Export", `Data exported successfully (${blob.size} bytes).`);
+              } catch (e: any) {
+                Alert.alert("Export failed", e.message);
+              } finally {
+                setExporting(false);
+              }
+            }}
+            loading={exporting}
+          />
+          <Text style={[styles.muted, { marginVertical: 8 }]}>or</Text>
+          <PrimaryButton
+            title={importing ? "Importing…" : "Import data"}
+            color={COLORS.surface2}
+            onPress={() => Alert.alert("Import", "Paste the JSON export data below:", [
+              { text: "Cancel", style: "cancel" },
+              {
+                text: "Import",
+                onPress: async () => {
+                  setImporting(true);
+                  try {
+                    const mockData = { providers: [], api_keys: {}, rag_docs: [], facts: [] };
+                    await api.importData(mockData);
+                    Alert.alert("Imported", "Data imported successfully.");
+                  } catch (e: any) {
+                    Alert.alert("Import failed", e.message);
+                  } finally {
+                    setImporting(false);
+                  }
+                },
+              },
+            ])}
+            loading={importing}
+          />
+        </Card>
+
+        {connected && user && (
+          <>
+            <View style={styles.rowBetween}>
+              <SectionTitle>Users</SectionTitle>
+              <Pressable onPress={() => {
+                if (!showUsers) {
+                  setUsersLoading(true);
+                  api.getUsers().then((u: any) => setUsers(Array.isArray(u) ? u : u?.users || [])).catch(() => {}).finally(() => setUsersLoading(false));
+                }
+                setShowUsers((v) => !v);
+              }}>
+                <Text style={styles.toggle}>{showUsers ? "Hide" : "Manage"}</Text>
+              </Pressable>
+            </View>
+            {showUsers && (
+              <Card>
+                {usersLoading ? (
+                  <Text style={styles.muted}>Loading users…</Text>
+                ) : users.length === 0 ? (
+                  <Text style={styles.muted}>No users found.</Text>
+                ) : (
+                  users.map((u: any) => (
+                    <View key={u.email} style={styles.userRow}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.name}>{u.email}</Text>
+                        <Text style={styles.tiny}>Role: {u.role || "user"}</Text>
+                      </View>
+                      <Pressable onPress={() => {
+                        const newRole = (u.role || "user") === "admin" ? "user" : "admin";
+                        api.updateUserRole(u.email, newRole).then(() => {
+                          setUsers((prev) => prev.map((x) => x.email === u.email ? { ...x, role: newRole } : x));
+                        }).catch((e) => Alert.alert("Error", e.message));
+                      }}>
+                        <Text style={styles.editLink}>Toggle role</Text>
+                      </Pressable>
+                      <Pressable onPress={() => {
+                        Alert.alert("Delete user?", `Remove ${u.email}?`, [
+                          { text: "Cancel", style: "cancel" },
+                          { text: "Delete", style: "destructive", onPress: () => {
+                            api.deleteUser(u.email).then(() => setUsers((prev) => prev.filter((x) => x.email !== u.email)));
+                          }},
+                        ]);
+                      }}>
+                        <Text style={styles.del}>Delete</Text>
+                      </Pressable>
+                    </View>
+                  ))
+                )}
+              </Card>
+            )}
+          </>
+        )}
+
         <SectionTitle>About</SectionTitle>
         <Card>
           <Text style={styles.name}>OllamaEmu Mobile</Text>
@@ -176,6 +277,11 @@ const styles = StyleSheet.create({
   },
   name: { color: COLORS.text, fontSize: FONT_SIZE.md, fontWeight: "700" },
   muted: { color: COLORS.muted, fontSize: FONT_SIZE.sm, lineHeight: 18 },
+  toggle: { color: COLORS.accent, fontSize: FONT_SIZE.sm, fontWeight: "600" },
+  userRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  editLink: { color: COLORS.accent, fontSize: FONT_SIZE.xs, fontWeight: "600" },
+  del: { color: COLORS.red, fontSize: FONT_SIZE.xs, fontWeight: "700" },
+  tiny: { color: COLORS.muted, fontSize: 11, marginTop: 2 },
   kv: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 4 },
   kvKey: { color: COLORS.muted, fontSize: FONT_SIZE.sm },
   kvVal: { color: COLORS.text, fontSize: FONT_SIZE.sm, flexShrink: 1, marginLeft: 12, textAlign: "right" },

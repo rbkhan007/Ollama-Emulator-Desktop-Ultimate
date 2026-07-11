@@ -14,13 +14,12 @@ Configure via environment variables:
 Or set OLLAMA_EMU_DATABASE_URL for a single connection string.
 """
 import os
-import json
 import hashlib
 import hmac
 import secrets
 import logging
 from contextlib import contextmanager
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -471,11 +470,53 @@ def save_provider(name: str, cfg: dict, api_key: str = ""):
         )
 
 
+def get_provider(name: str) -> Optional[dict]:
+    if not is_connected():
+        return None
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT name, url, models_url, auth_type, default_model, free_heuristic, type, api_key FROM providers WHERE name=%s", (name,))
+        row = cur.fetchone()
+        if row:
+            return {
+                "name": row["name"],
+                "url": row["url"],
+                "models_url": row["models_url"],
+                "auth_type": row["auth_type"],
+                "default_model": row["default_model"],
+                "free_heuristic": row["free_heuristic"],
+                "type": row["type"],
+                "api_key": row["api_key"] or "",
+            }
+        return None
+
+
 def delete_provider(name: str):
     if not is_connected():
         return
     with get_cursor() as cur:
         cur.execute("DELETE FROM providers WHERE name=%s", (name,))
+
+
+def update_provider(name: str, data: dict):
+    """Partial update of a provider's fields. Only sets non-None keys."""
+    if not is_connected():
+        return {"status": "skipped", "reason": "db not connected"}
+    fields = []
+    values = []
+    for key in ("url", "models_url", "auth_type", "default_model", "type", "api_key"):
+        if key in data and data[key] is not None:
+            fields.append(f"{key}=%s")
+            values.append(data[key])
+    if "free_heuristic" in data and data["free_heuristic"] is not None:
+        fields.append("free_heuristic=%s")
+        values.append(str(data["free_heuristic"]))
+    if not fields:
+        return {"status": "no_changes"}
+    values.append(name)
+    sql = f"UPDATE providers SET {', '.join(fields)} WHERE name=%s"
+    with get_cursor() as cur:
+        cur.execute(sql, tuple(values))
+        return {"status": "updated", "rowcount": cur.rowcount}
 
 
 def seed_default_providers(defaults: dict):
@@ -593,6 +634,100 @@ def delete_session(token: str):
         return
     with get_cursor() as cur:
         cur.execute("DELETE FROM sessions WHERE token=%s", (token,))
+
+
+def load_all_users() -> List[dict]:
+    """List all users. Admin only."""
+    if not is_connected():
+        return []
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT email, role, created_at FROM users ORDER BY created_at DESC")
+        return [dict(r) for r in cur.fetchall()]
+
+
+def update_user_role(email: str, role: str) -> bool:
+    """Update a user's role. Admin only."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("UPDATE users SET role=%s WHERE email=%s", (role, email))
+        return cur.rowcount > 0
+
+
+def delete_user(email: str) -> bool:
+    """Delete a user and their sessions. Admin only."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("DELETE FROM sessions WHERE email=%s", (email,))
+        cur.execute("DELETE FROM users WHERE email=%s", (email,))
+        return cur.rowcount > 0
+
+
+def get_memory_message(msg_id: str) -> Optional[dict]:
+    """Get a single memory message by ID."""
+    if not is_connected():
+        return None
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT id, role, content, model, provider, session_id, tokens, created_at FROM memory_messages WHERE id=%s", (msg_id,))
+        row = cur.fetchone()
+        return dict(row) if row else None
+
+
+def delete_memory_message(msg_id: str) -> bool:
+    """Delete a single memory message by ID."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("DELETE FROM memory_messages WHERE id=%s", (msg_id,))
+        return cur.rowcount > 0
+
+
+def clear_all_messages() -> bool:
+    """Delete all memory messages."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("DELETE FROM memory_messages")
+        return True
+
+
+def get_rag_document(doc_id: str) -> Optional[dict]:
+    """Get a single RAG document by ID."""
+    if not is_connected():
+        return None
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT id, filename, file_hash, chunk_count, collection, metadata, created_at FROM rag_documents WHERE id=%s", (doc_id,))
+        row = cur.fetchone()
+        return dict(row) if row else None
+
+
+def list_rag_chunks(doc_id: str) -> List[dict]:
+    """List all chunks for a document."""
+    if not is_connected():
+        return []
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT id, chunk_index, content, tokens FROM rag_chunks WHERE doc_id=%s ORDER BY chunk_index", (doc_id,))
+        return [dict(r) for r in cur.fetchall()]
+
+
+def update_rag_chunk(chunk_id: str, content: str) -> bool:
+    """Update a chunk's text content. Embedding must be re-computed by the caller."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute("UPDATE rag_chunks SET content=%s WHERE id=%s", (content, chunk_id))
+        return cur.rowcount > 0
+
+
+def get_usage_stats() -> dict:
+    """Aggregate usage stats from memory_messages."""
+    if not is_connected():
+        return {"total_messages": 0, "total_tokens": 0}
+    with get_cursor(commit=False) as cur:
+        cur.execute("SELECT COUNT(*) as total, COALESCE(SUM(tokens),0) as tokens FROM memory_messages")
+        row = cur.fetchone()
+        return {"total_messages": row["total"], "total_tokens": row["tokens"]}
 
 
 def logout_all_sessions(email: str):

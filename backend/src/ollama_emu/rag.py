@@ -18,7 +18,7 @@ import math
 import hashlib
 import logging
 from collections import Counter
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 
 import numpy as np
 
@@ -38,6 +38,8 @@ CHUNK_OVERLAP = int(os.environ.get("OLLAMA_EMU_CHUNK_OVERLAP", "64"))
 DEFAULT_TOP_K = int(os.environ.get("OLLAMA_EMU_RAG_TOP_K", "5"))
 MIN_SIMILARITY = float(os.environ.get("OLLAMA_EMU_RAG_MIN_SIM", "0.0"))
 HYBRID_ALPHA = float(os.environ.get("OLLAMA_EMU_RAG_HYBRID_ALPHA", "0.7"))
+CROSS_ENCODER_MODEL = os.environ.get("OLLAMA_EMU_CROSS_ENCODER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+RERANK_ENABLED = os.environ.get("OLLAMA_EMU_RAG_RERANK", "true").lower() == "true"
 INDEX_TYPE = os.environ.get("OLLAMA_EMU_RAG_INDEX_TYPE", "hnsw")
 HNSW_M = int(os.environ.get("OLLAMA_EMU_RAG_HNSW_M", "16"))
 HNSW_EF_CONSTRUCTION = int(os.environ.get("OLLAMA_EMU_RAG_HNSW_EF_CONSTRUCTION", "200"))
@@ -256,6 +258,33 @@ def get_embedding_backend() -> EmbeddingBackend:
         return OpenAIEmbeddingBackend(model=EMBEDDING_MODEL)
     else:
         return TFIDFBackend()
+
+
+# ============================================================
+# CROSS-ENCODER RERANKER
+# ============================================================
+
+_cross_encoder = None
+
+
+def get_cross_encoder():
+    """Get or initialize the cross-encoder reranker (lazy load)."""
+    global _cross_encoder
+    if not RERANK_ENABLED:
+        return None
+    if _cross_encoder is not None:
+        return _cross_encoder
+    try:
+        from sentence_transformers import CrossEncoder
+        _cross_encoder = CrossEncoder(CROSS_ENCODER_MODEL)
+        log.info("Loaded cross-encoder model: %s", CROSS_ENCODER_MODEL)
+    except ImportError:
+        log.warning("sentence-transformers not installed — cross-encoder reranking disabled")
+        return None
+    except Exception as e:
+        log.warning("Could not load cross-encoder '%s': %s", CROSS_ENCODER_MODEL, e)
+        return None
+    return _cross_encoder
 
 
 _backend: Optional[EmbeddingBackend] = None
@@ -557,7 +586,7 @@ class RAGEngine:
                 })
 
         if hybrid and vector_results and fts_results:
-            return self._rrf_merge(vector_results, fts_results, top_k, min_score)
+            results = self._rrf_merge(vector_results, fts_results, top_k * 2, min_score)
         elif vector_results:
             results = vector_results
         elif fts_results:
@@ -565,7 +594,9 @@ class RAGEngine:
         else:
             return []
 
-        return [r for r in results[:top_k] if r.get("vector_score", r.get("fts_score", 0)) >= min_score]
+        results = [r for r in results[:top_k * 2] if r.get("vector_score", r.get("fts_score", 0)) >= min_score]
+        results = self.rerank(query, results, top_k)
+        return results
 
     def _rrf_merge(self, vector_results: List[dict], fts_results: List[dict],
                    top_k: int, min_score: float) -> List[dict]:
@@ -595,6 +626,25 @@ class RAGEngine:
 
         merged.sort(key=lambda x: x["score"], reverse=True)
         return [r for r in merged[:top_k] if r.get("score", 0) >= min_score]
+
+    def rerank(self, query: str, results: List[dict], top_k: int = None) -> List[dict]:
+        """Re-rank results using a cross-encoder for improved relevance."""
+        if not results:
+            return results
+        cross = get_cross_encoder()
+        if cross is None:
+            return results
+        try:
+            pairs = [(query, r["content"]) for r in results]
+            scores = cross.score(pairs)
+            for i, r in enumerate(results):
+                r["cross_score"] = round(float(scores[i]), 4)
+            results.sort(key=lambda x: x["cross_score"], reverse=True)
+            if top_k:
+                results = results[:top_k]
+        except Exception as e:
+            log.warning("Cross-encoder reranking failed: %s", e)
+        return results
 
     def search_vector(self, query: str, top_k: int = DEFAULT_TOP_K, collection: str = None) -> List[dict]:
         """Vector-only search (no FTS fallback)."""
@@ -700,6 +750,22 @@ class RAGEngine:
                 )
         log.info("Re-indexed document '%s' (%d chunks)", doc["filename"], len(chunks))
         return {"reindexed": doc["filename"], "chunks": len(chunks)}
+
+    def reembed_chunk(self, chunk_id: str, new_content: str):
+        """Re-embed a single chunk after its content is updated."""
+        if not is_connected():
+            return {"error": "PostgreSQL not connected"}
+        vec = embed_texts([new_content])[0]
+        with get_cursor() as cur:
+            cur.execute(
+                "UPDATE rag_chunks SET embedding = %s::vector, content = %s WHERE id = %s",
+                (vector_to_sql(vec), new_content, chunk_id),
+            )
+            cur.execute(
+                "UPDATE rag_fts SET content = to_tsvector('english', %s) WHERE doc_id = (SELECT doc_id FROM rag_chunks WHERE id = %s)",
+                (new_content, chunk_id),
+            )
+        return {"reembedded": chunk_id}
 
     def list_documents(self, collection: str = None) -> List[dict]:
         if not is_connected():

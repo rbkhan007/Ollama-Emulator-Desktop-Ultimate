@@ -200,8 +200,248 @@ def test_auth():
     else:
         fail(f"Seeded user login failed: {r}")
 
+def test_providers_crud():
+    print("\n[5] Providers CRUD")
+    # Add a test provider
+    r = request("POST", "/api/providers/add", {
+        "name": "test_provider_crud",
+        "url": "https://api.test.com/v1/chat/completions",
+        "type": "openai",
+        "models_url": "https://api.test.com/v1/models",
+        "default_model": "gpt-3.5-turbo",
+    }, expect=200)
+    if r.get("status") == "added":
+        ok(f"POST /api/providers/add — added test_provider_crud")
+    else:
+        fail(f"POST /api/providers/add failed: {r}")
+
+    # Get single provider
+    r = request("GET", "/api/providers/test_provider_crud", expect=200)
+    if r.get("name") == "test_provider_crud":
+        ok(f"GET /api/providers/{r['name']} — detail returned")
+    else:
+        fail(f"GET /api/providers/test_provider_crud failed: {r}")
+
+    # Update provider
+    r = request("PUT", "/api/providers/test_provider_crud", {
+        "default_model": "gpt-4o",
+    }, expect=200)
+    if r.get("status") == "updated":
+        ok(f"PUT /api/providers/test_provider_crud — updated")
+    else:
+        fail(f"PUT /api/providers/test_provider_crud failed: {r}")
+
+    # Verify update persisted
+    r = request("GET", "/api/providers/test_provider_crud", expect=200)
+    if r.get("default_model") == "gpt-4o":
+        ok(f"  Verified default_model = gpt-4o")
+    else:
+        fail(f"  Update not persisted: {r}")
+
+    # Delete provider
+    r = request("DELETE", "/api/providers/test_provider_crud", expect=200)
+    if r.get("status") == "deleted":
+        ok(f"DELETE /api/providers/test_provider_crud — deleted")
+    else:
+        fail(f"DELETE /api/providers/test_provider_crud failed: {r}")
+
+    # Verify deletion
+    r = request("GET", "/api/providers/test_provider_crud", expect=404)
+    ok(f"  Verified provider gone (404)")
+
+
+def test_users_crud():
+    print("\n[6] Users CRUD")
+    demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
+    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+
+    # Login as admin
+    r = request("POST", "/api/auth/login", {"email": demo_email, "password": demo_password}, expect=200)
+    if not r.get("token"):
+        fail("Admin login failed — skipping user tests")
+        return
+    token = r["token"]
+
+    # List users
+    req = urllib.request.Request(f"{BASE}/api/users", headers={"Authorization": f"Bearer {token}"})
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            users = json.loads(resp.read().decode())
+            if len(users) >= 1:
+                ok(f"GET /api/users — {len(users)} users")
+            else:
+                fail(f"GET /api/users returned empty list")
+    except urllib.error.HTTPError as e:
+        fail(f"GET /api/users failed: {e.code}")
+
+    # Create new test user via register
+    test_email = f"crud_test_{int(time.time())}@example.com"
+    r = request("POST", "/api/auth/register", {"email": test_email, "password": "crudPass123!"}, expect=200)
+    if r.get("success"):
+        ok(f"  Created test user: {test_email}")
+    else:
+        fail(f"  Create test user failed: {r}")
+
+    # Update user role
+    req = urllib.request.Request(
+        f"{BASE}/api/users/{test_email}",
+        data=json.dumps({"role": "power_user"}).encode(),
+        method="PUT",
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            r = json.loads(resp.read().decode())
+            if r.get("role") == "power_user":
+                ok(f"PUT /api/users/{test_email} — role=power_user")
+            else:
+                fail(f"Role update response: {r}")
+    except urllib.error.HTTPError as e:
+        fail(f"PUT /api/users/{test_email} failed: {e.code}")
+
+    # Delete test user
+    req = urllib.request.Request(
+        f"{BASE}/api/users/{test_email}",
+        method="DELETE",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            r = json.loads(resp.read().decode())
+            if r.get("status") == "deleted":
+                ok(f"DELETE /api/users/{test_email} — deleted")
+            else:
+                fail(f"Delete response: {r}")
+    except urllib.error.HTTPError as e:
+        fail(f"DELETE /api/users/{test_email} failed: {e.code}")
+
+
+def test_memory_crud():
+    print("\n[7] Memory CRUD")
+
+    # Add a fact
+    r = request("POST", "/api/memory/facts", {
+        "fact": "The sky is blue during the day.",
+        "importance": "normal",
+        "session_id": "test_session_crud",
+    }, expect=200)
+    if r.get("status") == "added":
+        fact_id = r.get("id", "")
+        ok(f"POST /api/memory/facts — added (id={fact_id[:16]}...)")
+    else:
+        fact_id = ""
+        fail(f"POST /api/memory/facts failed: {r}")
+
+    # List facts
+    r = request("GET", "/api/memory/facts?session_id=test_session_crud", expect=200)
+    if isinstance(r, list) and len(r) > 0:
+        ok(f"GET /api/memory/facts — {len(r)} facts")
+    else:
+        fail(f"GET /api/memory/facts failed: {r}")
+
+    # Get messages (should be empty for test session)
+    r = request("GET", "/api/memory/messages?session_id=test_session_crud", expect=200)
+    if isinstance(r, list):
+        ok(f"GET /api/memory/messages — {len(r)} messages")
+    else:
+        fail(f"GET /api/memory/messages failed: {r}")
+
+    # Get sessions
+    r = request("GET", "/api/memory/sessions", expect=200)
+    if isinstance(r, list):
+        ok(f"GET /api/memory/sessions — {len(r)} sessions")
+    else:
+        fail(f"GET /api/memory/sessions failed: {r}")
+
+    # Get stats
+    r = request("GET", "/api/memory/stats", expect=200)
+    if "messages" in r or "facts" in r:
+        ok(f"GET /api/memory/stats — ok")
+    else:
+        fail(f"GET /api/memory/stats failed: {r}")
+
+    # Delete the fact
+    if fact_id:
+        r = request("DELETE", f"/api/memory/facts/{fact_id}", expect=200)
+        if r.get("deleted"):
+            ok(f"DELETE /api/memory/facts/{fact_id[:16]}... — deleted")
+        else:
+            fail(f"DELETE fact failed: {r}")
+
+
+def test_rag_crud():
+    print("\n[8] RAG CRUD")
+    test_text = "PostgreSQL is a powerful, open-source object-relational database system."
+
+    # Add text
+    r = request("POST", "/api/rag/add-text", {
+        "text": test_text,
+        "name": "test_doc_crud",
+        "collection": "test_collection",
+    }, expect=200)
+    doc_id = r.get("doc_id", "")
+    if doc_id:
+        ok(f"POST /api/rag/add-text — doc_id={doc_id[:16]}...")
+    else:
+        fail(f"POST /api/rag/add-text failed: {r}")
+
+    # List documents
+    r = request("GET", "/api/rag/documents", expect=200)
+    if isinstance(r, list):
+        ok(f"GET /api/rag/documents — {len(r)} docs")
+    else:
+        fail(f"GET /api/rag/documents failed: {r}")
+
+    # Get single document
+    if doc_id:
+        r = request("GET", f"/api/rag/documents/{doc_id}", expect=200)
+        if r.get("id") == doc_id:
+            ok(f"GET /api/rag/documents/{doc_id[:16]}... — doc returned")
+        else:
+            fail(f"GET single document failed: {r}")
+
+        # Get chunks
+        r = request("GET", f"/api/rag/chunks/{doc_id}", expect=200)
+        if isinstance(r, list):
+            ok(f"GET /api/rag/chunks/{doc_id[:16]}... — {len(r)} chunks")
+        else:
+            fail(f"GET chunks failed: {r}")
+
+        # Search
+        r = request("POST", "/api/rag/search", {"query": "PostgreSQL database", "top_k": 3}, expect=200)
+        if isinstance(r, list):
+            ok(f"POST /api/rag/search — {len(r)} results")
+        else:
+            fail(f"RAG search failed: {r}")
+
+        # Delete document
+        r = request("DELETE", f"/api/rag/documents/{doc_id}", expect=200)
+        if r.get("deleted"):
+            ok(f"DELETE /api/rag/documents/{doc_id[:16]}... — deleted")
+        else:
+            fail(f"DELETE document failed: {r}")
+
+
+def test_export_import():
+    print("\n[9] Export / Import")
+
+    # Export
+    r = request("GET", "/api/export", expect=200)
+    if "providers" in r and "version" in r:
+        ok(f"GET /api/export — {len(r['providers'])} providers, {len(r.get('memory_facts', []))} facts")
+    else:
+        fail(f"Export failed: {r}")
+
+    # Free models endpoint
+    r = request("GET", "/api/models/free", expect=200)
+    if "models" in r:
+        ok(f"GET /api/models/free — {len(r['models'])} free models cached")
+    else:
+        fail(f"GET /api/models/free failed: {r}")
+
+
 def test_api_endpoints():
-    print("\n[5] API Endpoints")
+    print("\n[10] API Endpoints")
 
     r = request("GET", "/api/status")
     if "active_provider" in r:
@@ -360,6 +600,11 @@ def main():
         test_frontend_build()
         test_server_online()
         test_auth()
+        test_providers_crud()
+        test_users_crud()
+        test_memory_crud()
+        test_rag_crud()
+        test_export_import()
         test_api_endpoints()
         test_spa()
         test_non_existent()

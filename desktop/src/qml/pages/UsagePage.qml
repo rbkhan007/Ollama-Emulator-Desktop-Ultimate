@@ -1,0 +1,143 @@
+import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
+
+Rectangle {
+    color: "transparent"
+
+    property var usageData: ({})
+
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 30
+        spacing: 24
+
+        Text {
+            text: "Usage Analytics"
+            font: Theme.fontHeading
+            font.pixelSize: 22
+            color: Theme.textPrimary
+        }
+
+        Text {
+            text: "View your API token consumption and request statistics."
+            font: Theme.fontBody
+            color: Theme.textSecondary
+        }
+
+        GridLayout {
+            Layout.fillWidth: true
+            columns: 2
+            columnSpacing: 20
+            rowSpacing: 20
+
+            StatCard {
+                title: "Total Requests"
+                value: (usageData.total_requests || 0).toString()
+                icon: "\u2261"
+                color: Theme.accentPrimary
+                Layout.fillWidth: true
+            }
+
+            StatCard {
+                title: "Tokens Used"
+                value: (usageData.total_tokens || 0).toString()
+                icon: "\u2630"
+                color: Theme.accentSecondary
+                Layout.fillWidth: true
+            }
+
+            StatCard {
+                title: "Active Models"
+                value: (usageData.active_models || 0).toString()
+                icon: "\u2699"
+                color: Theme.accentTertiary
+                Layout.fillWidth: true
+            }
+
+            StatCard {
+                title: "Avg. Response Time"
+                value: (usageData.avg_response_time || "0") + "ms"
+                icon: "\u23F1"
+                color: "#ffa500"
+                Layout.fillWidth: true
+            }
+        }
+
+        Item { Layout.fillHeight: true }
+
+        Button {
+            Layout.alignment: Qt.AlignHCenter
+            text: "Refresh Data"
+            flat: true
+            implicitWidth: 160
+            implicitHeight: 40
+            contentItem: Text {
+                text: parent.text
+                color: "#ffffff"
+                font: Theme.fontBody
+                font.bold: true
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            background: Rectangle {
+                radius: Theme.radiusMedium
+                gradient: Gradient {
+                    GradientStop { position: 0.0; color: Theme.accentPrimary }
+                    GradientStop { position: 1.0; color: Theme.accentSecondary }
+                }
+            }
+            onClicked: {
+                try {
+                    usageData = apiClient.getUsage()
+                } catch(e) {
+                    console.warn("Failed to fetch usage:", e)
+                }
+            }
+        }
+    }
+
+    component StatCard: Rectangle {
+        property string title
+        property string value
+        property string icon
+        property color color: Theme.accentPrimary
+
+        implicitHeight: 120
+        radius: Theme.radiusLarge
+        color: Theme.surface
+        border.color: Theme.border
+        border.width: 1
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 8
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 8
+
+                Text {
+                    text: parent.parent.parent.icon
+                    font.pixelSize: 20
+                    color: parent.parent.parent.color
+                }
+
+                Text {
+                    text: parent.parent.parent.title
+                    font: Theme.fontBody
+                    color: Theme.textSecondary
+                    Layout.fillWidth: true
+                }
+            }
+
+            Text {
+                text: parent.parent.value
+                font: Theme.fontHeading
+                font.pixelSize: 28
+                color: Theme.textPrimary
+            }
+        }
+    }
+}

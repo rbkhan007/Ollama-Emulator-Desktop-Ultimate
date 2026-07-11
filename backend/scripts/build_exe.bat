@@ -9,43 +9,30 @@ echo  v1.0.2 - Copyright (c) 2024-2026 Rhasan@dev
 echo ============================================
 echo.
 
-:: Ensure frontend is built (without GitHub Pages basePath)
-echo [1/5] Building frontend for local use...
-pushd frontend
-set "NEXT_PUBLIC_BASE_PATH="
-set "NEXT_PUBLIC_SITE_URL="
-set "NEXT_PUBLIC_FREETIER_DOMAIN="
-call npm install --silent 2>nul
-call npm run build 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] Frontend build failed!
-    pause
-    exit /b 1
-)
-popd
-echo [OK] Frontend built.
+:: Check for --desktop flag (builds the QML desktop app)
+if /i "%1"=="--desktop" goto build_desktop
+if /i "%1"=="-d" goto build_desktop
 
-:: Install Python build deps
+:build_server
+echo  Mode: Backend Server (headless)
+echo.
+call :ensure_frontend
+if %errorlevel% neq 0 exit /b 1
+
 echo [2/5] Installing build dependencies...
 pip install pyinstaller -q 2>nul
-echo [OK] Dependencies installed.
+echo [OK]
 
-:: Clean previous builds
-echo [3/5] Cleaning previous builds...
+echo [3/5] Cleaning...
 if exist "dist\OllamaEmu" rmdir /s /q "dist\OllamaEmu"
 if exist "build\OllamaEmu" rmdir /s /q "build\OllamaEmu"
-echo [OK] Cleaned.
+echo [OK]
 
-:: Build EXE
-echo [4/5] Building executable (this may take a while)...
+echo [4/5] Building executable...
 python -m PyInstaller --onefile --console ^
     --name "OllamaEmu" ^
     --add-data "frontend\out;frontend\out" ^
-    --add-data "backend\src\ollama_emu\rag.py;ollama_emu" ^
-    --add-data "backend\src\ollama_emu\memory.py;ollama_emu" ^
-    --add-data "backend\src\ollama_emu\acl.py;ollama_emu" ^
-    --add-data "backend\src\ollama_emu\db.py;ollama_emu" ^
-    --add-data "docs\README.md;." ^
+    --add-data "backend\src\ollama_emu;ollama_emu" ^
     --hidden-import numpy ^
     --collect-data numpy ^
     --hidden-import psycopg2 ^
@@ -76,24 +63,72 @@ if %errorlevel% neq 0 (
     pause
     exit /b 1
 )
-echo [OK] Executable built.
+echo [OK]
+goto finalize
 
-:: Copy docs
+:build_desktop
+echo  Mode: Desktop App (PySide6 + QML)
+echo.
+call :ensure_frontend
+if %errorlevel% neq 0 exit /b 1
+
+echo [2/5] Installing build dependencies...
+pip install pyinstaller pyside6 -q 2>nul
+if %errorlevel% neq 0 (
+    echo [FAIL] Failed to install PySide6. Make sure Qt is available.
+    pause
+    exit /b 1
+)
+echo [OK]
+
+echo [3/5] Cleaning...
+if exist "dist\OllamaEmuDesktop" rmdir /s /q "dist\OllamaEmuDesktop"
+if exist "dist\OllamaEmuDesktop.exe" del "dist\OllamaEmuDesktop.exe"
+if exist "build\OllamaEmuDesktop" rmdir /s /q "build\OllamaEmuDesktop"
+echo [OK]
+
+echo [4/5] Building desktop executable...
+python desktop\build.py --skip-frontend 2>&1
+if %errorlevel% neq 0 (
+    echo [FAIL] Desktop build failed!
+    pause
+    exit /b 1
+)
+echo [OK]
+
+:finalize
 echo [5/5] Finalizing...
 copy docs\README.md dist\README.md 2>nul
 copy configs\.env.example dist\.env.example 2>nul
-copy configs\opencode.example.json dist\opencode.example.json 2>nul
-echo [OK] Done!
+echo [OK]
 
 echo.
 echo ============================================
 echo  Build complete!
-echo  Executable: dist\OllamaEmu.exe
-echo  Includes: Frontend dashboard, RAG, Memory
+if /i "%1"=="--desktop" (
+    echo  Executable: dist\OllamaEmuDesktop.exe
+    echo  Includes: QML GUI + Backend + Frontend
+) else (
+    echo  Executable: dist\OllamaEmu.exe
+    echo  Includes: Backend Server + Frontend
+)
 echo ============================================
 echo.
-echo  To run: dist\OllamaEmu.exe
-echo  Then open http://localhost:11434
-echo  Configure your API key in Settings
-echo.
 pause
+exit /b 0
+
+:ensure_frontend
+echo [1/5] Building frontend...
+pushd frontend
+set "NEXT_PUBLIC_BASE_PATH="
+set "NEXT_PUBLIC_SITE_URL="
+call npm install --silent 2>nul
+call npm run build 2>&1
+if %errorlevel% neq 0 (
+    echo [FAIL] Frontend build failed!
+    popd
+    exit /b 1
+)
+popd
+echo [OK]
+exit /b 0

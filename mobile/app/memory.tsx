@@ -28,6 +28,8 @@ export default function Memory() {
   const [results, setResults] = useState<any[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [expandedMsg, setExpandedMsg] = useState<string | null>(null);
+  const [msgDetail, setMsgDetail] = useState<any | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -104,6 +106,38 @@ export default function Memory() {
             setMessages([]);
             setSessions([]);
             setResults(null);
+          } catch {
+            /* ignore */
+          }
+        },
+      },
+    ]);
+
+  const viewMessageDetail = async (msgId: string) => {
+    try {
+      setBusy(true);
+      const detail = await api.getMemoryMessage(msgId);
+      setMsgDetail(detail);
+      setExpandedMsg(msgId);
+    } catch {
+      Alert.alert("Error", "Could not load message detail.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const deleteMsg = (msgId: string) =>
+    Alert.alert("Delete message?", "This cannot be undone.", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await api.deleteMemoryMessage(msgId);
+            setMessages((m) => m.filter((x) => x.id !== msgId));
+            setExpandedMsg(null);
+            setMsgDetail(null);
           } catch {
             /* ignore */
           }
@@ -189,10 +223,26 @@ export default function Memory() {
               <SectionTitle>Recent messages</SectionTitle>
               {messages.slice(0, 12).map((m: any, i: number) => (
                 <Card key={m.id ?? i} style={styles.mini}>
-                  <Text style={[styles.tiny, { textTransform: "capitalize" }]}>{m.role}</Text>
-                  <Text style={styles.muted} numberOfLines={2}>
-                    {m.content}
-                  </Text>
+                  <Pressable onPress={() => viewMessageDetail(m.id)}>
+                    <View style={styles.rowBetween}>
+                      <Text style={[styles.tiny, { textTransform: "capitalize", flex: 1 }]}>{m.role}</Text>
+                      <Pressable onPress={() => deleteMsg(m.id)}>
+                        <Text style={styles.del}>Delete</Text>
+                      </Pressable>
+                    </View>
+                    <Text style={styles.muted} numberOfLines={expandedMsg === m.id ? undefined : 2}>
+                      {m.content}
+                    </Text>
+                    {expandedMsg === m.id && msgDetail && (
+                      <View style={{ marginTop: 8, backgroundColor: COLORS.surface2, padding: 10, borderRadius: 8 }}>
+                        <KV k="ID" v={msgDetail.id || m.id} />
+                        <KV k="Role" v={msgDetail.role || m.role} />
+                        <KV k="Model" v={msgDetail.model || "-"} />
+                        <KV k="Tokens" v={String(msgDetail.token_count ?? "-")} />
+                        <KV k="Created" v={msgDetail.created_at || m.created_at || ""} />
+                      </View>
+                    )}
+                  </Pressable>
                 </Card>
               ))}
             </>
@@ -200,6 +250,15 @@ export default function Memory() {
         </View>
       </ScrollView>
       <BottomNav />
+    </View>
+  );
+}
+
+function KV({ k, v }: { k: string; v: string }) {
+  return (
+    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 2 }}>
+      <Text style={{ color: COLORS.muted, fontSize: FONT_SIZE.xs }}>{k}</Text>
+      <Text style={{ color: COLORS.text, fontSize: FONT_SIZE.xs, flexShrink: 1, marginLeft: 8, textAlign: "right" }}>{v}</Text>
     </View>
   );
 }

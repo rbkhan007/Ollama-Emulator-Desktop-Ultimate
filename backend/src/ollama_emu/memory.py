@@ -9,7 +9,7 @@ import time
 import uuid
 import threading
 import logging
-from typing import List, Dict, Optional
+from typing import List
 from collections import deque
 
 from ollama_emu.db import get_cursor, is_connected

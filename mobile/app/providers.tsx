@@ -27,6 +27,8 @@ export default function Providers() {
   const [busy, setBusy] = useState("");
   const [keys, setKeys] = useState<Record<string, string>>({});
   const [showAdd, setShowAdd] = useState(false);
+  const [editProvider, setEditProvider] = useState<string | null>(null);
+  const [editData, setEditData] = useState<any>(null);
   const [add, setAdd] = useState({
     name: "",
     url: "",
@@ -247,7 +249,57 @@ export default function Providers() {
                   >
                     <Text style={styles.btnText}>Delete</Text>
                   </Pressable>
+                  <Pressable
+                    style={[styles.btn, styles.btnGhost]}
+                    onPress={async () => {
+                      try {
+                        const data = await api.getProvider(p.name);
+                        setEditProvider(p.name);
+                        setEditData({
+                          url: data.url || p.url,
+                          models_url: data.models_url || "",
+                          default_model: data.default_model || "",
+                          free_heuristic: data.free_heuristic ?? false,
+                        });
+                      } catch {
+                        Alert.alert("Error", "Could not load provider details.");
+                      }
+                    }}
+                  >
+                    <Text style={[styles.btnText, { color: COLORS.text }]}>Edit</Text>
+                  </Pressable>
                 </View>
+                {editProvider === p.name && editData && (
+                  <View style={{ marginTop: 10, borderTopWidth: 1, borderTopColor: COLORS.border, paddingTop: 10 }}>
+                    <Field label="URL" value={editData.url} onChange={(t) => setEditData((d: any) => ({ ...d, url: t }))} placeholder="https://api.openai.com/v1" />
+                    <Field label="Models URL" value={editData.models_url} onChange={(t) => setEditData((d: any) => ({ ...d, models_url: t }))} placeholder="https://api.openai.com/v1/models" />
+                    <Field label="Default model" value={editData.default_model} onChange={(t) => setEditData((d: any) => ({ ...d, default_model: t }))} placeholder="gpt-4o-mini" />
+                    <Pressable style={styles.checkRow} onPress={() => setEditData((d: any) => ({ ...d, free_heuristic: !d.free_heuristic }))}>
+                      <View style={[styles.checkbox, editData.free_heuristic && styles.checkboxOn]} />
+                      <Text style={styles.muted}>Free heuristic</Text>
+                    </Pressable>
+                    <View style={styles.actionRow}>
+                      <Pressable style={[styles.btn, styles.btnAccent]} onPress={async () => {
+                        setBusy(p.name + ":edit");
+                        try {
+                          await api.updateProvider(p.name, editData);
+                          setEditProvider(null);
+                          setEditData(null);
+                          await load();
+                        } catch (e: any) {
+                          Alert.alert("Error", e.message || "Failed to update");
+                        } finally {
+                          setBusy("");
+                        }
+                      }}>
+                        <Text style={styles.btnText}>Save</Text>
+                      </Pressable>
+                      <Pressable style={[styles.btn, styles.btnGhost]} onPress={() => { setEditProvider(null); setEditData(null); }}>
+                        <Text style={[styles.btnText, { color: COLORS.text }]}>Cancel</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                )}
               </Card>
             );
           })}

@@ -94,6 +94,100 @@ export async function saveProviderKey(provider: string, apiKey: string) {
 export const getUsage = () => apiJson("/api/usage/stats");
 export const getDevice = () => apiJson("/api/device");
 
+// ---------- Provider CRUD (individual provider operations) ----------
+export async function getProvider(name: string) {
+  return apiJson(`/api/providers/${encodeURIComponent(name)}`);
+}
+
+export async function updateProvider(name: string, cfg: {
+  url?: string;
+  type?: string;
+  models_url?: string;
+  auth_type?: string;
+  default_model?: string;
+  free_heuristic?: boolean;
+  api_key?: string;
+}) {
+  return apiJson(`/api/providers/${encodeURIComponent(name)}`, {
+    method: "PUT",
+    body: JSON.stringify(cfg),
+  });
+}
+
+// ---------- Users CRUD (admin) ----------
+export const getUsers = () => apiJson("/api/users/list");
+
+export async function getUser(email: string) {
+  return apiJson(`/api/users/${encodeURIComponent(email)}`);
+}
+
+export async function updateUserRole(email: string, role: string) {
+  return apiJson("/api/users/role", {
+    method: "PUT",
+    body: JSON.stringify({ email, role }),
+  });
+}
+
+export async function deleteUser(email: string) {
+  return apiJson(`/api/users/${encodeURIComponent(email)}`, { method: "DELETE" });
+}
+
+// ---------- Memory CRUD (message-level operations) ----------
+export async function getMemoryMessage(msgId: string) {
+  return apiJson(`/api/memory/messages/${encodeURIComponent(msgId)}`);
+}
+
+export async function deleteMemoryMessage(msgId: string) {
+  return apiJson(`/api/memory/messages/${encodeURIComponent(msgId)}`, { method: "DELETE" });
+}
+
+export async function clearAllMessages() {
+  return apiJson("/api/memory/messages", { method: "DELETE" });
+}
+
+// ---------- RAG CRUD (document & chunk operations) ----------
+export async function getRagDocument(docId: string) {
+  return apiJson(`/api/rag/documents/${encodeURIComponent(docId)}`);
+}
+
+export async function getRagChunks(docId: string) {
+  return apiJson(`/api/rag/chunks/${encodeURIComponent(docId)}`);
+}
+
+export async function updateRagChunk(chunkId: string, text: string) {
+  return apiJson(`/api/rag/chunks/${encodeURIComponent(chunkId)}`, {
+    method: "PUT",
+    body: JSON.stringify({ text }),
+  });
+}
+
+export async function reembedChunk(chunkId: string) {
+  return apiJson(`/api/rag/chunks/${encodeURIComponent(chunkId)}/reembed`, {
+    method: "POST",
+  });
+}
+
+// ---------- Export / Import ----------
+export async function exportData(): Promise<Blob> {
+  const base = await getBase();
+  const token = await getToken();
+  const headers: Record<string, string> = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${base}/api/export`, { headers });
+  if (!res.ok) throw new Error(`${res.status}: Export failed`);
+  return res.blob();
+}
+
+export async function importData(data: any) {
+  return apiJson("/api/import", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+// ---------- Free Models ----------
+export const getFreeModels = () => apiJson("/api/models/free");
+
 // ---------- RAG (Knowledge Base) ----------
 export const getRagStats = () => apiJson("/api/rag/stats");
 export const getRagDocuments = () => apiJson("/api/rag/documents");

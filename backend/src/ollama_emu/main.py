@@ -11,7 +11,6 @@ import os
 import sys
 import json
 import threading
-import asyncio
 import datetime
 import uuid
 import httpx
@@ -20,12 +19,11 @@ import logging
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form
 from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, Field, field_validator
 from typing import Dict, Optional, List, Any
 import re
 import secrets
-import hashlib
-import hmac
 import ipaddress
 import urllib.parse
 import argparse
@@ -385,6 +383,21 @@ class AuthRequest(BaseModel):
     email: str
     password: str
 
+    @field_validator("email")
+    @classmethod
+    def validate_auth_email(cls, v):
+        v = v.strip().lower()
+        if not v or len(v) > 254:
+            raise ValueError("Invalid email address")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def validate_auth_password(cls, v):
+        if not v or len(v) > 256:
+            raise ValueError("Invalid password")
+        return v
+
 @app.post("/api/auth/register")
 async def auth_register(request: Request, req: AuthRequest):
     ip = _acl._get_client_ip(request)
@@ -540,6 +553,59 @@ async def audit_log_endpoint(request: Request, limit: int = 100, event: str = ""
         raise HTTPException(status_code=403, detail="Admin permission required")
     return _acl.get_audit_log(limit=limit, event=event or None, email=email or None)
 
+@app.get("/api/users")
+async def list_users(request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    return _db.load_all_users()
+
+
+@app.get("/api/users/{email}")
+async def get_user_detail(email: str, request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    user = _db.get_user(email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"email": user["email"], "role": user.get("role", "user"), "created_at": str(user["created_at"])}
+
+
+@app.put("/api/users/{email}")
+async def update_user_role_endpoint(email: str, body: UserUpdateRequest, request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    if body.role not in _acl.ROLE_HIERARCHY:
+        raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {', '.join(_acl.ROLE_HIERARCHY.keys())}")
+    if not _db.update_user_role(email, body.role):
+        raise HTTPException(status_code=404, detail="User not found")
+    _acl.audit_log("user_role_updated", email=auth["email"], details={"target": email, "new_role": body.role})
+    return {"status": "updated", "email": email, "role": body.role}
+
+
+@app.delete("/api/users/{email}")
+async def delete_user_endpoint(email: str, request: Request):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+    if email == auth["email"]:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    if not _db.delete_user(email):
+        raise HTTPException(status_code=404, detail="User not found")
+    _acl.audit_log("user_deleted", email=auth["email"], details={"target": email})
+    return {"status": "deleted", "email": email}
+
+
 @app.get("/api/acl/roles")
 async def acl_roles(request: Request):
     auth = _acl.get_auth_context(request)
@@ -557,6 +623,14 @@ async def acl_roles(request: Request):
 class ConfigRequest(BaseModel):
     provider: str
     api_key: str = ""
+
+    @field_validator("provider")
+    @classmethod
+    def validate_config_provider(cls, v):
+        v = v.strip()
+        if not v or len(v) > 100:
+            raise ValueError("Provider name must be 1-100 chars")
+        return v
 
 class ProviderAddRequest(BaseModel):
     name: str
@@ -590,6 +664,45 @@ class ProviderAddRequest(BaseModel):
             raise ValueError(
                 "Provider name can only contain letters, numbers, spaces, hyphens, underscores"
             )
+        return v
+
+
+class ProviderUpdateRequest(BaseModel):
+    url: Optional[str] = None
+    models_url: Optional[str] = None
+    auth_type: Optional[str] = None
+    default_model: Optional[str] = None
+    free_heuristic: Any = None
+    type: Optional[str] = None
+    api_key: Optional[str] = None
+    active: Optional[bool] = None
+
+    @field_validator("url")
+    @classmethod
+    def validate_upd_url(cls, v):
+        if v is not None:
+            return validate_url(v, "Provider URL")
+        return v
+
+    @field_validator("models_url")
+    @classmethod
+    def validate_upd_models_url(cls, v):
+        if v is not None and v:
+            return validate_url(v, "Models URL")
+        return v
+
+    @field_validator("auth_type")
+    @classmethod
+    def validate_upd_auth_type(cls, v):
+        if v is not None and v not in ("bearer", "header", "none", ""):
+            raise ValueError("auth_type must be 'bearer', 'header', or 'none'")
+        return v
+
+    @field_validator("type")
+    @classmethod
+    def validate_upd_type(cls, v):
+        if v is not None and v not in ("openai", "anthropic", "gemini", "custom"):
+            raise ValueError("type must be 'openai', 'anthropic', 'gemini', or 'custom'")
         return v
 
 
@@ -677,14 +790,87 @@ class MemorySearchRequest(BaseModel):
     limit: int = 20
     session_id: Optional[str] = None
 
+    @field_validator("query")
+    @classmethod
+    def validate_mem_query(cls, v):
+        v = v.strip()
+        if len(v) > 5000:
+            raise ValueError("Query too long (max 5000 chars)")
+        return v
+
+    @field_validator("limit")
+    @classmethod
+    def validate_mem_limit(cls, v):
+        return max(1, min(v, 500))
+
 class MemoryFactRequest(BaseModel):
     fact: str
     source: str = ""
     importance: str = "normal"
     session_id: str = "default"
 
+    @field_validator("fact")
+    @classmethod
+    def validate_fact(cls, v):
+        v = v.strip()
+        if not v:
+            raise ValueError("Fact cannot be empty")
+        if len(v) > 10000:
+            raise ValueError("Fact too long (max 10000 chars)")
+        return v
+
+    @field_validator("importance")
+    @classmethod
+    def validate_importance(cls, v):
+        if v not in ("normal", "high", "low"):
+            raise ValueError("importance must be 'normal', 'high', or 'low'")
+        return v
+
+    @field_validator("session_id")
+    @classmethod
+    def validate_mem_session(cls, v):
+        if len(v) > 200:
+            raise ValueError("session_id too long")
+        return v
+
+class UserUpdateRequest(BaseModel):
+    role: str
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v):
+        v = v.strip().lower()
+        if v not in ("guest", "user", "power_user", "admin"):
+            raise ValueError("role must be 'guest', 'user', 'power_user', or 'admin'")
+        return v
+
 class MemoryClearRequest(BaseModel):
     session_id: Optional[str] = None
+
+    @field_validator("session_id")
+    @classmethod
+    def validate_clear_session(cls, v):
+        if v is not None and len(v) > 200:
+            raise ValueError("session_id too long")
+        return v
+
+
+class MemoryMessageDeleteRequest(BaseModel):
+    confirm: bool = False
+
+
+class RagChunkUpdateRequest(BaseModel):
+    content: str
+
+    @field_validator("content")
+    @classmethod
+    def validate_chunk_content(cls, v):
+        v = v.strip()
+        if not v:
+            raise ValueError("Content cannot be empty")
+        if len(v) > MAX_TEXT_LENGTH:
+            raise ValueError(f"Content too long (max {MAX_TEXT_LENGTH} chars)")
+        return v
 
 # ============================================================
 # PROVIDER HELPERS
@@ -1445,6 +1631,58 @@ async def add_provider(body: ProviderAddRequest):
     return {"status": "added", "name": body.name}
 
 
+@app.get("/api/providers/{name}")
+async def get_provider_detail(name: str):
+    with state_lock:
+        if name not in PROVIDER_CONFIGS:
+            return JSONResponse({"error": "provider not found"}, status_code=404)
+        cfg = PROVIDER_CONFIGS[name]
+        return {
+            "name": name,
+            "url": cfg["url"],
+            "models_url": cfg.get("models_url", ""),
+            "auth_type": cfg["auth_type"],
+            "default_model": cfg["default_model"],
+            "free_heuristic": cfg["free_heuristic"],
+            "type": cfg["type"],
+            "api_key_set": bool(API_KEYS.get(name)),
+            "api_key_masked": ("****" + API_KEYS[name][-4:]) if API_KEYS.get(name) else "",
+        }
+
+
+@app.put("/api/providers/{name}")
+async def update_provider_endpoint(name: str, body: ProviderUpdateRequest):
+    global ACTIVE_PROVIDER
+    with state_lock:
+        if name not in PROVIDER_CONFIGS:
+            return JSONResponse({"error": "provider not found"}, status_code=404)
+        cfg = PROVIDER_CONFIGS[name]
+        if body.url is not None:
+            validate_url(body.url, "Provider URL")
+            cfg["url"] = body.url
+        if body.models_url is not None:
+            validate_url(body.models_url, "Models URL")
+            cfg["models_url"] = body.models_url
+        if body.auth_type is not None:
+            cfg["auth_type"] = body.auth_type
+        if body.default_model is not None:
+            cfg["default_model"] = body.default_model
+        if body.free_heuristic is not None:
+            cfg["free_heuristic"] = body.free_heuristic
+        if body.type is not None:
+            cfg["type"] = body.type
+        if body.api_key is not None:
+            if body.api_key:
+                API_KEYS[name] = body.api_key
+            else:
+                API_KEYS.pop(name, None)
+        if body.active is not None and body.active:
+            ACTIVE_PROVIDER = name
+    update_data = body.model_dump(exclude_unset=True)
+    _db.update_provider(name, update_data)
+    return {"status": "updated", "name": name}
+
+
 @app.delete("/api/providers/{name}")
 async def del_provider(name: str):
     global ACTIVE_PROVIDER
@@ -1989,6 +2227,57 @@ async def memory_context(query: str = "", max_tokens: int = 2000, session_id: st
     return {"context": ctx, "has_context": bool(ctx)}
 
 
+@app.get("/api/memory/messages/{msg_id}")
+async def memory_get_message(msg_id: str):
+    msg = _db.get_memory_message(msg_id)
+    if not msg:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return msg
+
+
+@app.delete("/api/memory/messages/{msg_id}")
+async def memory_delete_message(msg_id: str):
+    if not _db.delete_memory_message(msg_id):
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"status": "deleted", "id": msg_id}
+
+
+@app.delete("/api/memory/messages")
+async def memory_clear_messages(body: MemoryMessageDeleteRequest = None):
+    confirm = body.confirm if body else False
+    if not confirm:
+        raise HTTPException(status_code=400, detail="Set confirm=true to clear all messages")
+    _db.clear_all_messages()
+    return {"status": "cleared"}
+
+
+@app.get("/api/rag/documents/{doc_id}")
+async def rag_get_document(doc_id: str):
+    doc = _db.get_rag_document(doc_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return doc
+
+
+@app.get("/api/rag/chunks/{doc_id}")
+async def rag_list_chunks(doc_id: str):
+    return _db.list_rag_chunks(doc_id)
+
+
+@app.put("/api/rag/chunks/{chunk_id}")
+async def rag_update_chunk(chunk_id: str, body: RagChunkUpdateRequest):
+    if not body.content.strip():
+        raise HTTPException(status_code=400, detail="Content is required")
+    if not _db.update_rag_chunk(chunk_id, body.content):
+        raise HTTPException(status_code=404, detail="Chunk not found")
+    try:
+        from ollama_emu.rag import RAG
+        RAG.reembed_chunk(chunk_id, body.content)
+    except Exception as e:
+        log.warning("Re-embedding failed for chunk %s: %s", chunk_id, e)
+    return {"status": "updated", "id": chunk_id}
+
+
 # ============================================================
 # USAGE & AUTH API
 # ============================================================
@@ -2040,15 +2329,134 @@ async def get_usage_stats():
         }
 
 # ============================================================
+# EXPORT / IMPORT
+# ============================================================
+
+@app.get("/api/export")
+async def export_all_data():
+    """Export all providers, memory facts, and RAG documents as JSON."""
+    with state_lock:
+        providers = [
+            {"name": n, **{k: cfg[k] for k in ("url", "models_url", "auth_type", "default_model", "free_heuristic", "type")},
+             "api_key": API_KEYS.get(n, "")}
+            for n, cfg in PROVIDER_CONFIGS.items()
+        ]
+    facts = []
+    sessions = []
+    try:
+        facts = MEMORY.get_facts()
+        sessions = MEMORY.get_sessions()
+    except Exception:
+        pass
+    docs = []
+    try:
+        docs = RAG.list_documents()
+    except Exception:
+        pass
+    return {
+        "version": VERSION,
+        "exported_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "providers": providers,
+        "memory_facts": facts,
+        "memory_sessions": sessions,
+        "rag_documents": docs,
+    }
+
+
+@app.post("/api/import")
+async def import_all_data(data: dict):
+    """Import providers, memory facts, and optionally wipe existing data."""
+    imported = {"providers": 0, "facts": 0}
+    with state_lock:
+        for prov in data.get("providers", []):
+            name = prov.get("name", "")
+            if not name:
+                continue
+            cfg = {k: prov.get(k) for k in ("url", "models_url", "auth_type", "default_model", "free_heuristic", "type")}
+            cfg = {k: v for k, v in cfg.items() if v is not None}
+            PROVIDER_CONFIGS[name] = cfg
+            if prov.get("api_key"):
+                API_KEYS[name] = prov["api_key"]
+            save_provider_db(name, cfg, prov.get("api_key", ""))
+            imported["providers"] += 1
+        for fact_data in data.get("memory_facts", []):
+            fact = fact_data.get("fact", "")
+            if fact:
+                MEMORY.add_fact(fact, source=fact_data.get("source", ""),
+                                importance=fact_data.get("importance", "normal"),
+                                session_id=fact_data.get("session_id", "default"))
+                imported["facts"] += 1
+    return {"status": "imported", **imported}
+
+
+@app.get("/api/models/free")
+async def free_models():
+    """Return cached list of free models from OpenRouter."""
+    return {"models": FREE_MODEL_CACHE}
+
+
+FREE_MODEL_CACHE: list = []
+FREE_MODEL_LOCK = threading.Lock()
+
+
+def _refresh_free_models():
+    """Background task: fetch free models from OpenRouter."""
+    global FREE_MODEL_CACHE
+    try:
+        import httpx
+        resp = httpx.get("https://openrouter.ai/api/v1/models", timeout=15.0)
+        data = resp.json()
+        free_models = []
+        for m in data.get("data", []):
+            pricing = m.get("pricing", {})
+            prompt_price = float(pricing.get("prompt", "1"))
+            completion_price = float(pricing.get("completion", "1"))
+            if prompt_price == 0 and completion_price == 0:
+                free_models.append({
+                    "id": m.get("id", ""),
+                    "name": m.get("name", ""),
+                    "description": (m.get("description") or "")[:200],
+                })
+        with FREE_MODEL_LOCK:
+            FREE_MODEL_CACHE = free_models
+        log.info("Refreshed free models: %d free models cached", len(free_models))
+    except Exception as e:
+        log.warning("Failed to refresh free models: %s", e)
+
+
+# ── Start background refresh ──
+def _start_free_model_refresh():
+    _refresh_free_models()
+    def _loop():
+        while True:
+            import time
+            time.sleep(3600)  # refresh every hour
+            _refresh_free_models()
+    t = threading.Thread(target=_loop, daemon=True)
+    t.start()
+
+
+# ============================================================
 # SPA FALLBACK - serve Next.js static frontend
 # ============================================================
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    errors = exc.errors()
+    detail = "; ".join(f"{'.'.join(str(p) for p in e.get('loc', []))}: {e.get('msg', '')}" for e in errors)
+    log.warning("Validation error: %s", detail[:200])
+    return JSONResponse({"detail": detail or "Validation error"}, status_code=422)
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     if isinstance(exc, HTTPException):
-        return JSONResponse({"error": exc.detail}, status_code=exc.status_code)
+        return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+    if isinstance(exc, ValueError):
+        return JSONResponse({"detail": str(exc)}, status_code=400)
+    if isinstance(exc, (ConnectionError, TimeoutError)):
+        return JSONResponse({"detail": "Service temporarily unavailable"}, status_code=503)
     log.error("Unhandled exception: %s", mask_error(str(exc)))
-    return JSONResponse({"error": "Internal server error"}, status_code=500)
+    return JSONResponse({"detail": "Internal server error"}, status_code=500)
 
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str):
@@ -2123,6 +2531,8 @@ if __name__ == "__main__":
             pass
 
     log.info("[db] PostgreSQL connected via %s", _db.get_dsn().split("@")[-1] if "@" in _db.get_dsn() else "default")
+
+    _start_free_model_refresh()
 
     try:
         uvicorn.run(app, host=BIND_HOST, port=BIND_PORT)
