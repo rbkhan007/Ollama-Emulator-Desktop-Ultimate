@@ -5,7 +5,7 @@
 export const REPO_URL = "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate";
 export const REPO_RAW = "https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main";
 export const RELEASES_URL = `${REPO_URL}/releases/latest`;
-export const DOWNLOAD_URL = `${REPO_URL}/releases/latest/download/software.exe`;
+export const DOWNLOAD_URL = `${REPO_URL}/releases/latest/download/OllamaEmu.exe`;
 export const NPM_PACKAGE = "@rbkhan007/ollama-emulator-desktop-ultimate";
 export const NPM_URL =
   "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/pkgs/npm/ollama-emulator-desktop-ultimate";
@@ -25,4 +25,4 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || FREETIER_URL;
 export const ASSET_BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 // Direct download of the latest Windows build (GitHub release latest asset).
-export const EXE_URL = `${REPO_URL}/releases/latest/download/software.exe`;
+export const EXE_URL = `${REPO_URL}/releases/latest/download/OllamaEmu.exe`;

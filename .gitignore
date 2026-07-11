@@ -64,7 +64,6 @@ ehthumbs.db
 # Build Artifacts
 # =====================
 *.pyc
-__pycache__
 *.pyo
 *.manifest
 *.log
@@ -88,13 +87,6 @@ temp/
 # =====================
 software.exe
 OllamaEmu.exe
-
-
-# Build artifacts (release assets live on GitHub Releases, not in git)
 Ollama_Emulator.exe
-Ollama_Emulator_Mobile.apk
 *.apk
-OllamaEmu.exe
-software.exe
-dist/
 

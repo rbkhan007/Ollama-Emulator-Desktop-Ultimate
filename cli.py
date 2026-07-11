@@ -20,7 +20,7 @@ import argparse
 import httpx
 
 BASE = os.environ.get("OLLAMA_EMU_URL", "http://localhost:11434").rstrip("/")
-VERSION = "1.0.0"
+VERSION = "1.0.2"
 
 
 def _get(path: str, params: dict | None = None):

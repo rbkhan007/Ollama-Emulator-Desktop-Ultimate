@@ -1,5 +1,5 @@
 ﻿"""
-Ollama Emulator Desktop â€“ Ultimate Edition v1.0.0
+Ollama Emulator Desktop â€“ Ultimate Edition v1.0.2
 ================================================
 Copyright (c) 2024-2026 Rhasan@dev.
 
@@ -85,7 +85,7 @@ from rag import RAGEngine
 from memory import MemorySystem
 from device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
 
-VERSION = "1.0.0"
+VERSION = "1.0.2"
 
 # ============================================================
 # CONFIGURATION & PROVIDER DATABASE
@@ -661,8 +661,6 @@ def get_model_family(model_name: str) -> str:
         return "command"
     elif "jais" in model_lower:
         return "jais"
-    elif "nemotron" in model_lower:
-        return "nemotron"
     elif "stablelm" in model_lower:
         return "stablelm"
     elif "zephyr" in model_lower:
@@ -677,8 +675,6 @@ def get_model_family(model_name: str) -> str:
         return "qwen"
     elif "yi" in model_lower:
         return "yi"
-    elif "phi" in model_lower:
-        return "phi"
     else:
         return "llm"  # Generic fallback
 
