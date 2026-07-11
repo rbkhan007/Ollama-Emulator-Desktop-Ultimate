@@ -25,6 +25,7 @@ from typing import Dict, Optional, List, Any
 import re
 import secrets
 import hashlib
+import hmac
 import ipaddress
 import urllib.parse
 import argparse
@@ -268,6 +269,16 @@ def init_auth_db():
         created_at TEXT NOT NULL,
         FOREIGN KEY (email) REFERENCES users(email)
     )""")
+    # Seed a demo account so the app is usable out of the box.
+    # INSERT OR REPLACE keeps the demo credentials correct even if an older,
+    # differently-hashed row was left behind by a previous version.
+    DEMO_EMAIL = "example@gmail.com"
+    DEMO_PASSWORD = "12345678"
+    conn.execute(
+        "INSERT OR REPLACE INTO users (email, password_hash, created_at) VALUES (?, ?, ?)",
+        (DEMO_EMAIL, hash_password(DEMO_EMAIL, DEMO_PASSWORD),
+         datetime.datetime.now(datetime.UTC).isoformat()),
+    )
     conn.commit()
     conn.close()
 
@@ -278,6 +289,22 @@ def hash_password(email: str, password: str) -> str:
         "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
     )
     return f"pbkdf2${salt}${dk.hex()}"
+
+
+def verify_password(password: str, stored_hash: str) -> bool:
+    # Re-derive the hash using the salt embedded in the stored hash and
+    # compare in constant time. (hash_password() mints a fresh salt each call,
+    # so it must never be used to check a password.)
+    try:
+        algo, salt, dk = stored_hash.split("$")
+        if algo != "pbkdf2":
+            return False
+        expected = hashlib.pbkdf2_hmac(
+            "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
+        ).hex()
+        return hmac.compare_digest(expected, dk)
+    except Exception:
+        return False
 
 def create_session(email: str) -> str:
     token = secrets.token_hex(32)
@@ -412,15 +439,14 @@ async def auth_register(req: AuthRequest):
 @app.post("/api/auth/login")
 async def auth_login(req: AuthRequest):
     email = req.email.strip().lower()
-    pw_hash = hash_password(email, req.password)
     conn = sqlite3.connect(AUTH_DB_PATH)
     try:
-        cur = conn.execute("SELECT email FROM users WHERE email=? AND password_hash=?", (email, pw_hash))
+        cur = conn.execute("SELECT password_hash FROM users WHERE email=?", (email,))
         row = cur.fetchone()
-        if not row:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
     finally:
         conn.close()
+    if not row or not verify_password(req.password, row[0]):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_session(email)
     return {"success": True, "token": token, "email": email}
 
