@@ -6,7 +6,7 @@ import { Particles, GradientOrbs, MeshGrid, ComicHalftone } from "@/components/B
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import MobileSetup from "@/components/MobileSetup";
-import { SITE_URL } from "@/lib/config";
+import { SITE_URL, ASSET_BASE } from "@/lib/config";
 
 const themeScript = `
 (function(){try{var t=localStorage.getItem('ollama-emu-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}catch(e){}})()
@@ -41,25 +41,25 @@ export const metadata: Metadata = {
     siteName: "OllamaEmu",
     title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator that silently routes your prompts to real, 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file.",
-    images: [{ url: "/neural-proxy.svg", width: 800, height: 500, alt: "OllamaEmu neural proxy" }],
+    images: [{ url: `${ASSET_BASE}/neural-proxy.svg`, width: 800, height: 500, alt: "OllamaEmu neural proxy" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator routing prompts to 100% free LLMs. RAG, memory, analytics in one file.",
-    images: ["/neural-proxy.svg"],
+    images: [`${ASSET_BASE}/neural-proxy.svg`],
     creator: "@rbkhan007",
   },
-  icons: { icon: "/favicon.ico", apple: "/brand-mark.ico" },
+  icons: { icon: `${ASSET_BASE}/favicon.ico`, apple: `${ASSET_BASE}/brand-mark.ico` },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
         <head>
-          <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-          <link rel="icon" type="image/vnd.microsoft.icon" href="/brand-mark.ico" />
-          <link rel="apple-touch-icon" href="/brand-mark.ico" />
+          <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
+          <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
+          <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <meta name="theme-color" content="#f8f9fc" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#06060e" media="(prefers-color-scheme: dark)" />

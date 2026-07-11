@@ -6,6 +6,7 @@ import {
   EXE_URL,
   FREETIER_URL,
   SITE_URL,
+  ASSET_BASE,
 } from "@/lib/config";
 
 const features = [
@@ -136,7 +137,7 @@ export default function Home() {
 
         <div style={{ position: "relative", maxWidth: 760, margin: "48px auto 0" }}>
           <img
-            src="/neural-proxy.svg"
+            src={`${ASSET_BASE}/neural-proxy.svg`}
             alt="OllamaEmu neural proxy — routes your prompts to free LLMs"
             className="spidey-panel"
             style={{ width: "100%", height: "auto", display: "block", borderRadius: 22, animation: "floatSlow 7s ease-in-out infinite" }}

@@ -20,5 +20,9 @@ export const FREETIER_URL = `https://${FREETIER_DOMAIN}`;
 // Public base URL of the deployed marketing site (used for SEO: sitemap, robots, canonical, OG).
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || FREETIER_URL;
 
+// Base path prefix for static public assets (empty for the local EXE / root domain;
+// "/Ollama-Emulator-Desktop-Ultimate" when deployed to GitHub Pages project site).
+export const ASSET_BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 // Direct download of the latest Windows build (GitHub release latest asset).
 export const EXE_URL = `${REPO_URL}/releases/latest/download/software.exe`;
