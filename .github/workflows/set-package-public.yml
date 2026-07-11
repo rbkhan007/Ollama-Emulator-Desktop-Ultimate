@@ -13,4 +13,16 @@ jobs:
       - name: Make npm package public
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh api --method PATCH "/repos/rbkhan007/Ollama-Emulator-Desktop-Ultimate/packages/npm/ollama-emulator-desktop-ultimate/visibility" -f visibility=public
+        run: |
+          for url in \
+            "/user/packages/npm/%40rbkhan007%2Follama-emulator-desktop-ultimate/visibility" \
+            "/user/packages/npm/ollama-emulator-desktop-ultimate/visibility" \
+            "/repos/rbkhan007/Ollama-Emulator-Desktop-Ultimate/packages/npm/ollama-emulator-desktop-ultimate/visibility" ; do
+            echo "Trying: $url"
+            if gh api --method PATCH "$url" -f visibility=public; then
+              echo "SUCCESS via $url"
+              exit 0
+            fi
+          done
+          echo "All attempts failed"
+          exit 1
