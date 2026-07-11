@@ -28,6 +28,15 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6eda916e-e96f-4a29-8e38-e8605b42b56c"
+      }
+    },
+    "owner": "rhavex"
   }
 }

@@ -36,9 +36,15 @@ For distribution (an installable `.apk` or `.aab`) without Expo Go:
 ```bash
 cd mobile
 npm install -g eas-cli        # once
-eas login                     # Expo account
+eas login                     # Expo account (or export EXPO_TOKEN for CI/robot)
+eas init --force              # link/register the EAS project (run once)
 eas build -p android --profile apk   # standalone APK (assembleRelease)
 ```
+
+> The EAS project lives under the Expo account **`rhavex`** as
+> `@rhavex/ollama-emu-mobile` (see `expo.extra.eas.projectId` in `app.json`).
+> With a robot token (`EXPO_TOKEN`) you must run `eas init --force` once before
+> the first build. Track progress with `eas build:view <id>` or `eas build:list`.
 
 The build runs in Expo's cloud, so **no local Android SDK is required**. Download
 the artifact from the EAS dashboard and install it.
