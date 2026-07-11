@@ -24,17 +24,22 @@
   --toast-bg: #5a4bd1;
   --skeleton: linear-gradient(90deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.03) 75%);
   color-scheme: light;
-  /* Theme-aware background orbs (comic glow) */
-  --orb-1: rgba(108,92,231,0.14);
-  --orb-2: rgba(0,206,201,0.10);
-  --orb-3: rgba(253,121,168,0.08);
+  /* Theme-aware background orbs (light = water ripples, dark = comic glow) */
+  --orb-1: rgba(56,189,248,0.12);
+  --orb-2: rgba(34,211,238,0.10);
+  --orb-3: rgba(103,232,249,0.08);
   /* Ben-Day comic halftone dots */
-  --comic-dot: rgba(108,92,231,0.07);
-  --comic-dot-2: rgba(0,206,201,0.05);
+  --comic-dot: rgba(56,189,248,0.05);
+  --comic-dot-2: rgba(34,211,238,0.04);
   --comic-bg: rgba(255,255,255,0);
-  /* Comic poster accent outline */
+  /* Poster accent outline */
   --ink: #1a1a2e;
-  --ink-soft: rgba(26,26,46,0.12);
+  --ink-soft: rgba(26,26,46,0.08);
+  /* Water ripple accent */
+  --water-1: rgba(56,189,248,0.15);
+  --water-2: rgba(34,211,238,0.12);
+  --water-3: rgba(103,232,249,0.10);
+  --water-4: rgba(14,165,233,0.08);
   /* Self-hosted fonts (next/font) with system fallbacks */
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
@@ -421,6 +426,82 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 .orb-1 { background: radial-gradient(circle, var(--orb-1) 0%, transparent 70%); }
 .orb-2 { background: radial-gradient(circle, var(--orb-2) 0%, transparent 70%); }
 .orb-3 { background: radial-gradient(circle, var(--orb-3) 0%, transparent 70%); }
+
+/* ===========================
+   WATER RIPPLE EFFECT (LIGHT THEME)
+   =========================== */
+.water-ripple {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.6;
+}
+[data-theme="light"] .water-ripple {
+  background:
+    radial-gradient(ellipse 600px 200px at 20% 30%, var(--water-1) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 250px at 70% 60%, var(--water-2) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 180px at 50% 80%, var(--water-3) 0%, transparent 70%),
+    radial-gradient(ellipse 350px 150px at 80% 20%, var(--water-4) 0%, transparent 70%);
+  animation: waterShift 20s ease-in-out infinite alternate;
+}
+[data-theme="dark"] .water-ripple {
+  display: none;
+}
+@keyframes waterShift {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -15px) scale(1.02); }
+  66% { transform: translate(-15px, 10px) scale(0.98); }
+  100% { transform: translate(10px, -20px) scale(1.01); }
+}
+
+/* Water caustic light pattern */
+.water-caustics {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.08;
+  background:
+    repeating-conic-gradient(var(--water-1) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px,
+    repeating-conic-gradient(var(--water-2) 0% 25%, transparent 0% 50%) 40px 40px / 80px 80px;
+  animation: causticDrift 30s linear infinite;
+}
+[data-theme="light"] .water-caustics {
+  opacity: 0.06;
+}
+[data-theme="dark"] .water-caustics {
+  opacity: 0.03;
+}
+@keyframes causticDrift {
+  0% { background-position: 0 0, 40px 40px; }
+  100% { background-position: 80px 80px, 120px 120px; }
+}
+
+/* Subtle wave overlay for light theme */
+[data-theme="light"] .wave-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(56,189,248,0.03) 40%,
+    rgba(34,211,238,0.06) 70%,
+    rgba(103,232,249,0.04) 100%);
+  animation: waveFloat 8s ease-in-out infinite;
+}
+[data-theme="dark"] .wave-overlay {
+  display: none;
+}
+@keyframes waveFloat {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(-10px); opacity: 0.8; }
+}
 
 /* ===========================
    SPIDER-VERSE COMIC THEME

@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Particles, GradientOrbs, MeshGrid, ComicHalftone } from "@/components/Background";
+import { Particles, GradientOrbs, MeshGrid, ComicHalftone, WaterRipple, WaterCaustics, WaveOverlay } from "@/components/Background";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import MobileSetup from "@/components/MobileSetup";
@@ -112,6 +112,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <GradientOrbs />
             <ComicHalftone />
             <MeshGrid />
+            <WaterRipple />
+            <WaterCaustics />
+            <WaveOverlay />
             <div style={{ position: "relative", zIndex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
               <Navbar />
               <main style={{ flex: 1 }}>

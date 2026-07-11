@@ -1,9 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+function useTheme() {
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  useEffect(() => {
+    const check = () => {
+      const t = document.documentElement.getAttribute("data-theme");
+      setTheme(t === "light" ? "light" : "dark");
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+  return theme;
+}
 
 export function Particles({ count = 20 }: { count?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const theme = useTheme();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -11,7 +27,9 @@ export function Particles({ count = 20 }: { count?: number }) {
     const ctx = canvas.getContext("2d")!;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let animId: number | null = null;
-    const particles: { x: number; y: number; vx: number; vy: number; r: number; a: number; hue: number }[] = [];
+    const particles: { x: number; y: number; vx: number; vy: number; r: number; a: number; hue: number; sat: number; light: number }[] = [];
+
+    const isDark = theme === "dark";
 
     function resize() {
       canvas!.width = window.innerWidth;
@@ -21,15 +39,33 @@ export function Particles({ count = 20 }: { count?: number }) {
     window.addEventListener("resize", resize);
 
     for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: -Math.random() * 0.4 - 0.1,
-        r: Math.random() * 2 + 0.5,
-        a: Math.random() * 0.4 + 0.1,
-        hue: Math.random() * 60 + 240,
-      });
+      if (isDark) {
+        // Dark: purple/pink particles (comic glow)
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: -Math.random() * 0.4 - 0.1,
+          r: Math.random() * 2 + 0.5,
+          a: Math.random() * 0.4 + 0.1,
+          hue: Math.random() * 60 + 240,
+          sat: 70,
+          light: 60,
+        });
+      } else {
+        // Light: blue/teal water particles
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.15,
+          r: Math.random() * 3 + 1,
+          a: Math.random() * 0.15 + 0.05,
+          hue: Math.random() * 40 + 180, // 180-220 = cyan/blue
+          sat: 60,
+          light: 65,
+        });
+      }
     }
 
     function draw() {
@@ -38,11 +74,12 @@ export function Particles({ count = 20 }: { count?: number }) {
         p.x += p.vx;
         p.y += p.vy;
         if (p.y < -10) { p.y = canvas!.height + 10; p.x = Math.random() * canvas!.width; }
+        if (p.y > canvas!.height + 10) { p.y = -10; p.x = Math.random() * canvas!.width; }
         if (p.x < -10) p.x = canvas!.width + 10;
         if (p.x > canvas!.width + 10) p.x = -10;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.a})`;
+        ctx.fillStyle = `hsla(${p.hue}, ${p.sat}%, ${p.light}%, ${p.a})`;
         ctx.fill();
       }
       if (!reduceMotion && !document.hidden) {
@@ -65,7 +102,7 @@ export function Particles({ count = 20 }: { count?: number }) {
     }
 
     if (reduceMotion) {
-      draw(); // single static frame, no loop
+      draw();
     } else {
       start();
     }
@@ -81,7 +118,7 @@ export function Particles({ count = 20 }: { count?: number }) {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [count]);
+  }, [count, theme]);
 
   return (
     <canvas
@@ -94,7 +131,7 @@ export function Particles({ count = 20 }: { count?: number }) {
         height: "100%",
         pointerEvents: "none",
         zIndex: 0,
-        opacity: 0.5,
+        opacity: theme === "dark" ? 0.5 : 0.35,
         contain: "strict",
       }}
     />
@@ -118,6 +155,18 @@ export function GradientOrbs() {
       }} />
     </div>
   );
+}
+
+export function WaterRipple() {
+  return <div className="water-ripple" aria-hidden="true" />;
+}
+
+export function WaterCaustics() {
+  return <div className="water-caustics" aria-hidden="true" />;
+}
+
+export function WaveOverlay() {
+  return <div className="wave-overlay" aria-hidden="true" />;
 }
 
 export function ComicHalftone() {
