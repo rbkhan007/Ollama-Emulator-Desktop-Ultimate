@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/AuthContext";
-import { FeatureIcon, HeroIllustration, ProviderLogos, CodeSnippet } from "@/components/Icons";
+import { FeatureIcon, ProviderLogos, CodeSnippet } from "@/components/Icons";
 import { BrandIcon, ProviderIcon } from "@/components/BrandIcon";
 
 type Status = { active_provider: string; api_key_set: boolean; model_count: number };
@@ -72,7 +72,7 @@ export default function Home() {
           v1.0.0 &middot; Free &amp; Open Source
         </div>
 
-        <h1 className="hero-title" style={{
+        <h1 className="hero-title spidey-title" style={{
           fontWeight: 800, lineHeight: 1.1,
           marginBottom: 24, letterSpacing: "-0.03em",
           maxWidth: 800, margin: "0 auto 24px",
@@ -140,8 +140,26 @@ export default function Home() {
         </div>
 
         <ProviderLogos />
-        <div style={{ marginTop: 60, animation: "floatSlow 6s ease-in-out infinite" }}>
-          <HeroIllustration />
+        <div style={{ marginTop: 60, position: "relative" }}>
+          <img
+            src="/neural-proxy.svg"
+            alt="OllamaEmu neural proxy — routes your prompts to free LLMs"
+            className="spidey-panel"
+            style={{
+              width: "min(760px, 92%)",
+              height: "auto",
+              margin: "0 auto",
+              display: "block",
+              animation: "floatSlow 7s ease-in-out infinite",
+              borderRadius: 22,
+            }}
+          />
+          <div className="spidey-burst" style={{
+            position: "absolute", top: -18, right: "calc(50% - 420px)",
+            width: 96, height: 96, fontSize: 13, transform: "rotate(8deg)",
+          }}>
+            FREE<br />LOCAL<br />AI
+          </div>
         </div>
       </section>
 

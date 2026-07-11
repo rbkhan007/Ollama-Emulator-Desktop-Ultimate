@@ -24,6 +24,17 @@
   --toast-bg: #5a4bd1;
   --skeleton: linear-gradient(90deg, rgba(0,0,0,0.03) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0.03) 75%);
   color-scheme: light;
+  /* Theme-aware background orbs (comic glow) */
+  --orb-1: rgba(108,92,231,0.14);
+  --orb-2: rgba(0,206,201,0.10);
+  --orb-3: rgba(253,121,168,0.08);
+  /* Ben-Day comic halftone dots */
+  --comic-dot: rgba(108,92,231,0.07);
+  --comic-dot-2: rgba(0,206,201,0.05);
+  --comic-bg: rgba(255,255,255,0);
+  /* Comic poster accent outline */
+  --ink: #1a1a2e;
+  --ink-soft: rgba(26,26,46,0.12);
 }
 
 [data-theme="dark"] {
@@ -52,6 +63,14 @@
   --toast-bg: #6c5ce7;
   --skeleton: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
   color-scheme: dark;
+  --orb-1: rgba(124,108,255,0.22);
+  --orb-2: rgba(0,206,201,0.16);
+  --orb-3: rgba(253,121,168,0.14);
+  --comic-dot: rgba(124,108,255,0.10);
+  --comic-dot-2: rgba(0,206,201,0.07);
+  --comic-bg: rgba(6,6,14,0);
+  --ink: #eef0ff;
+  --ink-soft: rgba(238,240,255,0.14);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -389,8 +408,98 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 }
 
 /* ===========================
-   RESPONSIVE
+   THEME-AWARE BACKGROUND ORBS
    =========================== */
+.orb-1, .orb-2, .orb-3 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  transition: background 0.4s ease;
+}
+.orb-1 { background: radial-gradient(circle, var(--orb-1) 0%, transparent 70%); }
+.orb-2 { background: radial-gradient(circle, var(--orb-2) 0%, transparent 70%); }
+.orb-3 { background: radial-gradient(circle, var(--orb-3) 0%, transparent 70%); }
+
+/* ===========================
+   SPIDER-VERSE COMIC THEME
+   =========================== */
+.comic-halftone {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(var(--comic-dot) 1.5px, transparent 1.6px),
+    radial-gradient(var(--comic-dot-2) 1.5px, transparent 1.6px);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 0 0, 11px 11px;
+  opacity: 0.7;
+  transition: background-image 0.4s ease;
+}
+
+/* Poster headline: bold, slightly skewed, ink outline */
+.spidey-title {
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  transform: skewX(-4deg);
+  text-shadow:
+    3px 3px 0 var(--ink-soft),
+    -1px -1px 0 var(--ink-soft);
+}
+
+/* Comic panel: thick ink border, offset drop shadow, slight tilt */
+.spidey-panel {
+  position: relative;
+  border: 2.5px solid var(--ink-soft);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 8px 8px 0 var(--ink-soft);
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, border-color 0.25s;
+}
+.spidey-panel:hover {
+  transform: translate(-3px, -3px) rotate(-0.4deg);
+  box-shadow: 12px 12px 0 var(--ink-soft);
+  border-color: rgba(108,92,231,0.45);
+}
+
+/* Starburst badge (POW! style) */
+.spidey-burst {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(
+    50% 0%, 61% 18%, 83% 12%, 78% 35%, 100% 38%, 85% 57%,
+    97% 78%, 72% 76%, 68% 100%, 50% 82%, 32% 100%, 28% 76%,
+    3% 78%, 15% 57%, 0% 38%, 22% 35%, 17% 12%, 39% 18%
+  );
+  background: var(--gradient-2);
+  color: #fff;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+}
+
+/* Comic speech-bubble accent border for code/snippets */
+.spidey-bubble {
+  border: 2px dashed var(--ink-soft);
+  border-radius: 14px;
+}
+
+/* Subtle comic "boom" accent line under headings */
+.spidey-rule {
+  width: 64px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--gradient-1);
+  margin: 14px auto 0;
+  transform: skewX(-12deg);
+}
+
+/* ===========================
+    RESPONSIVE
+    =========================== */
 @media (max-width: 900px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
 }

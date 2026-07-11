@@ -54,7 +54,7 @@ export default function Landing() {
           v1.0.0 &middot; Free &amp; Open Source &middot; 100% Local
         </div>
 
-        <h1 style={{
+        <h1 className="spidey-title" style={{
           fontWeight: 800, lineHeight: 1.08, letterSpacing: "-0.03em",
           fontSize: "clamp(2.4rem, 6vw, 4.2rem)", margin: "0 auto 20px", maxWidth: 900,
         }}>
@@ -111,6 +111,18 @@ export default function Landing() {
         <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
           or <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>browse all releases</a> &middot; macOS / Linux via <code style={{ fontFamily: "var(--font-mono)" }}>run.sh</code>
         </div>
+
+        <div style={{ position: "relative", maxWidth: 760, margin: "48px auto 0" }}>
+          <img
+            src="/neural-proxy.svg"
+            alt="OllamaEmu neural proxy — routes your prompts to free LLMs"
+            className="spidey-panel"
+            style={{ width: "100%", height: "auto", display: "block", borderRadius: 22, animation: "floatSlow 7s ease-in-out infinite" }}
+          />
+          <div className="spidey-burst" style={{ position: "absolute", top: -16, left: -8, width: 92, height: 92, fontSize: 12, transform: "rotate(-10deg)" }}>
+            FREE<br />LOCAL<br />AI
+          </div>
+        </div>
       </section>
 
       {/* Works with */}
@@ -141,11 +153,11 @@ export default function Landing() {
         <div style={{
           display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 18,
         }}>
-          {features.map((f) => (
-            <div key={f.title} style={{
-              padding: 24, borderRadius: 16, background: "var(--surface)",
-              border: "1px solid var(--glass-border)",
-            }}>
+           {features.map((f) => (
+             <div key={f.title} className="spidey-panel" style={{
+               padding: 24, borderRadius: 16, background: "var(--surface)",
+               border: "1px solid var(--glass-border)",
+             }}>
               <div style={{
                 width: 44, height: 44, borderRadius: 12, marginBottom: 16,
                 display: "flex", alignItems: "center", justifyContent: "center",
@@ -166,11 +178,11 @@ export default function Landing() {
           Live in 60 seconds
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
-          {steps.map((s) => (
-            <div key={s.n} style={{
-              padding: 24, borderRadius: 16, background: "var(--surface)",
-              border: "1px solid var(--glass-border)", textAlign: "center",
-            }}>
+           {steps.map((s) => (
+             <div key={s.n} className="spidey-panel" style={{
+               padding: 24, borderRadius: 16, background: "var(--surface)",
+               border: "1px solid var(--glass-border)", textAlign: "center",
+             }}>
               <div style={{
                 width: 40, height: 40, borderRadius: "50%", margin: "0 auto 14px",
                 background: "var(--gradient-1)", color: "white", fontWeight: 800, fontSize: 18,

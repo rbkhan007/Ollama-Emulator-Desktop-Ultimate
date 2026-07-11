@@ -104,26 +104,24 @@ export function Particles({ count = 20 }: { count?: number }) {
 export function GradientOrbs() {
   return (
     <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, overflow: "hidden", contain: "strict" }}>
-      <div style={{
-        position: "absolute", top: "-15%", right: "-10%", width: 500, height: 500, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(108,92,231,0.1) 0%, transparent 70%)",
+      <div className="orb-1" style={{
+        position: "absolute", top: "-15%", right: "-10%", width: 500, height: 500,
         animation: "orbFloat1 20s ease-in-out infinite",
-        filter: "blur(40px)",
       }} />
-      <div style={{
-        position: "absolute", bottom: "-10%", left: "-5%", width: 400, height: 400, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(0,206,201,0.08) 0%, transparent 70%)",
+      <div className="orb-2" style={{
+        position: "absolute", bottom: "-10%", left: "-5%", width: 400, height: 400,
         animation: "orbFloat2 25s ease-in-out infinite",
-        filter: "blur(40px)",
       }} />
-      <div style={{
-        position: "absolute", top: "40%", left: "50%", width: 350, height: 350, borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(253,121,168,0.06) 0%, transparent 70%)",
+      <div className="orb-3" style={{
+        position: "absolute", top: "40%", left: "50%", width: 350, height: 350,
         animation: "orbFloat3 18s ease-in-out infinite",
-        filter: "blur(50px)",
       }} />
     </div>
   );
+}
+
+export function ComicHalftone() {
+  return <div className="comic-halftone" aria-hidden="true" />;
 }
 
 export function MeshGrid() {

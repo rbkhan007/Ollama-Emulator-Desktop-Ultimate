@@ -37,7 +37,7 @@ For distribution (an installable `.apk` or `.aab`) without Expo Go:
 cd mobile
 npm install -g eas-cli        # once
 eas login                     # Expo account
-eas build -p android --profile preview   # APK; use "production" for AAB
+eas build -p android --profile apk   # standalone APK (assembleRelease)
 ```
 
 The build runs in Expo's cloud, so **no local Android SDK is required**. Download

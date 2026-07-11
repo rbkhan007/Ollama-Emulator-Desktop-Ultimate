@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Particles, GradientOrbs, MeshGrid } from "@/components/Background";
+import { Particles, GradientOrbs, MeshGrid, ComicHalftone } from "@/components/Background";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import MobileSetup from "@/components/MobileSetup";
@@ -47,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             <Particles count={18} />
             <GradientOrbs />
+            <ComicHalftone />
             <MeshGrid />
             <div style={{ position: "relative", zIndex: 1, minHeight: "100vh", display: "flex", flexDirection: "column" }}>
               <Navbar />
