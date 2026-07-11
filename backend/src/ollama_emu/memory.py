@@ -12,7 +12,7 @@ import logging
 from typing import List, Dict, Optional
 from collections import deque
 
-from db import get_cursor, is_connected
+from ollama_emu.db import get_cursor, is_connected
 
 log = logging.getLogger("ollama-emu.memory")
 

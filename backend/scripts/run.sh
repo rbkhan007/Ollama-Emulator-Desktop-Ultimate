@@ -3,6 +3,8 @@
 # Starts: Backend + Frontend + Database (all in one)
 set -e
 
+cd "$(dirname "$0")/../.."
+
 echo ""
 echo "  ============================================"
 echo "   OllamaEmu Desktop Ultimate v1.0.2"
@@ -13,7 +15,7 @@ echo ""
 
 # ── Python dependencies ──────────────────────────────
 echo "  [1/4] Installing Python dependencies..."
-pip3 install -r requirements.txt -q 2>/dev/null
+pip3 install -e . -q 2>/dev/null
 echo "        Done."
 echo ""
 
@@ -38,15 +40,8 @@ if command -v npm &> /dev/null; then
         else
             echo "  [!] Frontend build failed. The server will run without the GUI."
         fi
-    elif grep -q "Ollama-Emulator-Desktop-Ultimate" frontend/out/index.html 2>/dev/null; then
-        echo "        Rebuilding frontend (wrong basePath detected)..."
-        rm -rf frontend/out
-        cd frontend
-        NEXT_PUBLIC_BASE_PATH="" NEXT_PUBLIC_SITE_URL="" NEXT_PUBLIC_FREETIER_DOMAIN="" npm run build 2>&1
-        cd ..
-        echo "        Frontend rebuilt for local use."
     else
-        echo "        Frontend already built correctly."
+        echo "        Frontend already built."
     fi
 else
     echo "  [2/4] Node.js not found — skipping frontend build."
@@ -71,4 +66,4 @@ echo "  │  Press Ctrl+C to stop                      │"
 echo "  └──────────────────────────────────────────┘"
 echo ""
 
-python3 ollama_emu_desktop.py
+python3 -m ollama_emu.main

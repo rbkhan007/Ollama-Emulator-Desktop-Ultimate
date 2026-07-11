@@ -22,7 +22,7 @@ from typing import List, Dict, Optional, Tuple
 
 import numpy as np
 
-from db import get_cursor, get_conn, is_connected
+from ollama_emu.db import get_cursor, get_conn, is_connected
 
 log = logging.getLogger("ollama-emu.rag")
 

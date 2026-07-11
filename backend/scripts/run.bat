@@ -1,7 +1,7 @@
 @echo off
 title OllamaEmu — Desktop Ultimate
 chcp 65001 >nul
-cd /d "%~dp0"
+cd /d "%~dp0\..\.."
 
 echo.
 echo  ============================================
@@ -13,7 +13,7 @@ echo.
 
 :: ── Python dependencies ──────────────────────────────
 echo  [1/4] Installing Python dependencies...
-pip install -r requirements.txt -q 2>nul
+pip install -e . -q 2>nul
 if %errorlevel% neq 0 (
     echo  [!] pip install failed. Make sure Python 3.11+ is on PATH.
     pause
@@ -49,22 +49,7 @@ if %errorlevel% equ 0 (
             echo  [!] Frontend build failed. The server will run without the GUI.
         )
     ) else (
-        :: Force rebuild if built with wrong basePath
-        findstr /C:"Ollama-Emulator-Desktop-Ultimate" "frontend\out\index.html" >nul 2>&1
-        if %errorlevel% equ 0 (
-            echo        Rebuilding frontend (wrong basePath detected)...
-            rmdir /s /q "frontend\out" 2>nul
-            pushd frontend
-            set "NEXT_PUBLIC_BASE_PATH="
-            set "NEXT_PUBLIC_SITE_URL="
-            set "NEXT_PUBLIC_FREETIER_DOMAIN="
-            call npm install --silent 2>nul
-            call npm run build 2>&1
-            popd
-            echo        Frontend rebuilt for local use.
-        ) else (
-            echo        Frontend already built correctly.
-        )
+        echo        Frontend already built.
     )
 ) else (
     echo  [2/4] Node.js not found — skipping frontend build.
@@ -89,7 +74,7 @@ echo  │  Press Ctrl+C to stop                      │
 echo  └──────────────────────────────────────────┘
 echo.
 
-python ollama_emu_desktop.py
+python -m ollama_emu.main
 if %errorlevel% neq 0 (
     echo.
     echo  [!] Server exited with an error.

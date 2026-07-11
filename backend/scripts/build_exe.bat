@@ -1,7 +1,7 @@
 @echo off
 title OllamaEmu — Build EXE
 chcp 65001 >nul
-cd /d "%~dp0"
+cd /d "%~dp0\..\.."
 
 echo ============================================
 echo  Building OllamaEmu Desktop EXE
@@ -25,20 +25,6 @@ if %errorlevel% neq 0 (
 popd
 echo [OK] Frontend built.
 
-:: Verify no basePath prefix in build
-findstr /C:"Ollama-Emulator-Desktop-Ultimate" "frontend\out\index.html" >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [WARN] basePath detected in build! Rebuilding...
-    rmdir /s /q "frontend\out" 2>nul
-    pushd frontend
-    set "NEXT_PUBLIC_BASE_PATH="
-    set "NEXT_PUBLIC_SITE_URL="
-    set "NEXT_PUBLIC_FREETIER_DOMAIN="
-    call npm run build 2>&1
-    popd
-    echo [OK] Frontend rebuilt correctly.
-)
-
 :: Install Python build deps
 echo [2/5] Installing build dependencies...
 pip install pyinstaller -q 2>nul
@@ -55,11 +41,11 @@ echo [4/5] Building executable (this may take a while)...
 python -m PyInstaller --onefile --console ^
     --name "OllamaEmu" ^
     --add-data "frontend\out;frontend\out" ^
-    --add-data "rag.py;." ^
-    --add-data "memory.py;." ^
-    --add-data "acl.py;." ^
-    --add-data "db.py;." ^
-    --add-data "README.md;." ^
+    --add-data "backend\src\ollama_emu\rag.py;ollama_emu" ^
+    --add-data "backend\src\ollama_emu\memory.py;ollama_emu" ^
+    --add-data "backend\src\ollama_emu\acl.py;ollama_emu" ^
+    --add-data "backend\src\ollama_emu\db.py;ollama_emu" ^
+    --add-data "docs\README.md;." ^
     --hidden-import numpy ^
     --collect-data numpy ^
     --hidden-import psycopg2 ^
@@ -82,8 +68,8 @@ python -m PyInstaller --onefile --console ^
     --workpath "build" ^
     --specpath "." ^
     --clean ^
-    --icon "brand-mark.ico" ^
-    ollama_emu_desktop.py 2>&1
+    --icon "resources\brand-mark.ico" ^
+    backend\src\ollama_emu\main.py 2>&1
 
 if %errorlevel% neq 0 (
     echo [FAIL] PyInstaller build failed!
@@ -94,9 +80,9 @@ echo [OK] Executable built.
 
 :: Copy docs
 echo [5/5] Finalizing...
-copy README.md dist\README.md 2>nul
-copy .env.example dist\.env.example 2>nul
-copy opencode.example.json dist\opencode.example.json 2>nul
+copy docs\README.md dist\README.md 2>nul
+copy configs\.env.example dist\.env.example 2>nul
+copy configs\opencode.example.json dist\opencode.example.json 2>nul
 echo [OK] Done!
 
 echo.

@@ -134,7 +134,7 @@ def set_auth_context(request, ctx: dict):
 
 def extract_auth(request) -> dict:
     """Extract auth from request: session token, API key, or basic auth."""
-    from db import get_session, get_user
+    from ollama_emu.db import get_session, get_user
 
     auth = {"authenticated": False, "role": "guest", "email": None, "method": None}
 
@@ -165,7 +165,7 @@ def extract_auth(request) -> dict:
             email, password = decoded.split(":", 1)
             user = get_user(email)
             if user:
-                from db import verify_password
+                from ollama_emu.db import verify_password
                 if verify_password(password, user["password_hash"]):
                     role = "admin" if email == ADMIN_EMAIL else "user"
                     auth.update({"authenticated": True, "role": role, "email": email, "method": "basic"})

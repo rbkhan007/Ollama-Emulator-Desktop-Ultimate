@@ -33,7 +33,7 @@ def _post(path: str, json_body: dict | None = None):
 
 def cmd_serve(args):
     import uvicorn
-    import ollama_emu_desktop
+    from ollama_emu import main as ollama_emu_desktop
 
     host = args.host
     port = args.port

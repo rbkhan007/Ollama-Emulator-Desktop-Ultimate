@@ -29,7 +29,7 @@ import hmac
 import ipaddress
 import urllib.parse
 import argparse
-import acl as _acl
+from ollama_emu import acl as _acl
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", stream=sys.stdout)
 log = logging.getLogger("ollama-emu")
@@ -82,9 +82,9 @@ def sanitize_filename(filename: str) -> str:
 def mask_error(msg: str) -> str:
     return msg.replace(os.sep, "/").split("Traceback")[0].strip()[:200]
 
-from rag import RAGEngine
-from memory import MemorySystem
-from device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
+from ollama_emu.rag import RAGEngine
+from ollama_emu.memory import MemorySystem
+from ollama_emu.device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
 
 VERSION = "1.0.2"
 
@@ -249,9 +249,9 @@ MODEL_CACHE: List[Dict] = []
 # ============================================================
 # POSTGRESQL PERSISTENCE (providers, auth, RAG, memory)
 # ============================================================
-import db as _db
+from ollama_emu import db as _db
 
-FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "out")
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "frontend", "out")
 
 
 def init_db():
@@ -1796,7 +1796,7 @@ async def v1_messages(request: Request):
 @app.get("/api/rag/stats")
 async def rag_stats():
     stats = RAG.stats()
-    from rag import vector_stats
+    from ollama_emu.rag import vector_stats
     stats["vector"] = vector_stats()
     return stats
 
@@ -1887,13 +1887,13 @@ async def rag_clear(body: RagClearRequest = None):
 
 @app.get("/api/rag/vector-stats")
 async def rag_vector_stats():
-    from rag import vector_stats
+    from ollama_emu.rag import vector_stats
     return vector_stats()
 
 
 @app.post("/api/rag/rebuild-index")
 async def rag_rebuild_index():
-    from rag import drop_embedding_index, create_embedding_index
+    from ollama_emu.rag import drop_embedding_index, create_embedding_index
     drop_embedding_index()
     create_embedding_index()
     return {"success": True, "message": "Vector index rebuilt"}

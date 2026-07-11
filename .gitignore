@@ -17,6 +17,8 @@ build/
 *.sqlite3
 _rag_tmp/
 *.pyc
+.venv/
+venv/
 
 # =====================
 # Node / Frontend

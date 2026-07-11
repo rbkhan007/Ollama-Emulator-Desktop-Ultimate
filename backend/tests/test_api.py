@@ -117,7 +117,7 @@ def test_postgres_connection():
 
 def test_frontend_build():
     print("\n[2] Checking Frontend Build")
-    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend", "out")
+    out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "frontend", "out")
     index = os.path.join(out_dir, "index.html")
     if os.path.isfile(index):
         ok(f"Frontend built: {index}")
@@ -300,12 +300,11 @@ def test_non_existent():
 
 def start_server():
     global SERVER_PROC
-    server_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ollama_emu_desktop.py")
+    project_root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
     log("Starting server...")
-    server_dir = os.path.dirname(server_script)
     SERVER_PROC = subprocess.Popen(
-        [sys.executable, "-u", server_script],
-        cwd=server_dir,
+        [sys.executable, "-u", "-m", "ollama_emu.main"],
+        cwd=project_root,
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
         env=os.environ
     )
