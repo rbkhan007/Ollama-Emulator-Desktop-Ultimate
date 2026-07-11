@@ -82,8 +82,8 @@ export function BrandIcon({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "rgba(255,255,255,0.08)",
-          color: "#fff",
+          background: "rgba(108,92,231,0.12)",
+          color: "var(--text, #1a1a2e)",
           fontSize: size * 0.4,
           fontWeight: 700,
         }}

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
 import { useAuth } from "@/lib/AuthContext";
-import { LogoSvg } from "./Icons";
 import { BrandIcon } from "./BrandIcon";
 
 const links = [
@@ -143,7 +142,7 @@ export default function Navbar() {
             color: "#6c5ce7",
             fontWeight: 600,
             letterSpacing: "0.05em",
-          }}>v1.0.0</span>
+            }}>v1.0.2</span>
         </Link>
         <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 6, flex: 1 }}>
           {links.map((l) => {

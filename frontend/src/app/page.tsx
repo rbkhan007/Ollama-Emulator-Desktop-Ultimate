@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   REPO_URL,
   RELEASES_URL,
@@ -8,6 +9,17 @@ import {
   SITE_URL,
   ASSET_BASE,
 } from "@/lib/config";
+
+export const metadata: Metadata = {
+  title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+  description: "Stop paying $20/mo for Claude & ChatGPT. OllamaEmu gives you 26 free LLMs on one port. RAG knowledge base, persistent memory, usage analytics, and a polished dashboard.",
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+    description: "26 free LLMs on one port. RAG, memory, analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, and more.",
+    url: SITE_URL,
+  },
+};
 
 const features = [
   { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "#6c5ce7" },
@@ -87,7 +99,7 @@ export default function Home() {
           fontSize: 13, color: "var(--text-muted)", marginBottom: 28, fontWeight: 500,
         }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#00b894", boxShadow: "0 0 10px #00b894" }} />
-          v1.0.0 &middot; Free &amp; Open Source &middot; 100% Local
+          v1.0.2 &middot; Free &amp; Open Source &middot; 100% Local
         </div>
 
         <h1 className="spidey-title" style={{

@@ -1,4 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/config";
+
+export const metadata: Metadata = {
+  title: "About — OllamaEmu",
+  description: "OllamaEmu emulates the Ollama API and routes prompts to 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file. Compare with Ollama, LM Studio, Jan, and GPT4All.",
+  alternates: { canonical: `${SITE_URL}/about` },
+  openGraph: {
+    title: "About OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+    description: "Learn how OllamaEmu emulates the Ollama API and routes prompts to 100% free LLMs with RAG, memory, and a polished dashboard.",
+    url: `${SITE_URL}/about`,
+  },
+};
 
 const pages = [
   { href: "/", title: "Home", desc: "Hero, features, quick start, comparison, and the live neural-proxy diagram." },

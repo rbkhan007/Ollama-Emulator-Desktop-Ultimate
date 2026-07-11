@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/navigation";
 import { apiJson } from "@/lib/api";
-import { PageIcon } from "@/components/Icons";
 import { ProviderIcon } from "@/components/BrandIcon";
 
 interface UsageEntry {
@@ -146,7 +145,11 @@ export default function UsagePage() {
       <div className="page-container">
         <div className="page-header">
           <div className="page-header-icon" style={{ background: "rgba(253,203,110,0.1)" }}>
-            <PageIcon type="settings" color="#fdcb6e" />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fdcb6e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
           </div>
           <div>
             <h1>Usage Analytics</h1>
@@ -158,7 +161,6 @@ export default function UsagePage() {
   }
 
   const modelNames = Object.keys(stats.byModel);
-  const totalCost = 0;
 
   return (
     <div className="page-container">

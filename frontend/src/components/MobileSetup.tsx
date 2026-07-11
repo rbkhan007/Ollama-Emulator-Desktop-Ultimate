@@ -48,10 +48,10 @@ export default function MobileSetup() {
     >
       <div style={{ width: "100%", maxWidth: 360 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6, textAlign: "center" }}>
-          Ollama Emulator
+          OllamaEmu
         </h1>
         <p style={{ fontSize: 13, color: "#94a3b8", textAlign: "center", marginBottom: 24, lineHeight: 1.6 }}>
-          Enter the address of the desktop server running Ollama Emulator (same Wi-Fi network).
+          Enter the address of the desktop server running OllamaEmu (same Wi-Fi network).
         </p>
         <input
           aria-label="Server URL"

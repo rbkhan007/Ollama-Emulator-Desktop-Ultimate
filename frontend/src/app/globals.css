@@ -664,3 +664,8 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   margin-top: 6px;
   display: flex; gap: 8px;
 }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
