@@ -1,49 +1,97 @@
-# 🦄 OllamaEmu — The Ultimate Free-LLM Desktop Router
+# OllamaEmu — Stop Paying $20/mo for Claude & ChatGPT
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main/logo.svg" alt="OllamaEmu" width="320" />
 </p>
 
 <p align="center">
+  <b>Turn any free API key into a local Ollama / OpenAI / Anthropic-compatible server.</b><br/>
+  RAG, memory, usage analytics, and a polished dashboard — all on one port.
+</p>
+
+<p align="center">
   <a href="https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest"><img src="https://img.shields.io/github/v/release/rbkhan007/Ollama-Emulator-Desktop-Ultimate?color=2da44e&label=release&style=flat-square" alt="Release" /></a>
   <img src="https://img.shields.io/github/downloads/rbkhan007/Ollama-Emulator-Desktop-Ultimate/total?style=flat-square" alt="Downloads" />
   <img src="https://img.shields.io/github/license/rbkhan007/Ollama-Emulator-Desktop-Ultimate?style=flat-square" alt="License" />
-  <img src="https://img.shields.io/npm/v/@rbkhan007/ollama-emulator-desktop-ultimate?color=blue&style=flat-square" alt="npm" />
   <img src="https://img.shields.io/badge/python-3.11%2B-blue?style=flat-square" alt="Python" />
+  <img src="https://img.shields.io/badge/100%25-FOSS-green?style=flat-square" alt="FOSS" />
   <a href="https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/stargazers"><img src="https://img.shields.io/github/stars/rbkhan007/Ollama-Emulator-Desktop-Ultimate?style=social" alt="Stars" /></a>
 </p>
 
-<p align="center">
-  <b>Stop paying $20/mo for Claude & ChatGPT. Turn <i>any</i> free API key into a local Ollama / OpenAI / Anthropic-compatible server.</b>
-</p>
+---
 
-**OllamaEmu** (repo: `Ollama-Emulator-Desktop-Ultimate`) runs a *fake* Ollama server on your machine that silently routes to **real, 100% FREE LLMs** — OpenRouter, OpenAI, Anthropic, Gemini, DeepSeek, Groq, Mistral, Together — and gives you RAG, persistent memory, usage analytics, and a polished dashboard.
+## Why Are You Still Paying $20/mo?
 
-> 🔌 Works with **Claude Code**, **OpenCode**, **Cursor**, **Continue.dev**, and every Ollama-compatible AI coding tool — all on a single port (`localhost:11434`).
+| Service | Monthly Cost | Annual Cost | Models Included |
+|---------|-------------|-------------|-----------------|
+| ChatGPT Plus | $20 | $240 | GPT-4o only |
+| Claude Pro | $20 | $240 | Claude 3.5 Sonnet only |
+| Cursor Pro | $20 | $240 | Limited GPT-4 requests |
+| GitHub Copilot | $10-19 | $120-228 | Limited to VS Code |
+| **OllamaEmu** | **$0** | **$0** | **10+ free models** |
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main/Rhasan%40dev.png" alt="Developed by Rhasan@dev" width="220" />
-</p>
+**OllamaEmu runs on your machine. Your data never leaves. No subscription. No limits.**
 
 ---
 
-## 🚀 Why OllamaEmu?
+## Free Models You Get (No API Key Required for OpenRouter Free Tier)
 
-- 💸 **$0 forever free tier** — 10+ free models (Gemini Flash, DeepSeek, Llama, Qwen, Phi-4…) through OpenRouter.
-- 🧩 **Drop-in replacement** — speak Ollama `/api/*`, OpenAI `/v1/*`, *and* Anthropic `/v1/messages` from one box.
-- 🖥️ **One executable** — `run.bat` / `run.sh` and you're live on `http://localhost:11434`.
-- 🧠 **Built-in brains** — RAG knowledge base (FTS5 + TF-IDF) and auto-saving memory, all local.
-- 📊 **Analytics** — real-time token tracking, resonance, accuracy, hourly activity.
-- 🔒 **Private by design** — your keys & docs never leave your machine; SSRF-protected, hashed auth.
-- 📱 **Fully Responsive & Blazing Fast** — the static site adapts to mobile, tablet, and desktop; it ships self-hosted fonts via `next/font` and includes built-in SEO (`sitemap.xml`, `robots.txt`, canonical URL, OpenGraph + Twitter cards, JSON-LD `SoftwareApplication` + `FAQPage`, and a web app manifest).
+| Model | Provider | Quality | Best For |
+|-------|----------|---------|----------|
+| Gemini 2.0 Flash | Google | High | General chat, code |
+| DeepSeek R1 | DeepSeek | High | Reasoning, math |
+| DeepSeek V3 | DeepSeek | High | Code generation |
+| Llama 3.1 70B | Meta | High | General purpose |
+| Llama 3.1 8B | Meta | Medium | Fast responses |
+| Qwen 2.5 72B | Alibaba | High | Multilingual |
+| Phi-4 | Microsoft | Medium | Code, reasoning |
+| Mistral 7B | Mistral | Medium | Fast, efficient |
+| Gemma 2 9B | Google | Medium | General chat |
+| Nous Hermes 2 | Nous | Medium | Roleplay, creative |
 
-If this saves you a subscription, ⭐ **[star the repo](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate)** and tell a friend. Virality is the only price.
+**All 100% free through OpenRouter's free tier.** No credit card. No limits. No catches.
 
 ---
 
-## ⚡ Quick Start
+## How It Works
 
+```
+Your PC (OllamaEmu)          Cloud (Free LLMs)
+┌─────────────────┐          ┌─────────────────┐
+│  localhost:11434 │  ─────>  │  OpenRouter      │
+│  (fake Ollama)   │          │  Gemini Flash    │
+│                  │  ─────>  │  DeepSeek R1     │
+│  RAG + Memory    │          │  Llama 3.1       │
+│  Usage Analytics │          │  Qwen 2.5        │
+└─────────────────┘          └─────────────────┘
+```
+
+**OllamaEmu** pretends to be Ollama (`localhost:11434`) but routes your prompts to **free cloud LLMs**. Your coding tools (Claude Code, Cursor, OpenCode) don't know the difference — they think they're talking to a local model, but you're getting cloud-quality responses for free.
+
+---
+
+## Quick Start
+
+### Option 1: Download the EXE (Windows)
 ```bash
+# Download OllamaEmu.exe from:
+# https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest
+
+# Double-click to run
+OllamaEmu.exe
+```
+
+### Option 2: Download the APK (Android)
+```bash
+# Download OllamaEmu.apk from the same release
+# Install on your phone, connect to your PC's IP
+```
+
+### Option 3: Run from Source
+```bash
+git clone https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate.git
+cd Ollama-Emulator-Desktop-Ultimate
+
 # Windows
 run.bat
 
@@ -55,144 +103,69 @@ Opens `http://localhost:11434` automatically. Add your API key in **Settings** a
 
 ---
 
-## 📥 Download & Install
+## Download & Install
 
-| Option | What you get | Link |
-|--------|--------------|------|
-| **Windows EXE** | Single-file `OllamaEmu.exe` (embedded frontend, no install) | [📦 Releases → `OllamaEmu.exe` / `software.exe`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
-| **Android APK** | Branded standalone `OllamaEmu.apk` (portrait-locked, full parity) | [📦 Releases → `OllamaEmu.apk`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
-| **From source** | `run.bat` / `run.sh` | clone + run (see below) |
-| **npm (GitHub Packages)** | `@rbkhan007/ollama-emulator-desktop-ultimate` | see [Install from GitHub Packages](#-install-from-github-packages) |
-
-> 🌐 **Free Tier gateway** — the live public site is **`https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate`** (a free GitHub Pages deployment). The button is wired via `FREETIER_DOMAIN` in [`frontend/src/lib/config.ts`](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/blob/main/frontend/src/lib/config.ts); you can override it with `NEXT_PUBLIC_FREETIER_DOMAIN`.
-
----
-
-## 📦 Install from GitHub Packages
-
-The project is also published to GitHub Packages as an npm package:
-
-```bash
-# 1. Point the @rbkhan007 scope at GitHub Packages (project .npmrc already does this)
-@rbkhan007:registry=https://npm.pkg.github.com
-
-# 2. Authenticate with a GitHub token that has read:packages
-npm login --scope=@rbkhan007 --auth-type=legacy --registry=https://npm.pkg.github.com
-
-# 3. Install
-npm install @rbkhan007/ollama-emulator-desktop-ultimate
-```
-
-> Requires a GitHub personal access token (classic) with the `read:packages` scope.
+| Platform | What You Get | Link |
+|----------|-------------|------|
+| **Windows EXE** | Single-file `OllamaEmu.exe` (embedded dashboard, no install) | [Download](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
+| **Android APK** | Branded app with 8 screens (Chat, RAG, Memory, Providers, Usage, Settings, About) | [Download](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
+| **From Source** | `run.bat` / `run.sh` | [Clone & Run](#quick-start) |
+| **npm** | `@rbkhan007/ollama-emulator-desktop-ultimate` | [GitHub Packages](#install-from-github-packages) |
+| **Web (Free)** | Live demo at GitHub Pages | [Open Free Tier](https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate) |
 
 ---
 
-## ✨ Features
+## Features
 
-| Feature | Description |
+| Feature | What It Does |
 |---------|-------------|
-| **Ollama-compatible API** | `/api/tags`, `/api/chat`, `/api/generate`, `/api/show` — drop-in replacement |
-| **OpenAI-compatible proxy** | `/v1/models`, `/v1/chat/completions`, `/v1/completions` |
-| **Anthropic-compatible proxy** | `/v1/messages` — works with Claude Code via `ANTHROPIC_BASE_URL` |
-| **Multi-provider routing** | OpenAI, Anthropic, Gemini, Groq, DeepSeek, OpenRouter, Mistral, Together |
-| **$0 Free Tier** | 10+ free models through OpenRouter (Gemini Flash, DeepSeek, Llama, Qwen, Phi-4, etc.) |
+| **Ollama API** | `/api/tags`, `/api/chat`, `/api/generate` — drop-in replacement |
+| **OpenAI API** | `/v1/models`, `/v1/chat/completions` — works with any OpenAI client |
+| **Anthropic API** | `/v1/messages` — works with Claude Code via `ANTHROPIC_BASE_URL` |
+| **10+ Free Models** | Gemini Flash, DeepSeek R1/V3, Llama 3.1, Qwen 2.5, Phi-4, Mistral |
+| **Multi-Provider** | OpenRouter, OpenAI, Anthropic, Gemini, Groq, DeepSeek, Mistral, Together |
 | **RAG Knowledge Base** | Upload docs, paste text, FTS5 + TF-IDF search |
 | **Persistent Memory** | Auto-saves conversations, facts, sessions to SQLite |
 | **Usage Analytics** | Real-time token tracking, resonance, accuracy, hourly activity |
-| **Local Auth System** | Email/password login, all data stored locally |
-| **Theme Support** | Dark/light mode with system preference detection |
-| **SPA Dashboard** | ~10 pages: Home, Playground, Usage, Settings, Knowledge (RAG), Memory, Login, Register, Setup, About |
+| **Local Auth** | Email/password login, all data stays on your machine |
+| **Dark/Light Theme** | System preference detection, manual toggle |
+| **Mobile App** | 8-screen React Native app (EXPO) with full parity |
+| **One-Click Launch** | `run.bat` / `run.sh` — live in 2 seconds |
 
 ---
 
-## 🏗️ Architecture
+## Why Build Your Own LLM Gateway?
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main/architecture.svg" alt="OllamaEmu architecture" width="780" />
-</p>
+### The Problem
+Every AI coding tool needs a subscription:
+- **Claude Code** wants Anthropic ($20/mo)
+- **Cursor** wants Pro ($20/mo) for GPT-4
+- **OpenCode** needs an API key
+- **Continue.dev** needs a provider
 
----
+That's **$60+/month** just to use different tools.
 
-## 🖧 Server Layout
+### The Solution
+**OllamaEmu** sits in the middle. One server. One port. All tools work.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main/server-layout.svg" alt="OllamaEmu server layout" width="780" />
-</p>
+```
+Claude Code  ──┐
+Cursor       ──┼──> OllamaEmu (localhost:11434) ──> Free Cloud LLMs
+OpenCode     ──┤
+Continue.dev ──┘
+```
 
----
-
-## 🔌 API Endpoints
-
-### Ollama-compatible
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/tags` | GET | List available models |
-| `/api/chat` | POST | Streaming chat completion |
-| `/api/generate` | POST | Text generation |
-| `/api/show` | GET | Model details |
-| `/api/version` | GET | Server version |
-
-### OpenAI-compatible
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/v1/models` | GET | List models |
-| `/v1/chat/completions` | POST | Chat completion |
-| `/v1/completions` | POST | Text completion |
-
-### Anthropic-compatible
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/v1/messages` | POST | Messages API (streaming) |
-
-### RAG (Knowledge Base)
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/rag/stats` | GET | Collection statistics |
-| `/api/rag/documents` | GET | List documents |
-| `/api/rag/collections` | GET | List collections |
-| `/api/rag/upload` | POST | Upload file for indexing |
-| `/api/rag/add-text` | POST | Add plain text |
-| `/api/rag/search` | POST | Semantic search |
-| `/api/rag/context` | GET | Build RAG context |
-| `/api/rag/documents/{id}` | DELETE | Remove document |
-
-### Memory
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/memory/stats` | GET | Memory statistics |
-| `/api/memory/messages` | GET | Conversation messages |
-| `/api/memory/facts` | GET/POST | Stored facts |
-| `/api/memory/facts/{id}` | DELETE | Remove fact |
-| `/api/memory/search` | POST | Search memory |
-| `/api/memory/sessions` | GET | List sessions |
-| `/api/memory/clear` | POST | Clear memory |
-
-### Usage & Config
-| Route | Method | Description |
-|-------|--------|-------------|
-| `/api/usage/stats` | GET | Real-time usage analytics |
-| `/api/status` | GET | Server status |
-| `/api/providers` | GET | List provider configs |
-| `/api/providers/list` | GET | Detailed provider list |
-| `/api/providers/add` | POST | Add custom provider |
-| `/api/providers/activate` | POST | Switch active provider (key-safe) |
-| `/api/providers/{name}` | DELETE | Remove provider |
-| `/api/config` | POST | Save active provider config |
+**You save $240+/year.** The same quality. Zero cost. Full privacy.
 
 ---
 
-## 🤖 Using with AI Coding Tools
+## Using with AI Coding Tools
 
 ### Claude Code
 ```bash
-# Set your OpenRouter API key
 set OLLAMA_EMU_API_KEY=sk-or-v1-your-key-here
-
-# Point Claude to the emulator
 set ANTHROPIC_BASE_URL=http://localhost:11434
 set ANTHROPIC_API_KEY=sk-local
-
-# Run Claude with a free model
 ANTHROPIC_MODEL=openrouter/auto claude
 ```
 
@@ -222,20 +195,84 @@ OpenAI-compatible endpoint:
   API Key:  sk-local
 ```
 
+### Any Ollama Client
+```
+OLLAMA_HOST=http://localhost:11434 ollama list
+```
+
 ---
 
-## 🔒 Security
+## API Endpoints
+
+### Ollama-Compatible
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/tags` | GET | List available models |
+| `/api/chat` | POST | Streaming chat completion |
+| `/api/generate` | POST | Text generation |
+| `/api/show` | GET | Model details |
+
+### OpenAI-Compatible
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/v1/models` | GET | List models |
+| `/v1/chat/completions` | POST | Chat completion |
+| `/v1/completions` | POST | Text completion |
+
+### Anthropic-Compatible
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/v1/messages` | POST | Messages API (streaming) |
+
+### RAG (Knowledge Base)
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/rag/upload` | POST | Upload file for indexing |
+| `/api/rag/add-text` | POST | Add plain text |
+| `/api/rag/search` | POST | Semantic search |
+| `/api/rag/documents` | GET | List documents |
+| `/api/rag/documents/{id}` | DELETE | Remove document |
+
+### Memory
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/memory/stats` | GET | Memory statistics |
+| `/api/memory/messages` | GET | Conversation messages |
+| `/api/memory/facts` | GET/POST | Stored facts |
+| `/api/memory/search` | POST | Search memory |
+
+### Provider Management
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/status` | GET | Active provider, key status |
+| `/api/providers/list` | GET | Configured providers |
+| `/api/providers/activate` | POST | Switch active provider |
+| `/api/providers/add` | POST | Add custom provider |
+| `/api/providers/{name}` | DELETE | Remove provider |
+| `/api/config` | POST | Save provider config |
+
+---
+
+## Architecture
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/main/architecture.svg" alt="OllamaEmu architecture" width="780" />
+</p>
+
+---
+
+## Security
 
 - **All data is local** — credentials, keys, and documents never leave your machine
-- **Password hashing** — PBKDF2-HMAC-SHA256 with a per-user random salt, stored in a local SQLite database (`auth.db`)
-- **Input validation** — provider URLs are scheme-checked and blocked from resolving to private/loopback/metadata addresses (SSRF protection), with path sanitization and size limits on all inputs
-- **Secure-by-default binding** — the server binds to `127.0.0.1` and uses a restricted CORS policy; use `--host 0.0.0.0` to opt into LAN exposure (opens CORS to all origins)
-- **Error masking** — internal paths and stack traces never exposed to clients
+- **Password hashing** — PBKDF2-HMAC-SHA256 with per-user random salt
+- **SSRF protection** — provider URLs are scheme-checked and blocked from private/loopback addresses
+- **Secure binding** — server binds to `127.0.0.1` by default; use `--host 0.0.0.0` for LAN
+- **Error masking** — internal paths and stack traces never exposed
 - **File upload safety** — random temp filenames, extension sanitization, 10MB limit
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
 | Variable | Description |
@@ -243,12 +280,12 @@ OpenAI-compatible endpoint:
 | `OLLAMA_EMU_API_KEY` | Pre-set API key on startup |
 | `OLLAMA_EMU_PROVIDER` | Active provider name (default: `openrouter`) |
 
-### Provider DB
-Provider configs are persisted in `providers.db` (SQLite). On first run, defaults for 8 providers are seeded automatically. Add custom providers through the Settings page.
+### Provider Database
+Provider configs are persisted in `providers.db` (SQLite). On first run, 8 providers are seeded automatically. Add custom providers through the Settings page or mobile app.
 
 ---
 
-## 🛠️ Building
+## Building
 
 ### Standalone EXE (Windows)
 ```bash
@@ -257,9 +294,8 @@ build_exe.bat
 Produces `dist/OllamaEmu.exe` — a single-file executable with embedded frontend.
 
 ### Requirements
-
-- **Python 3.11+** (the backend uses `datetime.UTC`, introduced in 3.11)
-- Node.js 18+ (for the frontend build)
+- **Python 3.11+** (backend uses `datetime.UTC`)
+- **Node.js 18+** (frontend build)
 
 ### Manual Development
 ```bash
@@ -272,28 +308,40 @@ cd frontend
 npm install
 npm run dev    # http://localhost:3000
 ```
-The dev frontend proxies to the backend on port 11434.
 
-### Deploy the public site (free, on GitHub)
-
-The merged homepage + About + comparison pages are pure static and deploy free to **GitHub Pages** straight from this repo (no backend needed for the marketing pages). The dynamic app pages (`/playground`, `/settings`, `/rag`, `/memory`, `/usage`) call the local API and need the EXE running.
-
-**GitHub Pages (zero-config, free):**
-1. Repo → **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. Push to `main` — the [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) workflow builds `frontend/out` (with `GITHUB_PAGES=true` so assets use the `/Ollama-Emulator-Desktop-Ultimate` base path) and publishes it.
-3. Live at `https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate`.
-4. (Optional) add a **custom domain** in Settings → Pages; then set `NEXT_PUBLIC_SITE_URL` and `NEXT_PUBLIC_FREETIER_DOMAIN` to it in the workflow env.
-
-**Cloudflare Pages (alternative, free custom domain):**
-1. Cloudflare Pages → **Create a project** → connect the repo.
-2. Build command: `cd frontend && npm install && npm run build` · Output: `frontend/out` · Node 18+.
-3. Live at `https://<project>.pages.dev`; add a custom domain in the dashboard.
-
-SEO is built in: `sitemap.xml`, `robots.txt`, canonical URL, OpenGraph + Twitter cards, and JSON-LD (`SoftwareApplication`) are generated into `frontend/out`. Submit `https://<your-domain>/sitemap.xml` in Google Search Console and Bing Webmaster Tools to get indexed and surface on trending/AI-overview results.
+### Deploy the Public Site (Free on GitHub)
+1. Repo → **Settings → Pages → Source: GitHub Actions**
+2. Push to `main` — the [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) workflow builds and publishes
+3. Live at `https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate`
 
 ---
 
-## 📁 Project Structure
+## Mobile App
+
+A **React Native (Expo)** app with 8 screens:
+
+| Screen | What It Does |
+|--------|-------------|
+| **Connect** | Enter server URL, test connection |
+| **Chat** | Streaming playground with model picker |
+| **Knowledge** | RAG: upload docs, search, manage collections |
+| **Memory** | Facts, sessions, recent messages |
+| **Providers** | Set active provider, paste API keys, add/delete |
+| **Usage** | Token tracking, per-model stats |
+| **Settings** | Server URL, account, device info |
+| **About** | App overview, supported tools |
+
+```bash
+cd mobile
+npm install
+npx expo start        # scan QR with Expo Go
+```
+
+Full details: **[MOBILE.md](MOBILE.md)**
+
+---
+
+## Project Structure
 
 ```
 ├── ollama_emu_desktop.py    # Main server (FastAPI, 1400+ lines)
@@ -304,58 +352,42 @@ SEO is built in: `sitemap.xml`, `robots.txt`, canonical URL, OpenGraph + Twitter
 ├── requirements.txt         # Python dependencies
 ├── run.bat / run.sh         # One-click launchers
 ├── build_exe.bat            # PyInstaller build script
-├── claude-code-env.bat/.sh  # Turnkey Claude Code launchers
-├── opencode.example.json    # OpenCode configuration example
-├── .env.example             # Environment variables template
-├── frontend/
-│   ├── src/
-│   │   ├── app/             # Next.js app routes (~10 pages)
-│   │   ├── components/      # Navbar, Icons, Background
-│   │   └── lib/             # api, AuthContext, ThemeContext
-│   ├── next.config.js       # Static export config (output: "export")
-│   └── package.json
+├── frontend/                # Next.js dashboard (static export)
+│   ├── src/app/             # ~15 pages
+│   ├── src/components/      # Navbar, Icons, Background
+│   └── src/lib/             # API, Auth, Theme
+├── mobile/                  # React Native (Expo) app
+│   ├── app/                 # 8 screens
+│   ├── components/          # UI, BottomNav, MessageBubble
+│   └── lib/                 # API client, AppContext
 └── README.md
 ```
 
 ---
 
-## 📱 Mobile (Android / iOS)
+## Share & Spread the Word
 
-A **React Native (Expo)** app (`mobile/`) is the phone client. It connects to the
-desktop/server running `ollama_emu_desktop.py` (same Wi-Fi) and proxies chats to
-the configured LLM provider. On first launch the app prompts for the server URL
-(e.g. `http://192.168.1.50:11434`).
+If this saves you a subscription, **share it**:
 
-The app ships with a **proper branded identity** — a custom app icon, Android
-adaptive icon (foreground mark on a brand gradient), monochrome notification
-icon, and a full-bleed splash screen — all generated from `brand-mark.svg`. It is
-**locked to portrait** (no auto-rotation) and the layout is responsive (centered
-on tablets, scaled padding on small phones).
+- **Twitter/X**: [Tweet about OllamaEmu](https://twitter.com/intent/tweet?text=Stop%20paying%20%2420%2Fmo%20for%20Claude%20%26%20ChatGPT.%20OllamaEmu%20gives%20you%2010%2B%20free%20LLMs%20on%20one%20port.%20%23OllamaEmu%20%23FreeLLM%20%23AI)
+- **Reddit**: Share in r/LocalLLaMA, r/selfhosted, r/ChatGPT, r/opensource
+- **Hacker News**: [Submit to HN](https://news.ycombinator.com/submitlink?u=https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate&t=OllamaEmu%20%E2%80%94%20Stop%20paying%20%2420%2Fmo%20for%20Claude%20%26%20ChatGPT)
+- **GitHub**: Star the repo, fork it, open issues
 
-It has **full parity with the desktop app** — all 8 screens are available on your
-phone and fully workable: **Connect**, **Chat (Playground)** with model picker,
-**Knowledge (RAG)** upload/search, **Memory** facts/sessions, **Providers**
-(set active provider, paste API keys, add & delete providers), **Usage**,
-**Settings**, and **About**. Any device on your network can do the same work as
-the EXE — chat with the same free models, manage providers, search RAG, and
-inspect usage — not just one locked machine.
-
-The branded standalone **`OllamaEmu.apk`** is attached to every
-[GitHub Release](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest),
-built automatically by EAS. You can also run it instantly with **Expo Go** (scan
-the QR from `npx expo start`) — no build needed — or produce a local APK/AAB with
-`eas build -p android`.
-
-```bash
-cd mobile
-npm install
-npx expo start        # scan the QR with the Expo Go app on your phone
-```
-
-Full instructions, the API contract, and EAS build steps: see **[MOBILE.md](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/blob/main/MOBILE.md)**.
+**The only price is virality.** Star the repo and tell a friend.
 
 ---
 
-## 📜 License
+## Contributing
+
+1. Fork the repo
+2. Create a feature branch
+3. Make your changes
+4. Run `tsc --noEmit` (frontend) and `python -m py_compile ollama_emu_desktop.py` (backend)
+5. Submit a PR
+
+---
+
+## License
 
 Copyright (c) 2024-2026 Rhasan@dev. All rights reserved.
