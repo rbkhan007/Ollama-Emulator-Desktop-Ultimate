@@ -171,7 +171,7 @@ Opens `http://localhost:11434` automatically. Add your API key in **Settings** a
 | **Android APK** | Branded app with 8 screens (Chat, RAG, Memory, Providers, Usage, Settings, About) | [Download](https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/releases/latest) |
 | **From Source** | `run.bat` / `run.sh` | [Clone & Run](#quick-start) |
 | **npm** | `@rbkhan007/ollama-emulator-desktop-ultimate` | [GitHub Packages](#install-from-github-packages) |
-| **Web (Free)** | Live demo at GitHub Pages | [Open Free Tier](https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate) |
+| **Web (Free)** | Live demo at custom domain | [Open Free Tier](https://ollama-emulator-desktop-ultimate.io) |
 
 ---
 
@@ -499,7 +499,7 @@ npm run dev    # http://localhost:3000
 ### Deploy the Public Site (Free on GitHub)
 1. Repo → **Settings → Pages → Source: GitHub Actions**
 2. Push to `main` — the [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) workflow builds and publishes
-3. Live at `https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate`
+3. Live at `https://ollama-emulator-desktop-ultimate.io`
 
 ---
 

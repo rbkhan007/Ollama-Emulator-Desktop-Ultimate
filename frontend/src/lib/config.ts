@@ -14,7 +14,7 @@ export const NPM_URL =
 // GitHub Pages site. Override with NEXT_PUBLIC_FREETIER_DOMAIN at build time
 // (e.g. your own custom domain) if you deploy a dedicated hosted gateway.
 export const FREETIER_DOMAIN =
-  process.env.NEXT_PUBLIC_FREETIER_DOMAIN || "rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate";
+  process.env.NEXT_PUBLIC_FREETIER_DOMAIN || "ollama-emulator-desktop-ultimate.io";
 export const FREETIER_URL = `https://${FREETIER_DOMAIN}`;
 
 // Public base URL of the deployed marketing site (used for SEO: sitemap, robots, canonical, OG).
