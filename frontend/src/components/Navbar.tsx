@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
 import { REPO_URL } from "@/lib/config";
-import BrandIcon from "@/components/BrandIcon";
+import { BrandIcon } from "@/components/BrandIcon";
 
 const links = [
   { href: "/", label: "Home", icon: "home" },
