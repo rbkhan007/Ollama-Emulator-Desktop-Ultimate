@@ -5,7 +5,7 @@ services:
     image: pgvector/pgvector:pg17
     environment:
       POSTGRES_USER: ollamaemu
-      POSTGRES_PASSWORD: ${PGPASSWORD:-ollamaemu}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
       POSTGRES_DB: ollamaemu
     ports:
       - "5432:5432"
@@ -26,7 +26,7 @@ services:
       PGHOST: postgres
       PGPORT: 5432
       PGUSER: ollamaemu
-      PGPASSWORD: ${PGPASSWORD:-ollamaemu}
+      PGPASSWORD: ${PGPASSWORD}
       PGDATABASE: ollamaemu
       OLLAMA_EMU_BIND: 0.0.0.0
       OLLAMA_EMU_PORT: 11434

@@ -46,7 +46,7 @@ def get_dsn() -> str:
     host = os.environ.get("PGHOST", "127.0.0.1")
     port = os.environ.get("PGPORT", "5432")
     user = os.environ.get("PGUSER", "ollamaemu")
-    password = os.environ.get("PGPASSWORD", "ollamaemu")
+    password = os.environ.get("PGPASSWORD", "")
     dbname = os.environ.get("PGDATABASE", "ollamaemu")
     sslmode = os.environ.get("PGSSLMODE", "")
     dsn = f"host={host} port={port} user={user} password={password} dbname={dbname}"

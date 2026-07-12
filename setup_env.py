@@ -25,9 +25,9 @@ VERCEL_ENV_VARS = {
 
 RENDER_ENV_VARS = {
     "COOKIE_SECURE": "true",
-    "SSLCOMMERZ_SANDBOX": "true",
-    "SSLCOMMERZ_STORE_ID": "rhasa6a5391325bb76",
-    "SSLCOMMERZ_STORE_PASSWORD": "rhasa6a5391325bb76@ssl",
+    "SSLCOMMERZ_SANDBOX": os.environ.get("SSLCOMMERZ_SANDBOX", "true"),
+    "SSLCOMMERZ_STORE_ID": os.environ.get("SSLCOMMERZ_STORE_ID", ""),
+    "SSLCOMMERZ_STORE_PASSWORD": os.environ.get("SSLCOMMERZ_STORE_PASSWORD", ""),
 }
 
 def run_cmd(cmd, check=True, capture=False):

@@ -27,7 +27,7 @@ if "%OLLAMA_EMU_API_KEY%"=="" (
 
 set OLLAMA_EMU_PROVIDER=openrouter
 set ANTHROPIC_BASE_URL=http://localhost:11434
-set ANTHROPIC_API_KEY=sk-local
+set ANTHROPIC_API_KEY=%ANTHROPIC_API_KEY%
 set ANTHROPIC_MODEL=openrouter/auto
 
 echo [1/2] Starting OllamoMUI on http://localhost:11434 ...

@@ -93,7 +93,7 @@ def test_postgres_connection():
         host = os.environ.get("PGHOST", "127.0.0.1")
         port = os.environ.get("PGPORT", "5432")
         user = os.environ.get("PGUSER", "ollamaemu")
-        password = os.environ.get("PGPASSWORD", "postgres")
+        password = os.environ.get("PGPASSWORD", "")
         dbname = os.environ.get("PGDATABASE", "ollamaemu")
         conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=dbname)
         cur = conn.cursor()
@@ -193,7 +193,7 @@ def test_auth():
 
     # Seeded user login
     demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
-    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "")
     r = request("POST", "/api/auth/login", {"email": demo_email, "password": demo_password}, expect=200)
     if r.get("success"):
         ok(f"Seeded user login: {demo_email}")
@@ -253,13 +253,13 @@ def test_providers_crud():
 def test_users_crud():
     print("\n[6] Users CRUD")
     admin_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
-    admin_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    admin_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "")
 
     # Login as admin (try primary, fall back to default)
     r = request("POST", "/api/auth/login", {"email": admin_email, "password": admin_password}, expect=200)
     if not r.get("token"):
         admin_email = "admin@localhost"
-        admin_password = "changeme123"
+        admin_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "")
         r = request("POST", "/api/auth/login", {"email": admin_email, "password": admin_password}, expect=200)
         if not r.get("token"):
             fail("Admin login failed — skipping user tests")
