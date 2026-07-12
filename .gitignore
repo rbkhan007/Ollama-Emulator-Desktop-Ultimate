@@ -103,3 +103,6 @@ Ollama_Emulator.exe
 # Platform tools (Android SDK)
 # =====================
 platform-tools/
+
+.vercel
+.env*

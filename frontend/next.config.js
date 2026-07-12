@@ -5,7 +5,7 @@ const apiBase = process.env.NEXT_PUBLIC_API_BASE || "";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: process.env.VERCEL ? undefined : "export",
-  distDir: "out",
+  distDir: process.env.VERCEL ? ".next" : "out",
   basePath: basePath,
   assetPrefix: basePath,
   images: { unoptimized: process.env.VERCEL ? false : true },
