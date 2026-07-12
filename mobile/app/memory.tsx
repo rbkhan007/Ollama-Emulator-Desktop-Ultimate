@@ -7,7 +7,6 @@ import {
   TextInput,
   Alert,
   StyleSheet,
-  ActivityIndicator,
   Pressable,
 } from "react-native";
 import { useApp } from "../lib/AppContext";

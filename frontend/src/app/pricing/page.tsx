@@ -1,7 +1,6 @@
 import { SITE_URL, STRIPE_WEB_PRO, STRIPE_DESKTOP_PRO, STRIPE_MOBILE_ULTIMATE, REPO_URL } from "@/lib/config";
 import type { Metadata } from "next";
 
-const S = typeof document !== "undefined" ? `${document.location.origin}` : SITE_URL;
 
 export const metadata: Metadata = {
   title: "Pricing — OllamoMUI",

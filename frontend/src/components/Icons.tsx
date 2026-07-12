@@ -1,4 +1,3 @@
-"use client";
 
 export function LogoSvg({ size = 48 }: { size?: number }) {
   return (

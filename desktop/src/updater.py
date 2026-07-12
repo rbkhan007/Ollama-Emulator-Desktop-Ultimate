@@ -121,7 +121,6 @@ class UpdaterManager(QObject):
 
             subprocess.Popen([script_path], shell=True)
             self.updateFinished.emit(True, "Update installed. Restarting...")
-            QObject.sender = None
             sys.exit(0)
         except Exception as e:
             self._status = "error"

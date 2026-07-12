@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
+  Pressable,
 } from "react-native";
 import { useRouter, Link } from "expo-router";
 import { useApp } from "../lib/AppContext";

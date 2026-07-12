@@ -7,7 +7,6 @@ import {
   TextInput,
   Alert,
   StyleSheet,
-  ActivityIndicator,
   Pressable,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";

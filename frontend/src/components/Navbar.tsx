@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
-import { BrandIcon } from "./BrandIcon";
+import { REPO_URL } from "@/lib/config";
+import BrandIcon from "@/components/BrandIcon";
 
 const links = [
   { href: "/", label: "Home", icon: "home" },
@@ -194,7 +195,7 @@ export default function Navbar() {
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
 
-        <a href="https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" style={{
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
           marginLeft: 8,
           padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
           background: "var(--surface)", color: "var(--text)",
@@ -226,7 +227,7 @@ export default function Navbar() {
             {l.label}
           </Link>
         ))}
-        <a href="https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: "center" }}>
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: "center" }}>
           ⭐ Star on GitHub
         </a>
       </div>

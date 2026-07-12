@@ -17,7 +17,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 qml_src = PROJECT_ROOT / "desktop" / "src" / "qml"
 qml_files = []
 for f in qml_src.rglob("*"):
-    if f.is_file() and f.suffix in (".qml", ".js", ".ttf", ".otf") or f.name == "qmldir":
+    if f.is_file() and (f.suffix in (".qml", ".js", ".ttf", ".otf") or f.name == "qmldir"):
         rel = f.relative_to(qml_src.parent)  # relative to desktop/src/
         qml_files.append((str(f), str(rel.parent)))
 

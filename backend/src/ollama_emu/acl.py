@@ -38,6 +38,8 @@ SESSION_EXPIRY_HOURS = int(os.environ.get("OLLAMA_EMU_SESSION_EXPIRY", "720"))
 MAX_SESSIONS_PER_USER = int(os.environ.get("OLLAMA_EMU_MAX_SESSIONS", "5"))
 API_KEY_HEADER = "X-API-Key"
 ADMIN_EMAIL = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
+if ADMIN_EMAIL == "admin@localhost":
+    log.warning("ADMIN_EMAIL is set to default 'admin@localhost' — this creates a privilege escalation risk. Set OLLAMA_EMU_ADMIN_EMAIL to a specific admin address.")
 IP_BLOCKLIST = set(filter(None, os.environ.get("OLLAMA_EMU_IP_BLOCKLIST", "").split(",")))
 IP_ALLOWLIST = set(filter(None, os.environ.get("OLLAMA_EMU_IP_ALLOWLIST", "").split(",")))
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() in ("1", "true", "yes")
@@ -140,13 +142,13 @@ def extract_auth(request) -> dict:
 
     auth = {"authenticated": False, "role": "guest", "email": None, "method": None}
 
-    # 1. Session token (cookie or header)
-    token = request.cookies.get("session_token") or request.headers.get("Authorization", "").removeprefix("Bearer ").strip()
+    # 1. Session token (cookie only)
+    token = request.cookies.get("session_token")
     if token and len(token) == 64:
         session = get_session(token)
         if session:
             user = get_user(session["email"])
-            role = "admin" if session["email"] == ADMIN_EMAIL else "user"
+            role = user.get("role", "user") if user else "user"
             auth.update({"authenticated": True, "role": role, "email": session["email"], "method": "session", "token": token})
             return auth
 

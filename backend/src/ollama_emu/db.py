@@ -63,9 +63,20 @@ def init_pool(minconn: int = 1, maxconn: int = 10) -> bool:
     global _pool, _connected
     if _pool is not None:
         return True
-    dsn = get_dsn()
+    url = os.environ.get("OLLAMA_EMU_DATABASE_URL", "").strip()
     try:
-        _pool = psycopg2.pool.ThreadedConnectionPool(minconn, maxconn, dsn)
+        if url:
+            _pool = psycopg2.pool.ThreadedConnectionPool(minconn, maxconn, url)
+        else:
+            host = os.environ.get("PGHOST", "127.0.0.1")
+            port = os.environ.get("PGPORT", "5432")
+            user = os.environ.get("PGUSER", "ollamaemu")
+            password = os.environ.get("PGPASSWORD", "")
+            dbname = os.environ.get("PGDATABASE", "ollamaemu")
+            _pool = psycopg2.pool.ThreadedConnectionPool(
+                minconn, maxconn,
+                host=host, port=port, user=user, password=password, dbname=dbname,
+            )
         _connected = True
         log.info("PostgreSQL pool created (min=%d, max=%d)", minconn, maxconn)
         return True
@@ -121,7 +132,7 @@ def get_cursor(commit: bool = True):
 def hash_password(email: str, password: str) -> str:
     salt = secrets.token_hex(16)
     dk = hashlib.pbkdf2_hmac(
-        "sha256", f"{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
+        "sha256", f"{email}::{password}::ollamaemu".encode(), bytes.fromhex(salt), 200_000
     )
     return f"pbkdf2${salt}${dk.hex()}"
 

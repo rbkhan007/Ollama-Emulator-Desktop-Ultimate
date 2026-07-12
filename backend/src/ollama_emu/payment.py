@@ -80,15 +80,14 @@ def _save_license(user_id: str, raw_key: str, plan: str, expiry_days: int = 30):
     with db.get_cursor() as cur:
         cur.execute(
             """
-            INSERT INTO licenses (user_id, key_hash, raw_key, plan, expiry_date)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO licenses (user_id, key_hash, plan, expiry_date)
+            VALUES (%s, %s, %s, %s)
             ON CONFLICT (user_id, plan) DO UPDATE
             SET key_hash = EXCLUDED.key_hash,
-                raw_key = EXCLUDED.raw_key,
                 expiry_date = EXCLUDED.expiry_date,
                 activated = false
             """,
-            (user_id, key_hash, raw_key, plan, expiry),
+            (user_id, key_hash, plan, expiry),
         )
     return raw_key, key_hash
 

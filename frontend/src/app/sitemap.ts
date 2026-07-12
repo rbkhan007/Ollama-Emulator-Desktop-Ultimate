@@ -7,12 +7,8 @@ const routes = [
   "",
   "/about",
   "/playground",
-  "/usage",
-  "/settings",
   "/rag",
   "/memory",
-  "/login",
-  "/register",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

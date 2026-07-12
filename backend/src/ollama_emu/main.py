@@ -362,7 +362,7 @@ def configure_cors(application):
         application.add_middleware(HTTPSRedirectMiddleware)
     application.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["*"],
+        allowed_hosts=["localhost", "127.0.0.1", "::1", "0.0.0.0"],
     )
     application.middleware("http")(_acl.create_acl_middleware(application))
 
@@ -901,7 +901,9 @@ class RagChunkUpdateRequest(BaseModel):
 # ============================================================
 
 def get_headers(provider: str, api_key: str) -> Dict[str, str]:
-    cfg = PROVIDER_CONFIGS[provider]
+    cfg = PROVIDER_CONFIGS.get(provider)
+    if not cfg:
+        raise HTTPException(400, "Unknown provider")
     h: Dict[str, str] = {"Content-Type": "application/json"}
     if cfg["auth_type"] == "bearer":
         h["Authorization"] = f"Bearer {api_key}"
@@ -912,14 +914,18 @@ def get_headers(provider: str, api_key: str) -> Dict[str, str]:
 
 
 def _resolve_model(provider: str, requested_model: str) -> str:
-    cfg = PROVIDER_CONFIGS[provider]
+    cfg = PROVIDER_CONFIGS.get(provider)
+    if not cfg:
+        raise HTTPException(400, "Unknown provider")
     if not requested_model or requested_model in ("openrouter/free", "default", ""):
         return cfg["default_model"]
     return requested_model
 
 
 def _resolve_target(provider: str, api_key: str, model: str):
-    cfg = PROVIDER_CONFIGS[provider]
+    cfg = PROVIDER_CONFIGS.get(provider)
+    if not cfg:
+        raise HTTPException(400, "Unknown provider")
     headers = get_headers(provider, api_key)
     url = cfg["url"]
     if cfg["type"] == "gemini":
@@ -1758,7 +1764,10 @@ async def get_models():
             models = []
             for m in data.get("data", data.get("models", [])):
                 mid = m.get("id", m.get("name", ""))
-                is_free = bool(cfg["free_heuristic"]) if cfg["free_heuristic"] != "api" else m.get("pricing", {}).get("prompt", "1") == "0"
+                pricing = m.get("pricing", {})
+                if not isinstance(pricing, dict):
+                    pricing = {}
+                is_free = bool(cfg["free_heuristic"]) if cfg["free_heuristic"] != "api" else pricing.get("prompt", "1") == "0"
                 if "free" in mid.lower():
                     is_free = True
                 models.append({"name": mid, "free": is_free})
@@ -1800,7 +1809,10 @@ async def get_all_models():
                     data = resp.json()
                     for m in data.get("data", data.get("models", [])):
                         mid = m.get("id", m.get("name", ""))
-                        is_free = bool(cfg["free_heuristic"]) if cfg["free_heuristic"] != "api" else m.get("pricing", {}).get("prompt", "1") == "0"
+                        pricing = m.get("pricing", {})
+                        if not isinstance(pricing, dict):
+                            pricing = {}
+                        is_free = bool(cfg["free_heuristic"]) if cfg["free_heuristic"] != "api" else pricing.get("prompt", "1") == "0"
                         if "free" in mid.lower():
                             is_free = True
                         live_models.append({"name": mid, "free": is_free})
@@ -1911,7 +1923,7 @@ async def ollama_chat(request: Request):
         provider = ACTIVE_PROVIDER
         api_key = API_KEYS.get(provider, "")
     if not api_key:
-        return JSONResponse({"error": "No API key set. Go to Settings."}, status_code=401)
+        return JSONResponse({"error": "No API key set."}, status_code=401)
     cfg = PROVIDER_CONFIGS[provider]
     model = _resolve_model(provider, body.get("model", cfg["default_model"]))
     user_msg = ""

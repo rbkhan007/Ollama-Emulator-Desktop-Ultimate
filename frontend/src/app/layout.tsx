@@ -3,7 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Particles, GradientOrbs, MeshGrid, ComicHalftone, WaterRipple, WaterCaustics, WaveOverlay } from "@/components/Background";
+import { GradientOrbs, MeshGrid } from "@/components/Background";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import { DbProvider } from "@/lib/DbContext";
