@@ -24,6 +24,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, List, Set, Callable
 from functools import wraps
+from starlette.requests import Request
 
 log = logging.getLogger("ollama-emu.acl")
 

@@ -122,7 +122,7 @@ def build_parser() -> argparse.ArgumentParser:
     serve = sub.add_parser("serve", help="Start the proxy server")
     serve.add_argument("--host", default=os.environ.get("OLLAMA_EMU_BIND", "127.0.0.1"),
                        help="Bind host (default 127.0.0.1; use 0.0.0.0 for LAN)")
-    serve.add_argument("--port", type=int, default=int(os.environ.get("OLLAMA_EMU_PORT", "11434")),
+    serve.add_argument("--port", type=int, default=int(os.environ.get("PORT", os.environ.get("OLLAMA_EMU_PORT", "11434"))),
                        help="Bind port (default 11434)")
     serve.set_defaults(func=cmd_serve)
 
