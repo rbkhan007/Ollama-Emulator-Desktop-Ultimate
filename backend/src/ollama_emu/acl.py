@@ -59,7 +59,7 @@ class Permission:
     USER_MANAGE = "user.manage"
     SYSTEM_ADMIN = "system.admin"
 
-ALL_PERMISSIONS = {p for p in dir(Permission) if not p.startswith("_") and p.isupper()}
+ALL_PERMISSIONS = {getattr(Permission, p) for p in dir(Permission) if not p.startswith("_") and p.isupper()}
 
 ROLE_HIERARCHY: Dict[str, Set[str]] = {
     "guest": set(),
@@ -237,6 +237,8 @@ def get_limiter(endpoint: str = "global", max_requests: int = None, window: int 
 
 def rate_limit(request, endpoint: str = "global", max_requests: int = None, window: int = None) -> bool:
     """Check rate limit. Returns True if allowed, False if blocked."""
+    if os.environ.get("OLLAMA_EMU_DISABLE_RATE_LIMIT", "").lower() in ("1", "true", "yes"):
+        return True
     ip = _get_client_ip(request)
     auth = get_auth_context(request)
     user_id = auth.get("email", ip) if auth else ip

@@ -248,6 +248,7 @@ MODEL_CACHE: List[Dict] = []
 # POSTGRESQL PERSISTENCE (providers, auth, RAG, memory)
 # ============================================================
 from ollama_emu import db as _db
+from ollama_emu.memory_monitor import MemoryMonitor
 
 FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "frontend", "out")
 
@@ -553,6 +554,27 @@ async def audit_log_endpoint(request: Request, limit: int = 100, event: str = ""
         raise HTTPException(status_code=403, detail="Admin permission required")
     return _acl.get_audit_log(limit=limit, event=event or None, email=email or None)
 
+class UserUpdateRequest(BaseModel):
+    role: str
+
+    @field_validator("role")
+    @classmethod
+    def validate_role(cls, v):
+        v = v.strip().lower()
+        if v not in ("guest", "user", "power_user", "admin"):
+            raise ValueError("role must be 'guest', 'user', 'power_user', or 'admin'")
+        return v
+
+class MemoryClearRequest(BaseModel):
+    session_id: Optional[str] = None
+
+    @field_validator("session_id")
+    @classmethod
+    def validate_clear_session(cls, v):
+        if v is not None and len(v) > 200:
+            raise ValueError("session_id too long")
+        return v
+
 @app.get("/api/users")
 async def list_users(request: Request):
     auth = _acl.get_auth_context(request)
@@ -577,18 +599,18 @@ async def get_user_detail(email: str, request: Request):
 
 
 @app.put("/api/users/{email}")
-async def update_user_role_endpoint(email: str, body: UserUpdateRequest, request: Request):
+async def update_user_role_endpoint(request: Request, email: str, update_data: UserUpdateRequest):
     auth = _acl.get_auth_context(request)
     if not auth or not auth.get("authenticated"):
         raise HTTPException(status_code=401, detail="Not authenticated")
     if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
         raise HTTPException(status_code=403, detail="Admin permission required")
-    if body.role not in _acl.ROLE_HIERARCHY:
+    if update_data.role not in _acl.ROLE_HIERARCHY:
         raise HTTPException(status_code=400, detail=f"Invalid role. Must be one of: {', '.join(_acl.ROLE_HIERARCHY.keys())}")
-    if not _db.update_user_role(email, body.role):
+    if not _db.update_user_role(email, update_data.role):
         raise HTTPException(status_code=404, detail="User not found")
-    _acl.audit_log("user_role_updated", email=auth["email"], details={"target": email, "new_role": body.role})
-    return {"status": "updated", "email": email, "role": body.role}
+    _acl.audit_log("user_role_updated", email=auth["email"], details={"target": email, "new_role": update_data.role})
+    return {"status": "updated", "email": email, "role": update_data.role}
 
 
 @app.delete("/api/users/{email}")
@@ -832,28 +854,6 @@ class MemoryFactRequest(BaseModel):
         if len(v) > 200:
             raise ValueError("session_id too long")
         return v
-
-class UserUpdateRequest(BaseModel):
-    role: str
-
-    @field_validator("role")
-    @classmethod
-    def validate_role(cls, v):
-        v = v.strip().lower()
-        if v not in ("guest", "user", "power_user", "admin"):
-            raise ValueError("role must be 'guest', 'user', 'power_user', or 'admin'")
-        return v
-
-class MemoryClearRequest(BaseModel):
-    session_id: Optional[str] = None
-
-    @field_validator("session_id")
-    @classmethod
-    def validate_clear_session(cls, v):
-        if v is not None and len(v) > 200:
-            raise ValueError("session_id too long")
-        return v
-
 
 class MemoryMessageDeleteRequest(BaseModel):
     confirm: bool = False
@@ -2533,6 +2533,13 @@ if __name__ == "__main__":
     log.info("[db] PostgreSQL connected via %s", _db.get_dsn().split("@")[-1] if "@" in _db.get_dsn() else "default")
 
     _start_free_model_refresh()
+
+    # ── Memory monitor ──
+    monitor = MemoryMonitor(
+        threshold_percent=float(os.getenv("OLLAMA_EMU_MEMORY_THRESHOLD", "35.0")),
+        interval_seconds=int(os.getenv("OLLAMA_EMU_MEMORY_INTERVAL", "30"))
+    )
+    monitor.start()
 
     try:
         uvicorn.run(app, host=BIND_HOST, port=BIND_PORT)

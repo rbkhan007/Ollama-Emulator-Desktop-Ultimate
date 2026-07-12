@@ -462,7 +462,7 @@ class RAGEngine:
                     (vec_str, json.dumps(tokenize(chunk_contents[i])), chunk_id),
                 )
 
-        log.info("Indexed document '%s' → %d chunks (collection: %s, backend: %s)",
+        log.info("Indexed document '%s' -> %d chunks (collection: %s, backend: %s)",
                  filename, len(chunks), collection, EMBEDDING_BACKEND)
         return {
             "doc_id": doc_id, "filename": filename, "chunks": len(chunks),

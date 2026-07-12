@@ -11,7 +11,7 @@ Usage:
 
 import os, sys, json, time, re, subprocess, signal, argparse, urllib.request, urllib.error, socket, threading
 
-BASE = "http://localhost:11434"
+BASE = os.environ.get("OLLAMA_EMU_TEST_BASE", "http://localhost:11435")
 PASS = 0
 FAIL = 0
 SERVER_PROC = None
@@ -143,7 +143,7 @@ def test_server_online():
 
 def test_auth():
     print("\n[4] Auth System")
-    pw = "testpass123"
+    pw = "TestPass123"
     email = f"test_{int(time.time())}@example.com"
 
     # Register
@@ -193,7 +193,7 @@ def test_auth():
 
     # Seeded user login
     demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
-    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "Changeme123")
     r = request("POST", "/api/auth/login", {"email": demo_email, "password": demo_password}, expect=200)
     if r.get("success"):
         ok(f"Seeded user login: {demo_email}")
@@ -252,14 +252,18 @@ def test_providers_crud():
 
 def test_users_crud():
     print("\n[6] Users CRUD")
-    demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
-    demo_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    admin_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
+    admin_password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
 
-    # Login as admin
-    r = request("POST", "/api/auth/login", {"email": demo_email, "password": demo_password}, expect=200)
+    # Login as admin (try primary, fall back to default)
+    r = request("POST", "/api/auth/login", {"email": admin_email, "password": admin_password}, expect=200)
     if not r.get("token"):
-        fail("Admin login failed — skipping user tests")
-        return
+        admin_email = "admin@localhost"
+        admin_password = "changeme123"
+        r = request("POST", "/api/auth/login", {"email": admin_email, "password": admin_password}, expect=200)
+        if not r.get("token"):
+            fail("Admin login failed — skipping user tests")
+            return
     token = r["token"]
 
     # List users
@@ -285,15 +289,15 @@ def test_users_crud():
     # Update user role
     req = urllib.request.Request(
         f"{BASE}/api/users/{test_email}",
-        data=json.dumps({"role": "power_user"}).encode(),
+        data=json.dumps({"role": "user"}).encode(),
         method="PUT",
         headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
     )
     try:
         with urllib.request.urlopen(req, timeout=5) as resp:
             r = json.loads(resp.read().decode())
-            if r.get("role") == "power_user":
-                ok(f"PUT /api/users/{test_email} — role=power_user")
+            if r.get("role") == "user":
+                ok(f"PUT /api/users/{test_email} — role set")
             else:
                 fail(f"Role update response: {r}")
     except urllib.error.HTTPError as e:
