@@ -112,9 +112,11 @@ graph TD
   end
   Clients -->|HTTPS · Ollama / OpenAI format| API[Backend · FastAPI / Render]
   API -->|routes prompts| PROV[Model Providers<br/>OpenRouter · OpenAI · Anthropic · Gemini · Groq · DeepSeek]
-  API -->|RAG + memory + licensing| DB[(PostgreSQL + pgvector<br/>Neon DB)]
-  API -->|webhook · HMAC-SHA256| LS[Lemon Squeezy<br/>Payments + Licenses]
+   API -->|RAG + memory + licensing| DB[(PostgreSQL + pgvector)]
+   API -->|webhook · HMAC-SHA256| LS[Lemon Squeezy<br/>Payments + Licenses]
 ```
+
+> **Database topology.** The **desktop EXE** bundles its own FastAPI backend plus a **local PostgreSQL** cluster (inspectable/manageable from **pgAdmin 4**) — its chats, keys, and RAG docs never leave your machine. The **marketing website** and **Android apps** call the cloud Render backend backed by **NeonDB**. You can paste **any provider API key** in Settings for free testing/local use; no license required.
 
 ### Request Flow
 
@@ -188,7 +190,7 @@ Open **http://localhost:3000** — no API key required for free models.
 
 ### Desktop EXE
 
-Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — runs the backend + QML GUI in a single click.
+Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — a single-click installer that runs the backend + QML GUI and a **self-contained local PostgreSQL** (viewable in **pgAdmin 4**). Bring **your own API key** (OpenAI, Anthropic, Gemini, a local LM Studio server, etc.) in Settings and use it free — no payment needed. See [`desktop/README.md`](desktop/README.md) for the local-DB details.
 
 ---
 

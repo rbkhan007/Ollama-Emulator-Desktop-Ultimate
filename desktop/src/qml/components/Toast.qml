@@ -50,11 +50,8 @@ Rectangle {
             color: "#ffffff"
             opacity: 0.7
 
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: root.dismiss()
-            }
+            HoverHandler { cursorShape: Qt.PointingHandCursor }
+            TapHandler { onTapped: root.dismiss() }
         }
     }
 

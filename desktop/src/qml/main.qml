@@ -10,7 +10,7 @@ ApplicationWindow {
     height: 800
     minimumWidth: 900
     minimumHeight: 600
-    title: "OllamoMUI – Free AI Gateway"
+    title: qsTr("OllamoMUI – Free AI Gateway")
 
     property var currentPage: homePage
 
@@ -59,7 +59,7 @@ ApplicationWindow {
                     onLoginSucceeded: {
                         sidebar.currentIndex = 2
                         stackLayout.currentIndex = 2
-                        showToast("Logged in successfully", 1)
+                        showToast(qsTr("Logged in successfully"), 1)
                     }
                 }
                 RegisterPage {
@@ -67,7 +67,7 @@ ApplicationWindow {
                     onRegisterSucceeded: {
                         sidebar.currentIndex = 2
                         stackLayout.currentIndex = 2
-                        showToast("Account created", 1)
+                        showToast(qsTr("Account created"), 1)
                     }
                 }
                 HomePage           { id: homePage }

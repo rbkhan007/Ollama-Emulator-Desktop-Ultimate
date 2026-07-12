@@ -7,10 +7,25 @@ Rectangle {
 
     signal registerSucceeded()
 
+    Connections {
+        target: apiClient
+        function onRequestFinished(id, payload) {
+            if (id !== "register") return
+            window.showLoading(false)
+            registerSucceeded()
+            window.showToast(qsTr("Account created. Please sign in."), 1)
+        }
+        function onRequestError(id, msg) {
+            if (id !== "register") return
+            window.showLoading(false)
+            window.showToast(msg, 2)
+        }
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
-        width: 360
-        spacing: 20
+        width: Math.min(parent.width * 0.9, 420)
+        spacing: Theme.padLarge
 
         Text {
             Layout.alignment: Qt.AlignHCenter
@@ -20,7 +35,7 @@ Rectangle {
 
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "Create Account"
+            text: qsTr("Create Account")
             font: Theme.fontHeading
             font.pixelSize: 28
             color: Theme.textPrimary
@@ -28,7 +43,7 @@ Rectangle {
 
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "Sign up to get started"
+            text: qsTr("Sign up to get started")
             font: Theme.fontBody
             color: Theme.textSecondary
         }
@@ -40,7 +55,7 @@ Rectangle {
             spacing: 16
 
             Text {
-                text: "Email"
+                text: qsTr("Email")
                 font: Theme.fontBody
                 color: Theme.textPrimary
             }
@@ -64,7 +79,7 @@ Rectangle {
             }
 
             Text {
-                text: "Password"
+                text: qsTr("Password")
                 font: Theme.fontBody
                 color: Theme.textPrimary
             }
@@ -88,7 +103,7 @@ Rectangle {
             }
 
             Text {
-                text: "Confirm Password"
+                text: qsTr("Confirm Password")
                 font: Theme.fontBody
                 color: Theme.textPrimary
             }
@@ -117,7 +132,7 @@ Rectangle {
         Button {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            text: "Create Account"
+            text: qsTr("Create Account")
             flat: true
             contentItem: Text {
                 text: parent.text
@@ -140,36 +155,25 @@ Rectangle {
                 var password = regPassword.text
                 var confirm = regConfirm.text
                 if (!email || !password) {
-                    window.showToast("Email and password are required", 2)
+                    window.showToast(qsTr("Email and password are required"), 2)
                     return
                 }
                 if (password !== confirm) {
-                    window.showToast("Passwords do not match", 2)
+                    window.showToast(qsTr("Passwords do not match"), 2)
                     return
                 }
                 if (password.length < 6) {
-                    window.showToast("Password must be at least 6 characters", 2)
+                    window.showToast(qsTr("Password must be at least 6 characters"), 2)
                     return
                 }
-                try {
-                    var result = apiClient.register(email, password)
-                    if (apiClient.token) {
-                        registerSucceeded()
-                        window.showToast("Account created and logged in", 1)
-                    } else {
-                        registerSucceeded()
-                        window.showToast("Account created. Please sign in.", 1)
-                    }
-                } catch(e) {
-                    var msg = e.message || "Registration failed"
-                    window.showToast(msg, 2)
-                }
+                window.showLoading(true)
+                apiClient.executeAsync("register", "register", JSON.stringify([email, password]), "{}")
             }
         }
 
         Button {
             Layout.alignment: Qt.AlignHCenter
-            text: "Already have an account? Sign in"
+            text: qsTr("Already have an account? Sign in")
             flat: true
             contentItem: Text {
                 text: parent.text

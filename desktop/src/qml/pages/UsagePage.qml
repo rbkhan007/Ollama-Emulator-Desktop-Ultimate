@@ -13,14 +13,14 @@ Rectangle {
         spacing: 24
 
         Text {
-            text: "Usage Analytics"
+            text: qsTr("Usage Analytics")
             font: Theme.fontHeading
             font.pixelSize: 22
             color: Theme.textPrimary
         }
 
         Text {
-            text: "View your API token consumption and request statistics."
+            text: qsTr("View your API token consumption and request statistics.")
             font: Theme.fontBody
             color: Theme.textSecondary
         }
@@ -32,7 +32,7 @@ Rectangle {
             rowSpacing: 20
 
             StatCard {
-                title: "Total Requests"
+                title: qsTr("Total Requests")
                 value: (usageData.total_requests || 0).toString()
                 icon: "\u2261"
                 color: Theme.accentPrimary
@@ -40,7 +40,7 @@ Rectangle {
             }
 
             StatCard {
-                title: "Tokens Used"
+                title: qsTr("Tokens Used")
                 value: (usageData.total_tokens || 0).toString()
                 icon: "\u2630"
                 color: Theme.accentSecondary
@@ -48,7 +48,7 @@ Rectangle {
             }
 
             StatCard {
-                title: "Active Models"
+                title: qsTr("Active Models")
                 value: (usageData.active_models || 0).toString()
                 icon: "\u2699"
                 color: Theme.accentTertiary
@@ -56,7 +56,7 @@ Rectangle {
             }
 
             StatCard {
-                title: "Avg. Response Time"
+                title: qsTr("Avg. Response Time")
                 value: (usageData.avg_response_time || "0") + "ms"
                 icon: "\u23F1"
                 color: "#ffa500"
@@ -77,7 +77,7 @@ Rectangle {
                 anchors.fill: parent; anchors.margins: 16; spacing: 8
 
                 Text {
-                    text: "Requests (last 7 days)"
+                    text: qsTr("Requests (last 7 days)")
                     font: Theme.fontSubheading; color: Theme.textPrimary
                 }
 
@@ -114,7 +114,7 @@ Rectangle {
 
         Button {
             Layout.alignment: Qt.AlignHCenter
-            text: "Refresh Data"
+            text: qsTr("Refresh Data")
             flat: true
             implicitWidth: 160
             implicitHeight: 40

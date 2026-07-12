@@ -7,16 +7,16 @@ Rectangle {
 
     property int currentIndex: 2  // default to Home
     property var pages: [
-        { label: "Login",      icon: "\u263A", section: "account" },
-        { label: "Register",   icon: "\u270E", section: "account" },
-        { label: "Home",       icon: "\u2302", section: "main" },
-        { label: "Playground", icon: "\u2699", section: "main" },
-        { label: "Usage",      icon: "\u2261", section: "main" },
-        { label: "Memory",     icon: "\u2749", section: "main" },
-        { label: "RAG",        icon: "\u2601", section: "main" },
-        { label: "Settings",   icon: "\u2692", section: "main" },
-        { label: "License",    icon: "\u2606", section: "main" },
-        { label: "Terminal",   icon: "\u23CE", section: "main" },
+        { label: qsTr("Login"),      icon: "\u263A", section: "account" },
+        { label: qsTr("Register"),   icon: "\u270E", section: "account" },
+        { label: qsTr("Home"),       icon: "\u2302", section: "main" },
+        { label: qsTr("Playground"), icon: "\u2699", section: "main" },
+        { label: qsTr("Usage"),      icon: "\u2261", section: "main" },
+        { label: qsTr("Memory"),     icon: "\u2749", section: "main" },
+        { label: qsTr("RAG"),        icon: "\u2601", section: "main" },
+        { label: qsTr("Settings"),   icon: "\u2692", section: "main" },
+        { label: qsTr("License"),    icon: "\u2606", section: "main" },
+        { label: qsTr("Terminal"),   icon: "\u23CE", section: "main" },
     ]
 
     signal pageSelected(int index)
@@ -50,7 +50,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "OllamoMUI"
+                    text: qsTr("OllamoMUI")
                     font: Theme.fontHeading
                     font.pixelSize: 18
                     color: Theme.textPrimary
@@ -100,13 +100,12 @@ Rectangle {
                     }
                 }
 
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
+                HoverHandler {
                     cursorShape: Qt.PointingHandCursor
-                    onEntered: if (!isActive) parent.color = Theme.surfaceAlt
-                    onExited: if (!isActive) parent.color = "transparent"
-                    onClicked: {
+                    onHoveredChanged: if (!isActive) parent.color = hovered ? Theme.surfaceAlt : "transparent"
+                }
+                TapHandler {
+                    onTapped: {
                         root.currentIndex = index
                         root.pageSelected(index)
                     }
@@ -146,7 +145,7 @@ Rectangle {
                     color: Theme.textSecondary
                 }
                 Text {
-                    text: "Theme"
+                    text: qsTr("Theme")
                     font: Theme.fontBody
                     color: Theme.textPrimary
                     Layout.fillWidth: true

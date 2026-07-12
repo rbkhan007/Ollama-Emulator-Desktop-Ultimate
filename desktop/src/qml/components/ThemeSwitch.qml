@@ -37,10 +37,9 @@ Rectangle {
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
+    HoverHandler { cursorShape: Qt.PointingHandCursor }
+    TapHandler {
+        onTapped: {
             root.checked = !root.checked
             themeManager.darkTheme = root.checked
             root.toggled()

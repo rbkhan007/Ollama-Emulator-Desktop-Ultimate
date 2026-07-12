@@ -38,7 +38,7 @@ Rectangle {
             Text {
                 anchors.centerIn: parent
                 font.pixelSize: 20
-                text: "🔄"
+                text: qsTr("🔄")
             }
         }
 
@@ -47,13 +47,13 @@ Rectangle {
             spacing: 4
 
             Text {
-                text: "Update available"
+                text: qsTr("Update available")
                 font.pixelSize: 14
                 font.weight: Font.Bold
                 color: Theme.textPrimary
             }
             Text {
-                text: "Version " + latestVersion + " is ready to install"
+                text: qsTr("Version ") + latestVersion + " is ready to install"
                 font.pixelSize: 12
                 color: Theme.textSecondary
                 elide: Text.ElideRight
@@ -62,7 +62,7 @@ Rectangle {
 
         Button {
             id: updateBtn
-            text: "Update"
+            text: qsTr("Update")
             font.pixelSize: 12
             font.weight: Font.Bold
             implicitHeight: 32
@@ -91,7 +91,7 @@ Rectangle {
 
         Button {
             id: skipBtn
-            text: "Skip"
+            text: qsTr("Skip")
             font.pixelSize: 12
             implicitHeight: 32
             implicitWidth: 60
@@ -136,7 +136,7 @@ Rectangle {
             width: parent.width - 48
 
             Text {
-                text: "Downloading update..."
+                text: qsTr("Downloading update...")
                 font.pixelSize: 13
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -182,7 +182,7 @@ Rectangle {
             root.downloading = false
             if (!success) {
                 root.visible_ = false
-                window.showToast("Update failed: " + message, 2)
+                window.showToast(qsTr("Update failed: ") + message, 2)
             }
         }
         function onCheckFinished() {

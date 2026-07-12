@@ -98,6 +98,7 @@ def run_pyinstaller(onefile: bool = False):
             "--hidden-import", "httpx",
             "--hidden-import", "dotenv",
             "--hidden-import", "python_multipart",
+            "--hidden-import", "postgres_bootstrap",
             "--distpath", str(DIST_DIR),
             "--workpath", str(BUILD_DIR),
             "--clean",
@@ -106,6 +107,10 @@ def run_pyinstaller(onefile: bool = False):
         ]
         if sys.platform == "win32":
             cmd += ["--icon", str(PROJECT_ROOT / "resources" / "ollamomui.ico")]
+
+        postgres_dir = PROJECT_ROOT / "desktop" / "postgres"
+        if postgres_dir.exists():
+            cmd += ["--add-data", f"{postgres_dir}{os.pathsep}postgres"]
 
     print(f"[BUILD] Running: {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)

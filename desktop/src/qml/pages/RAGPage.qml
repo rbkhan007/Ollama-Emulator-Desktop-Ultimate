@@ -9,6 +9,29 @@ Rectangle {
     property var currentChunks: []
     property var stats: ({})
 
+    Connections {
+        target: apiClient
+        function onRequestFinished(id, payload) {
+            if (id === "ragUpload") {
+                window.showLoading(false)
+                window.showToast(qsTr("File indexed"), 1)
+                refreshDocuments()
+            } else if (id === "ragAddText") {
+                docTitle.text = ""
+                docContent.text = ""
+                refreshDocuments()
+            }
+        }
+        function onRequestError(id, msg) {
+            if (id === "ragUpload") {
+                window.showLoading(false)
+                window.showToast(qsTr("Upload failed: ") + msg, 2)
+            } else if (id === "ragAddText") {
+                window.showToast(qsTr("Add failed: ") + msg, 2)
+            }
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 30
@@ -20,12 +43,12 @@ Rectangle {
 
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { text: "RAG Knowledge Base"; font: Theme.fontHeading; font.pixelSize: 22; color: Theme.textPrimary }
-                Text { text: "Documents: " + (stats.documents || 0) + " | Chunks: " + (stats.chunks || 0) + " | Vectors: " + (stats.vectors || 0); font: Theme.fontBody; color: Theme.textSecondary }
+                Text { text: qsTr("RAG Knowledge Base"); font: Theme.fontHeading; font.pixelSize: 22; color: Theme.textPrimary }
+                Text { text: qsTr("Documents: ") + (stats.documents || 0) + " | Chunks: " + (stats.chunks || 0) + " | Vectors: " + (stats.vectors || 0); font: Theme.fontBody; color: Theme.textSecondary }
             }
 
             Button {
-                text: "+ Add Text"
+                text: qsTr("+ Add Text")
                 flat: true; implicitWidth: 100; implicitHeight: 40
                 contentItem: Text {
                     text: parent.text; color: "#ffffff"; font: Theme.fontBody; font.bold: true
@@ -42,7 +65,7 @@ Rectangle {
             }
 
             Button {
-                text: "Upload File"
+                text: qsTr("Upload File")
                 flat: true; implicitWidth: 110; implicitHeight: 40
                 contentItem: Text {
                     text: parent.text; color: "#ffffff"; font: Theme.fontBody; font.bold: true
@@ -60,20 +83,13 @@ Rectangle {
 
             FileDialog {
                 id: fileDialog
-                title: "Choose a document to index"
+                title: qsTr("Choose a document to index")
                 nameFilters: ["Documents (*.pdf *.txt *.md *.docx *.html *.csv)", "All files (*)"]
                 onAccepted: {
                     var raw = fileDialog.fileUrl.toString()
                     var path = raw.startsWith("file:///") ? raw.substring(8) : raw
                     window.showLoading(true)
-                    try {
-                        var result = apiClient.uploadDocument(path)
-                        window.showToast("File indexed (" + (result.chunks || 0) + " chunks)", 1)
-                        refreshDocuments()
-                    } catch(e) {
-                        window.showToast("Upload failed: " + e.message, 2)
-                    }
-                    window.showLoading(false)
+                    apiClient.executeAsync("ragUpload", "uploadDocument", JSON.stringify([path]), "{}")
                 }
             }
 
@@ -105,7 +121,7 @@ Rectangle {
                 TextInput {
                     id: searchField; anchors.fill: parent; anchors.margins: 10
                     color: Theme.textPrimary; font: Theme.fontBody
-                    placeholderText: "Search documents..."; placeholderTextColor: Theme.textMuted
+                    placeholderText: qsTr("Search documents..."); placeholderTextColor: Theme.textMuted
                     verticalAlignment: Text.AlignVCenter
                 }
             }
@@ -129,16 +145,21 @@ Rectangle {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 radius: Theme.radiusLarge; color: Theme.surface; border.color: Theme.border; border.width: 1
 
-                ListView {
-                    id: docList; anchors.fill: parent; anchors.margins: 8
-                    model: documents; spacing: 4; clip: true
+                GridView {
+                    id: docGrid
+                    anchors.fill: parent; anchors.margins: Theme.padSmall
+                    model: documents; clip: true
+                    cellWidth: Math.max(220, (width - Theme.padLarge) / Math.floor(width / 240))
+                    cellHeight: 132
+
                     delegate: Rectangle {
-                        width: parent ? parent.width : 0
-                        implicitHeight: 64; radius: Theme.radiusSmall
+                        width: GridView.view.cellWidth - Theme.padSmall
+                        height: GridView.view.cellHeight - Theme.padSmall
+                        radius: Theme.radiusMedium
                         color: Theme.bgTertiary
 
                         RowLayout {
-                            anchors.fill: parent; anchors.margins: 10; spacing: 10
+                            anchors.fill: parent; anchors.margins: Theme.padMedium; spacing: Theme.padSmall
                             Text { text: "\u2601"; font.pixelSize: 20; color: Theme.accentPrimary }
 
                             ColumnLayout {
@@ -146,15 +167,16 @@ Rectangle {
                                 Text {
                                     text: modelData.filename || "Untitled"
                                     font: Theme.fontBody; font.bold: true; color: Theme.textPrimary; elide: Text.ElideRight
+                                    Layout.fillWidth: true
                                 }
                                 Text {
-                                    text: "Chunks: " + (modelData.chunks || 0) + " \u00B7 " + (modelData.collection || "default")
+                                    text: qsTr("Chunks: ") + (modelData.chunks || 0) + " \u00B7 " + (modelData.collection || "default")
                                     font: Theme.fontSmall; color: Theme.textMuted
                                 }
                             }
 
                             Button {
-                                text: "Chunks"; flat: true; implicitWidth: 60; implicitHeight: 28
+                                text: qsTr("Chunks"); flat: true; implicitWidth: 60; implicitHeight: 28
                                 contentItem: Text {
                                     text: parent.text; color: Theme.accentSecondary; font: Theme.fontSmall; font.bold: true
                                     horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
@@ -180,7 +202,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "No documents. Add text or upload to get started."
+                        text: qsTr("No documents. Add text or upload to get started.")
                         font: Theme.fontBody; color: Theme.textMuted; visible: documents.length === 0
                     }
                 }
@@ -200,7 +222,7 @@ Rectangle {
 
                     RowLayout {
                         Layout.fillWidth: true; spacing: 8
-                        Text { text: "Chunks (" + currentChunks.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
+                        Text { text: qsTr("Chunks (") + currentChunks.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
                         Item { Layout.fillWidth: true }
                         Button {
                             text: "\u2716"; flat: true; implicitWidth: 24; implicitHeight: 24
@@ -224,7 +246,7 @@ Rectangle {
                             ColumnLayout {
                                 anchors.fill: parent; anchors.margins: 10; spacing: 4
                                 Text {
-                                    text: "Chunk " + (modelData.chunk_index || 0)
+                                    text: qsTr("Chunk ") + (modelData.chunk_index || 0)
                                     font: Theme.fontSmall; font.bold: true; color: Theme.accentSecondary
                                 }
                                 Text {
@@ -235,11 +257,8 @@ Rectangle {
                                 }
                             }
 
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: editChunkDialog(modelData.id, modelData.content)
-                            }
+                            HoverHandler { cursorShape: Qt.PointingHandCursor }
+                            TapHandler { onTapped: editChunkDialog(modelData.id, modelData.content) }
                         }
                     }
                 }
@@ -250,23 +269,23 @@ Rectangle {
     // ── Add Text Dialog ──
     Dialog {
         id: addTextDialog
-        title: "Add Text Document"
+        title: qsTr("Add Text Document")
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
 
         contentItem: ColumnLayout {
             spacing: 10; implicitWidth: 400
-            Text { text: "Title"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Title"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: docTitle; Layout.fillWidth: true; placeholderText: "Document title"
+                id: docTitle; Layout.fillWidth: true; placeholderText: qsTr("Document title")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
-            Text { text: "Content"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Content"); font: Theme.fontBody; color: Theme.textPrimary }
             TextArea {
                 id: docContent; Layout.fillWidth: true; Layout.preferredHeight: 200
-                placeholderText: "Paste or type document content..."
+                placeholderText: qsTr("Paste or type document content...")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
@@ -276,13 +295,7 @@ Rectangle {
             var title = docTitle.text.trim() || "pasted-text"
             var text = docContent.text.trim()
             if (!text) return
-            try {
-                apiClient.addRagText(text, title)
-                docTitle.text = ""; docContent.text = ""
-                refreshDocuments()
-            } catch(e) {
-                console.warn("Upload failed:", e)
-            }
+            apiClient.executeAsync("ragAddText", "addRagText", JSON.stringify([text, title]), "{}")
         }
     }
 
@@ -290,14 +303,14 @@ Rectangle {
     Dialog {
         id: chunkEditDialog
         property string chunkId: ""
-        title: "Edit Chunk"
+        title: qsTr("Edit Chunk")
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
 
         contentItem: ColumnLayout {
             spacing: 10; implicitWidth: 500
-            Text { text: "Chunk Content"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Chunk Content"); font: Theme.fontBody; color: Theme.textPrimary }
             TextArea {
                 id: chunkEditContent; Layout.fillWidth: true; Layout.preferredHeight: 250
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
@@ -323,7 +336,7 @@ Rectangle {
         id: confirmDocDelete
         property string docId: ""
         property string docName: ""
-        title: "Confirm Delete"
+        title: qsTr("Confirm Delete")
         standardButtons: Dialog.Yes | Dialog.No
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3

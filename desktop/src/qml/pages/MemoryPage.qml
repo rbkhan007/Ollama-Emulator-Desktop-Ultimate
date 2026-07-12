@@ -22,8 +22,8 @@ Rectangle {
 
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { text: "Conversation Memory"; font: Theme.fontHeading; font.pixelSize: 22; color: Theme.textPrimary }
-                Text { text: "Messages: " + (memoryStats.messages || 0) + " | Facts: " + (memoryStats.facts || 0) + " | Sessions: " + (memoryStats.sessions || 0); font: Theme.fontBody; color: Theme.textSecondary }
+                Text { text: qsTr("Conversation Memory"); font: Theme.fontHeading; font.pixelSize: 22; color: Theme.textPrimary }
+                Text { text: qsTr("Messages: ") + (memoryStats.messages || 0) + " | Facts: " + (memoryStats.facts || 0) + " | Sessions: " + (memoryStats.sessions || 0); font: Theme.fontBody; color: Theme.textSecondary }
             }
 
             Button {
@@ -60,9 +60,9 @@ Rectangle {
                             color: activeTab === index ? "#ffffff" : Theme.textSecondary
                         }
 
-                        MouseArea {
-                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                            onClicked: {
+                        HoverHandler { cursorShape: Qt.PointingHandCursor }
+                        TapHandler {
+                            onTapped: {
                                 activeTab = index
                                 refreshAll()
                             }
@@ -111,10 +111,10 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true; spacing: 8; anchors.margins: 12
                     visible: messages.length > 0
-                    Text { text: "Messages (" + messages.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
+                    Text { text: qsTr("Messages (") + messages.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
                     Item { Layout.fillWidth: true }
                     Button {
-                        text: "Clear All"; flat: true; implicitWidth: 80; implicitHeight: 30
+                        text: qsTr("Clear All"); flat: true; implicitWidth: 80; implicitHeight: 30
                         contentItem: Text {
                             text: parent.text; color: "#ff6b9d"; font: Theme.fontSmall; font.bold: true
                             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
@@ -170,7 +170,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "No messages yet."
+                        text: qsTr("No messages yet.")
                         font: Theme.fontBody; color: Theme.textMuted; visible: messages.length === 0
                     }
                 }
@@ -189,10 +189,10 @@ Rectangle {
                 RowLayout {
                     Layout.fillWidth: true; spacing: 8; anchors.margins: 12
                     visible: facts.length > 0
-                    Text { text: "Facts (" + facts.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
+                    Text { text: qsTr("Facts (") + facts.length + ")"; font: Theme.fontSubheading; color: Theme.textPrimary }
                     Item { Layout.fillWidth: true }
                     Button {
-                        text: "+ Add Fact"; flat: true; implicitWidth: 90; implicitHeight: 30
+                        text: qsTr("+ Add Fact"); flat: true; implicitWidth: 90; implicitHeight: 30
                         contentItem: Text {
                             text: parent.text; color: Theme.accentSecondary; font: Theme.fontSmall; font.bold: true
                             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
@@ -227,7 +227,7 @@ Rectangle {
                                     font: Theme.fontBody; color: Theme.textPrimary; elide: Text.ElideRight
                                 }
                                 Text {
-                                    text: "Importance: " + (modelData.importance || "normal") + " \u00B7 " + (modelData.created_at ? new Date(modelData.created_at).toLocaleString() : "")
+                                    text: qsTr("Importance: ") + (modelData.importance || "normal") + " \u00B7 " + (modelData.created_at ? new Date(modelData.created_at).toLocaleString() : "")
                                     font: Theme.fontSmall; color: Theme.textMuted
                                 }
                             }
@@ -246,7 +246,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "No facts stored. Add one to persist knowledge."
+                        text: qsTr("No facts stored. Add one to persist knowledge.")
                         font: Theme.fontBody; color: Theme.textMuted; visible: facts.length === 0
                     }
                 }
@@ -279,7 +279,7 @@ Rectangle {
                                 font: Theme.fontBody; font.bold: true; color: Theme.textPrimary; elide: Text.ElideRight
                             }
                             Text {
-                                text: "Messages: " + (modelData.message_count || 0) + " \u00B7 " + (modelData.model || "") + " \u00B7 " + (modelData.updated_at ? new Date(modelData.updated_at).toLocaleString() : "")
+                                text: qsTr("Messages: ") + (modelData.message_count || 0) + " \u00B7 " + (modelData.model || "") + " \u00B7 " + (modelData.updated_at ? new Date(modelData.updated_at).toLocaleString() : "")
                                 font: Theme.fontSmall; color: Theme.textMuted
                             }
                         }
@@ -288,7 +288,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: "No sessions yet."
+                    text: qsTr("No sessions yet.")
                     font: Theme.fontBody; color: Theme.textMuted; visible: sessions.length === 0
                 }
             }
@@ -298,21 +298,21 @@ Rectangle {
     // ── Add Fact Dialog ──
     Dialog {
         id: addFactDialog
-        title: "Add Fact"
+        title: qsTr("Add Fact")
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
 
         contentItem: ColumnLayout {
             spacing: 10; implicitWidth: 400
-            Text { text: "Fact"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Fact"); font: Theme.fontBody; color: Theme.textPrimary }
             TextArea {
                 id: factContent; Layout.fillWidth: true; Layout.preferredHeight: 100
-                placeholderText: "What should the AI remember?"
+                placeholderText: qsTr("What should the AI remember?")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
-            Text { text: "Importance"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Importance"); font: Theme.fontBody; color: Theme.textPrimary }
             ComboBox {
                 id: factImportance; Layout.fillWidth: true
                 model: ["normal", "high", "low"]
@@ -339,12 +339,12 @@ Rectangle {
         id: confirmDeleteMsgDialog
         property string msgId: ""
         property int msgIndex: -1
-        title: "Confirm Delete"
+        title: qsTr("Confirm Delete")
         standardButtons: Dialog.Yes | Dialog.No
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
         contentItem: Text {
-            text: "Delete this message?"; font: Theme.fontBody; color: Theme.textPrimary
+            text: qsTr("Delete this message?"); font: Theme.fontBody; color: Theme.textPrimary
         }
         onAccepted: {
             try {
@@ -360,12 +360,12 @@ Rectangle {
         id: confirmDeleteFactDialog
         property string factId: ""
         property int factIndex: -1
-        title: "Confirm Delete"
+        title: qsTr("Confirm Delete")
         standardButtons: Dialog.Yes | Dialog.No
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
         contentItem: Text {
-            text: "Delete this fact?"; font: Theme.fontBody; color: Theme.textPrimary
+            text: qsTr("Delete this fact?"); font: Theme.fontBody; color: Theme.textPrimary
         }
         onAccepted: {
             try {
@@ -379,12 +379,12 @@ Rectangle {
 
     Dialog {
         id: confirmClearMessages
-        title: "Confirm Clear All"
+        title: qsTr("Confirm Clear All")
         standardButtons: Dialog.Yes | Dialog.No
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
         contentItem: Text {
-            text: "Clear ALL messages? This cannot be undone."
+            text: qsTr("Clear ALL messages? This cannot be undone.")
             font: Theme.fontBody; color: Theme.textPrimary; wrapMode: Text.WordWrap; width: 300
         }
         onAccepted: {

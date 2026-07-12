@@ -22,13 +22,13 @@ Rectangle {
             GradientText {
                 Layout.fillWidth: true
                 fontSize: 36
-                text: "Welcome to OllamoMUI"
+                text: qsTr("Welcome to OllamoMUI")
                 horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
                 Layout.fillWidth: true
-                text: "Your local AI playground with PostgreSQL-powered memory & RAG"
+                text: qsTr("Your local AI playground with PostgreSQL-powered memory & RAG")
                 font: Theme.fontBody
                 font.pixelSize: 16
                 color: Theme.textSecondary
@@ -45,42 +45,42 @@ Rectangle {
                 rowSpacing: 20
 
                 FeatureCard {
-                    title: "Chat Playground"
+                    title: qsTr("Chat Playground")
                     description: "Interact with local language models through a modern chat interface with streaming responses."
                     icon: "\u2699"
                     Layout.fillWidth: true
                 }
 
                 FeatureCard {
-                    title: "Memory"
+                    title: qsTr("Memory")
                     description: "Persistent conversation memory with PostgreSQL-backed semantic search and recall."
                     icon: "\u2749"
                     Layout.fillWidth: true
                 }
 
                 FeatureCard {
-                    title: "RAG Engine"
+                    title: qsTr("RAG Engine")
                     description: "Retrieval-Augmented Generation with pgvector, TF-IDF, and hybrid search."
                     icon: "\u2601"
                     Layout.fillWidth: true
                 }
 
                 FeatureCard {
-                    title: "Usage Analytics"
+                    title: qsTr("Usage Analytics")
                     description: "Track token usage, request counts, and model performance metrics."
                     icon: "\u2261"
                     Layout.fillWidth: true
                 }
 
                 FeatureCard {
-                    title: "Model Catalog"
+                    title: qsTr("Model Catalog")
                     description: "Browse and manage available models with auto-detection and metadata."
                     icon: "\u2630"
                     Layout.fillWidth: true
                 }
 
                 FeatureCard {
-                    title: "API Compatible"
+                    title: qsTr("API Compatible")
                     description: "Drop-in OpenAI-compatible API at /v1/chat/completions for any existing tooling."
                     icon: "\u21C4"
                     Layout.fillWidth: true
@@ -95,7 +95,7 @@ Rectangle {
                 spacing: 16
 
                 Button {
-                    text: "Launch Playground"
+                    text: qsTr("Launch Playground")
                     flat: true
                     implicitWidth: 200
                     implicitHeight: 44
@@ -123,7 +123,7 @@ Rectangle {
                 }
 
                 Button {
-                    text: "View on GitHub"
+                    text: qsTr("View on GitHub")
                     flat: true
                     implicitWidth: 200
                     implicitHeight: 44
@@ -187,11 +187,8 @@ Rectangle {
             }
         }
 
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered: parent.color = Theme.surfaceAlt
-            onExited: parent.color = Theme.surface
+        HoverHandler {
+            onHoveredChanged: parent.color = hovered ? Theme.surfaceAlt : Theme.surface
         }
     }
 }

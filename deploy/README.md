@@ -4,9 +4,11 @@
 
 - Domain names: `ollamomui.com` (frontend), `api.ollamomui.com` (backend)
 - GitHub account (for frontend hosting via Pages)
-- PostgreSQL 17 with pgvector (use NeonDB, Supabase, or self-hosted)
+- PostgreSQL 17 with pgvector (use **NeonDB** for the cloud backend that serves the marketing website and Android apps)
 - Lemon Squeezy account (API key, store ID, webhook secret)
 - SMTP credentials (Gmail app password works)
+
+> **Note on databases:** This guide covers the **cloud** backend (marketing site + Android → NeonDB). The **desktop EXE** is self-contained — it bundles its own local PostgreSQL cluster (managed from pgAdmin 4) and does **not** use Neon. See [`desktop/README.md`](../desktop/README.md).
 
 ---
 

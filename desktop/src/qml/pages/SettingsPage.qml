@@ -1,12 +1,35 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
+import QtQuick.Dialogs 1.3
 
 Rectangle {
     color: "transparent"
 
     property var providers: []
     property var users: []
+
+    Connections {
+        target: apiClient
+        function onRequestFinished(id, payload) {
+            if (id === "export") {
+                window.showLoading(false)
+                var r = JSON.parse(payload)
+                window.showToast(qsTr("Backup saved (") + r.providers + " providers, " + r.facts + " facts, " + r.messages + " messages, " + r.documents + " docs)", 1)
+            } else if (id === "import") {
+                window.showLoading(false)
+                var ri = JSON.parse(payload)
+                window.showToast(qsTr("Imported: ") + ri.providers + " providers, " + ri.facts + " facts, " + ri.messages + " messages, " + ri.documents + " docs", 1)
+                refreshProviders()
+            }
+        }
+        function onRequestError(id, msg) {
+            if (id === "export" || id === "import") {
+                window.showLoading(false)
+                window.showToast((id === "export" ? "Export" : "Import") + " failed: " + msg, 2)
+            }
+        }
+    }
 
     Flickable {
         anchors.fill: parent
@@ -30,20 +53,20 @@ Rectangle {
                     Layout.fillWidth: true
                     spacing: 4
                     Text {
-                        text: "Settings"
+                        text: qsTr("Settings")
                         font: Theme.fontHeading
                         font.pixelSize: 22
                         color: Theme.textPrimary
                     }
                     Text {
-                        text: "Manage providers, users, and application preferences."
+                        text: qsTr("Manage providers, users, and application preferences.")
                         font: Theme.fontBody
                         color: Theme.textSecondary
                     }
                 }
 
                 Button {
-                    text: "+ Add Provider"
+                    text: qsTr("+ Add Provider")
                     flat: true
                     implicitWidth: 130
                     implicitHeight: 40
@@ -68,7 +91,7 @@ Rectangle {
 
             // ── Provider List ──
             SettingsSection {
-                title: "Providers (" + providers.length + ")"
+                title: qsTr("Providers (") + providers.length + ")"
                 Layout.fillWidth: true
 
                 ListView {
@@ -114,7 +137,7 @@ Rectangle {
                             }
 
                             Button {
-                                text: "Edit"
+                                text: qsTr("Edit")
                                 flat: true
                                 implicitWidth: 60
                                 implicitHeight: 30
@@ -158,7 +181,7 @@ Rectangle {
 
                     Text {
                         anchors.centerIn: parent
-                        text: "No providers. Add one to get started."
+                        text: qsTr("No providers. Add one to get started.")
                         font: Theme.fontBody
                         color: Theme.textMuted
                         visible: providers.length === 0
@@ -168,13 +191,13 @@ Rectangle {
 
             // ── Server ──
             SettingsSection {
-                title: "Server"
+                title: qsTr("Server")
                 Layout.fillWidth: true
 
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 12
-                    Text { text: "API Endpoint"; font: Theme.fontBody; color: Theme.textPrimary; Layout.preferredWidth: 150 }
+                    Text { text: qsTr("API Endpoint"); font: Theme.fontBody; color: Theme.textPrimary; Layout.preferredWidth: 150 }
                     Rectangle {
                         Layout.fillWidth: true; Layout.preferredHeight: 36; radius: Theme.radiusSmall
                         color: Theme.surface; border.color: Theme.border; border.width: 1
@@ -188,19 +211,19 @@ Rectangle {
 
             // ── Appearance ──
             SettingsSection {
-                title: "Appearance"
+                title: qsTr("Appearance")
                 Layout.fillWidth: true
 
                 RowLayout {
                     Layout.fillWidth: true; spacing: 12
-                    Text { text: "Dark Mode"; font: Theme.fontBody; color: Theme.textPrimary; Layout.fillWidth: true }
+                    Text { text: qsTr("Dark Mode"); font: Theme.fontBody; color: Theme.textPrimary; Layout.fillWidth: true }
                     ThemeSwitch { checked: themeManager.darkTheme; onToggled: themeManager.darkTheme = checked }
                 }
             }
 
             // ── Account ──
             SettingsSection {
-                title: "Account"
+                title: qsTr("Account")
                 Layout.fillWidth: true
 
                 ColumnLayout {
@@ -208,7 +231,7 @@ Rectangle {
 
                     RowLayout {
                         Layout.fillWidth: true; spacing: 12
-                        Text { text: "Email"; font: Theme.fontBody; color: Theme.textPrimary; Layout.preferredWidth: 150 }
+                        Text { text: qsTr("Email"); font: Theme.fontBody; color: Theme.textPrimary; Layout.preferredWidth: 150 }
                         Rectangle {
                             Layout.fillWidth: true; Layout.preferredHeight: 36; radius: Theme.radiusSmall
                             color: Theme.surface; border.color: Theme.border; border.width: 1
@@ -221,7 +244,7 @@ Rectangle {
                     }
 
                     Button {
-                        text: "Change Password"; flat: true; implicitWidth: 180; implicitHeight: 36
+                        text: qsTr("Change Password"); flat: true; implicitWidth: 180; implicitHeight: 36
                         contentItem: Text {
                             text: parent.text; color: Theme.accentPrimary; font: Theme.fontBody; font.bold: true
                             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
@@ -236,7 +259,7 @@ Rectangle {
 
             // ── Users (admin) ──
             SettingsSection {
-                title: "Users (" + users.length + ")"
+                title: qsTr("Users (") + users.length + ")"
                 Layout.fillWidth: true
                 visible: users.length > 0
 
@@ -260,7 +283,7 @@ Rectangle {
                             ColumnLayout {
                                 Layout.fillWidth: true; spacing: 1
                                 Text { text: modelData.email || ""; font: Theme.fontBody; color: Theme.textPrimary; elide: Text.ElideRight }
-                                Text { text: "Role: " + (modelData.role || "user"); font: Theme.fontSmall; color: Theme.textMuted }
+                                Text { text: qsTr("Role: ") + (modelData.role || "user"); font: Theme.fontSmall; color: Theme.textMuted }
                             }
                         }
                     }
@@ -269,14 +292,14 @@ Rectangle {
 
             // ── Export / Import ──
             SettingsSection {
-                title: "Data Export / Import"
+                title: qsTr("Data Export / Import")
                 Layout.fillWidth: true
 
                 ColumnLayout {
                     Layout.fillWidth: true; spacing: 12
 
                     Text {
-                        text: "Export your providers, memory facts, and RAG documents as JSON."
+                        text: qsTr("Export your providers, memory facts, and RAG documents as JSON.")
                         font: Theme.fontBody; color: Theme.textSecondary; wrapMode: Text.WordWrap
                     }
 
@@ -284,7 +307,7 @@ Rectangle {
                         Layout.fillWidth: true; spacing: 12
 
                         Button {
-                            text: "Export All"
+                            text: qsTr("Export All")
                             flat: true; implicitWidth: 120; implicitHeight: 36
                             contentItem: Text {
                                 text: parent.text; color: "#ffffff"; font: Theme.fontBody; font.bold: true
@@ -297,21 +320,11 @@ Rectangle {
                                     GradientStop { position: 1.0; color: Theme.accentSecondary }
                                 }
                             }
-                            onClicked: {
-                                try {
-                                    var data = apiClient.exportAll()
-                                    var json = JSON.stringify(data, null, 2)
-                                    console.log("Exported data:", data)
-                                    // Save to file via clipboard or dialog
-                                    window.showToast("Exported " + data.providers.length + " providers, " + data.memory_facts.length + " facts", 1)
-                                } catch(e) {
-                                    window.showToast("Export failed: " + e.message, 2)
-                                }
-                            }
+                            onClicked: exportDialog.open()
                         }
 
                         Button {
-                            text: "Import"
+                            text: qsTr("Import")
                             flat: true; implicitWidth: 120; implicitHeight: 36
                             contentItem: Text {
                                 text: parent.text; color: Theme.accentPrimary; font: Theme.fontBody; font.bold: true
@@ -321,62 +334,48 @@ Rectangle {
                                 radius: Theme.radiusSmall; color: "transparent"
                                 border.color: Theme.accentPrimary; border.width: 1
                             }
-                            onClicked: importDialog.open()
+                            onClicked: importFileDialog.open()
                         }
                     }
                 }
             }
 
-            // ── Import Dialog ──
-            Dialog {
-                id: importDialog
-                title: "Import Data"
-                standardButtons: Dialog.Ok | Dialog.Cancel
-                modal: true
-                x: (parent.width - width) / 2; y: (parent.height - height) / 3
-
-                contentItem: ColumnLayout {
-                    spacing: 10; implicitWidth: 500
-
-                    Text {
-                        text: "Paste JSON data to import (providers, memory facts)."
-                        font: Theme.fontBody; color: Theme.textSecondary; wrapMode: Text.WordWrap
-                    }
-
-                    TextArea {
-                        id: importJsonArea
-                        Layout.fillWidth: true; Layout.preferredHeight: 300
-                        placeholderText: '{\n  "version": "1.0.2",\n  "providers": [...],\n  "memory_facts": [...]\n}'
-                        background: Rectangle {
-                            radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1
-                        }
-                        color: Theme.textPrimary; font: Theme.fontCode; wrapMode: Text.WordWrap
-                    }
-                }
-
+            // ── Export / Import file dialogs ──
+            FileDialog {
+                id: exportDialog
+                title: qsTr("Save backup")
+                selectExisting: false
+                nameFilters: ["JSON files (*.json)", "All files (*)"]
                 onAccepted: {
-                    try {
-                        var data = JSON.parse(importJsonArea.text)
-                        var result = apiClient.importAll(data)
-                        window.showToast("Imported: " + result.providers + " providers, " + result.facts + " facts", 1)
-                        refreshProviders()
-                        importJsonArea.text = ""
-                    } catch(e) {
-                        window.showToast("Import failed: " + e.message, 2)
-                    }
+                    var raw = exportDialog.fileUrl.toString()
+                    var path = raw.startsWith("file:///") ? raw.substring(8) : raw
+                    window.showLoading(true)
+                    apiClient.executeAsync("export", "exportBackup", JSON.stringify([path]), "{}")
+                }
+            }
+
+            FileDialog {
+                id: importFileDialog
+                title: qsTr("Import backup")
+                nameFilters: ["JSON files (*.json)", "All files (*)"]
+                onAccepted: {
+                    var raw = importFileDialog.fileUrl.toString()
+                    var path = raw.startsWith("file:///") ? raw.substring(8) : raw
+                    window.showLoading(true)
+                    apiClient.executeAsync("import", "importBackup", JSON.stringify([path]), "{}")
                 }
             }
 
             // ── About ──
             SettingsSection {
-                title: "About"
+                title: qsTr("About")
                 Layout.fillWidth: true
 
                 ColumnLayout {
                     Layout.fillWidth: true; spacing: 6
-                    Text { text: "OllamoMUI – Free AI Gateway"; font: Theme.fontSubheading; color: Theme.textPrimary }
-                    Text { text: "Version 1.0.4"; font: Theme.fontBody; color: Theme.textSecondary }
-                    Text { text: "Copyright (c) 2024-2026 Rhasan@dev"; font: Theme.fontSmall; color: Theme.textMuted }
+                    Text { text: qsTr("OllamoMUI – Free AI Gateway"); font: Theme.fontSubheading; color: Theme.textPrimary }
+                    Text { text: qsTr("Version 1.0.4"); font: Theme.fontBody; color: Theme.textSecondary }
+                    Text { text: qsTr("Copyright (c) 2024-2026 Rhasan@dev"); font: Theme.fontSmall; color: Theme.textMuted }
                 }
             }
         }
@@ -398,14 +397,14 @@ Rectangle {
         contentItem: ColumnLayout {
             spacing: 10; implicitWidth: 420
 
-            Text { text: "Name"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Name"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: pName; Layout.fillWidth: true; placeholderText: "e.g. my-provider"
+                id: pName; Layout.fillWidth: true; placeholderText: qsTr("e.g. my-provider")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary; readOnly: providerDialog.isEdit
             }
 
-            Text { text: "Type"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Type"); font: Theme.fontBody; color: Theme.textPrimary }
             ComboBox {
                 id: pType; Layout.fillWidth: true
                 model: ["openai", "anthropic", "gemini", "custom"]
@@ -413,37 +412,37 @@ Rectangle {
                 contentItem: Text { text: parent.currentText; color: Theme.textPrimary; font: Theme.fontBody; verticalAlignment: Text.AlignVCenter; leftPadding: 8 }
             }
 
-            Text { text: "URL"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("URL"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: pUrl; Layout.fillWidth: true; placeholderText: "https://api.example.com/v1/chat/completions"
+                id: pUrl; Layout.fillWidth: true; placeholderText: qsTr("https://api.example.com/v1/chat/completions")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
 
-            Text { text: "Models URL (optional)"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Models URL (optional)"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: pModelsUrl; Layout.fillWidth: true; placeholderText: "https://api.example.com/v1/models"
+                id: pModelsUrl; Layout.fillWidth: true; placeholderText: qsTr("https://api.example.com/v1/models")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
 
-            Text { text: "API Key"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("API Key"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: pApiKey; Layout.fillWidth: true; placeholderText: "sk-..."
+                id: pApiKey; Layout.fillWidth: true; placeholderText: qsTr("sk-...")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary; echoMode: TextInput.Password
             }
 
-            Text { text: "Default Model"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Default Model"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
-                id: pDefaultModel; Layout.fillWidth: true; placeholderText: "gpt-3.5-turbo"
+                id: pDefaultModel; Layout.fillWidth: true; placeholderText: qsTr("gpt-3.5-turbo")
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
 
             CheckBox {
                 id: pFreeHeuristic
-                text: "Free model heuristic"
+                text: qsTr("Free model heuristic")
                 contentItem: Text { text: parent.text; font: Theme.fontBody; color: Theme.textPrimary; leftPadding: 8; verticalAlignment: Text.AlignVCenter }
                 indicator: Rectangle {
                     width: 20; height: 20; radius: 4; border.color: Theme.border; border.width: 1; color: pFreeHeuristic.checked ? Theme.accentPrimary : Theme.surface
@@ -474,20 +473,20 @@ Rectangle {
     // ── Change Password Dialog ──
     Dialog {
         id: changePasswordDialog
-        title: "Change Password"
+        title: qsTr("Change Password")
         standardButtons: Dialog.Ok | Dialog.Cancel
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3
 
         contentItem: ColumnLayout {
             spacing: 10; implicitWidth: 360
-            Text { text: "Current Password"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("Current Password"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
                 id: cpOld; Layout.fillWidth: true; echoMode: TextInput.Password
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
                 color: Theme.textPrimary
             }
-            Text { text: "New Password"; font: Theme.fontBody; color: Theme.textPrimary }
+            Text { text: qsTr("New Password"); font: Theme.fontBody; color: Theme.textPrimary }
             TextField {
                 id: cpNew; Layout.fillWidth: true; echoMode: TextInput.Password
                 background: Rectangle { radius: Theme.radiusSmall; color: Theme.surface; border.color: Theme.border; border.width: 1 }
@@ -511,7 +510,7 @@ Rectangle {
         property string targetName: ""
         property int targetIndex: -1
 
-        title: "Confirm Delete"
+        title: qsTr("Confirm Delete")
         standardButtons: Dialog.Yes | Dialog.No
         modal: true
         x: (parent.width - width) / 2; y: (parent.height - height) / 3

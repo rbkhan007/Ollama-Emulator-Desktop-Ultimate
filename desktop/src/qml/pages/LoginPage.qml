@@ -7,10 +7,25 @@ Rectangle {
 
     signal loginSucceeded()
 
+    Connections {
+        target: apiClient
+        function onRequestFinished(id, payload) {
+            if (id !== "login") return
+            window.showLoading(false)
+            loginSucceeded()
+            window.showToast(qsTr("Logged in successfully"), 1)
+        }
+        function onRequestError(id, msg) {
+            if (id !== "login") return
+            window.showLoading(false)
+            window.showToast(msg, 2)
+        }
+    }
+
     ColumnLayout {
         anchors.centerIn: parent
-        width: 360
-        spacing: 20
+        width: Math.min(parent.width * 0.9, 420)
+        spacing: Theme.padLarge
 
         Text {
             Layout.alignment: Qt.AlignHCenter
@@ -21,7 +36,7 @@ Rectangle {
 
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "Welcome Back"
+            text: qsTr("Welcome Back")
             font: Theme.fontHeading
             font.pixelSize: 28
             color: Theme.textPrimary
@@ -29,7 +44,7 @@ Rectangle {
 
         Text {
             Layout.alignment: Qt.AlignHCenter
-            text: "Sign in to your account"
+            text: qsTr("Sign in to your account")
             font: Theme.fontBody
             color: Theme.textSecondary
         }
@@ -41,7 +56,7 @@ Rectangle {
             spacing: 16
 
             Text {
-                text: "Email"
+                text: qsTr("Email")
                 font: Theme.fontBody
                 color: Theme.textPrimary
             }
@@ -65,7 +80,7 @@ Rectangle {
             }
 
             Text {
-                text: "Password"
+                text: qsTr("Password")
                 font: Theme.fontBody
                 color: Theme.textPrimary
             }
@@ -94,7 +109,7 @@ Rectangle {
         Button {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
-            text: "Sign In"
+            text: qsTr("Sign In")
             flat: true
             contentItem: Text {
                 text: parent.text
@@ -116,23 +131,17 @@ Rectangle {
                 var email = emailField.text.trim()
                 var password = passwordField.text.trim()
                 if (!email || !password) {
-                    window.showToast("Email and password are required", 2)
+                    window.showToast(qsTr("Email and password are required"), 2)
                     return
                 }
-                try {
-                    var result = apiClient.login(email, password)
-                    loginSucceeded()
-                    window.showToast("Logged in successfully", 1)
-                } catch(e) {
-                    var msg = e.message || "Login failed"
-                    window.showToast(msg, 2)
-                }
+                window.showLoading(true)
+                apiClient.executeAsync("login", "login", JSON.stringify([email, password]), "{}")
             }
         }
 
         Button {
             Layout.alignment: Qt.AlignHCenter
-            text: "Don't have an account? Register"
+            text: qsTr("Don't have an account? Register")
             flat: true
             contentItem: Text {
                 text: parent.text

@@ -1,15 +1,54 @@
+import atexit
 import sys
 import threading
 import uvicorn
 from pathlib import Path
+
+if getattr(sys, "frozen", False):
+    BUNDLE = Path(sys.executable).resolve().parent
+    sys.path.insert(0, str(BUNDLE))
+else:
+    ROOT = Path(__file__).resolve().parent.parent.parent
+    sys.path.insert(0, str(ROOT / "backend" / "src"))
+    sys.path.insert(0, str(ROOT / "desktop"))
+
 from ollama_emu.main import app
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "backend" / "src"))
+_PG_STATE = {}
+
+def start_local_postgres():
+    try:
+        from postgres_bootstrap import ensure_local_postgres, find_postgres_bin, data_dir
+    except Exception as exc:
+        print(f"[postgres] bootstrap import failed: {exc}")
+        return
+    result = ensure_local_postgres()
+    _PG_STATE["bin_dir"] = find_postgres_bin()
+    _PG_STATE["data_dir"] = data_dir()
+    if result is None:
+        print("[postgres] no PostgreSQL binaries found; configure one or run fetch_postgres.py")
+        return
+    if not result.get("ok"):
+        print(f"[postgres] start failed: {result.get('error')}")
+        return
+    print(f"[postgres] local PostgreSQL ready at {result.get('dsn')}")
+
+def stop_local_postgres():
+    bin_dir = _PG_STATE.get("bin_dir")
+    ddir = _PG_STATE.get("data_dir")
+    if bin_dir and ddir:
+        try:
+            from postgres_bootstrap import stop_postgres
+            stop_postgres(bin_dir, ddir)
+        except Exception:
+            pass
 
 def run_server():
     uvicorn.run(app, host="127.0.0.1", port=11434, log_level="warning")
 
 def main():
+    start_local_postgres()
+    atexit.register(stop_local_postgres)
     threading.Thread(target=run_server, daemon=True).start()
 
     from .qml_engine import QmlEngine

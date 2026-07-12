@@ -34,23 +34,32 @@ if frontend_out.exists():
 docs_files = [
     (str(PROJECT_ROOT / "docs" / "README.md"), "docs"),
     (str(PROJECT_ROOT / "docs" / "SECURITY.md"), "docs"),
+    (str(PROJECT_ROOT / "desktop" / "README.md"), "docs") if (PROJECT_ROOT / "desktop" / "README.md").exists() else None,
     (str(PROJECT_ROOT / "configs" / ".env.example"), "."),
 ]
 
+# ── Bundled PostgreSQL binaries (optional; populated by fetch_postgres.py) ──
+postgres_files = []
+postgres_dir = PROJECT_ROOT / "desktop" / "postgres"
+if postgres_dir.exists():
+    for f in postgres_dir.rglob("*"):
+        if f.is_file():
+            rel = f.relative_to(PROJECT_ROOT)
+            postgres_files.append((str(f), str(rel.parent)))
+
+docs_files = [d for d in docs_files if d is not None]
+
 # ── All data files ──
-datas = qml_files + frontend_files + docs_files
+datas = qml_files + frontend_files + docs_files + postgres_files
 
 # ── Hidden imports for backend ──
 hiddenimports = [
     "numpy",
-    "psycopg2",
-    "psycopg2._psycopg",
-    "psycopg2.extensions",
-    "psycopg2.pool",
-    "psycopg2.extras",
-    "psycopg2.errors",
+    "psycopg",
+    "psycopg_pool",
+    "psycopg.rows",
     "pgvector",
-    "pgvector.psycopg2",
+    "pgvector.psycopg",
     "dotenv",
     "python_multipart",
     "multipart",
@@ -67,6 +76,7 @@ hiddenimports = [
     "ollama_emu.memory_monitor",
     "ollama_emu.updater",
     "psutil",
+    "postgres_bootstrap",
 ]
 
 # ── Collect all PySide6 Qt plugins and QML imports ──
@@ -87,7 +97,7 @@ excludes = [
 
 a = Analysis(
     [str(PROJECT_ROOT / "desktop" / "src" / "launcher.py")],
-    pathex=[str(PROJECT_ROOT), str(PROJECT_ROOT / "backend" / "src")],
+    pathex=[str(PROJECT_ROOT), str(PROJECT_ROOT / "backend" / "src"), str(PROJECT_ROOT / "desktop")],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,

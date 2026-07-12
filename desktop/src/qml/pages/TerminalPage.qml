@@ -11,14 +11,14 @@ Rectangle {
         spacing: 16
 
         Text {
-            text: "Terminal"
+            text: qsTr("Terminal")
             font: Theme.fontHeading
             font.pixelSize: 22
             color: Theme.textPrimary
         }
 
         Text {
-            text: "Direct CLI interface to the OllamoMUI backend."
+            text: qsTr("Direct CLI interface to the OllamoMUI backend.")
             font: Theme.fontBody
             color: Theme.textSecondary
         }

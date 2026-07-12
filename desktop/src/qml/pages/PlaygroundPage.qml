@@ -17,7 +17,7 @@ Rectangle {
             spacing: 12
 
             Text {
-                text: "Playground"
+                text: qsTr("Playground")
                 font: Theme.fontHeading
                 font.pixelSize: 22
                 color: Theme.textPrimary
@@ -143,7 +143,7 @@ Rectangle {
                     id: messageInput
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    placeholderText: "Type your message..."
+                    placeholderText: qsTr("Type your message...")
                     placeholderTextColor: Theme.textMuted
                     color: Theme.textPrimary
                     font: Theme.fontBody
