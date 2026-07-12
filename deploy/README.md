@@ -5,7 +5,7 @@
 - Domain names: `ollamomui.com` (frontend), `api.ollamomui.com` (backend)
 - GitHub account (for frontend hosting via Pages)
 - PostgreSQL 17 with pgvector (use NeonDB, Supabase, or self-hosted)
-- SSLCommerz merchant account (sandbox or live)
+- Lemon Squeezy account (API key, store ID, webhook secret)
 - SMTP credentials (Gmail app password works)
 
 ---
@@ -241,6 +241,6 @@ For Vercel: use their provided CNAME target instead of A records.
 - [ ] `curl /api/db/schema` shows `connected: true`
 - [ ] Payment flow works end-to-end (sandbox → license key → email)
 - [ ] Frontend loads at custom domain
-- [ ] Pricing page links point to correct Stripe/SSLCommerz URLs
+- [ ] Pricing page links point to correct Lemon Squeezy checkout URLs
 - [ ] SSL certificate valid (no browser warnings)
 - [ ] Auto-updater in EXE checks the live GitHub Releases

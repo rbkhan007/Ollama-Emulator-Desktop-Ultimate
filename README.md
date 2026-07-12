@@ -2,12 +2,12 @@
   <img src="https://raw.githubusercontent.com/rbkhan007/ollamomui/main/resources/ollamomui.svg" alt="OllamoMUI" width="220" />
 </p>
 
-<h1 align="center">OllamoMUI — Free AI Gateway</h1>
+<h1 align="center">OllamoMUI — The Free AI Gateway</h1>
 
 <p align="center">
-  <b>Stop paying $20/mo for ChatGPT & Claude. Get 26 free models on one port.</b>
+  <b>Stop paying $20/mo for ChatGPT &amp; Claude. Run 26 free models behind one Ollama-compatible port.</b>
   <br />
-  <i>RAG · Memory · Desktop EXE · Mobile App · Freemium Proxy</i>
+  <i>RAG · Memory · Desktop EXE · Mobile App · Freemium Licensing</i>
 </p>
 
 <p align="center">
@@ -21,7 +21,7 @@
 
 ---
 
-## Demo
+## 🚀 Demo
 
 | Platform | URL | Status |
 |----------|-----|--------|
@@ -30,28 +30,35 @@
 | **Desktop EXE** | [Download latest](https://github.com/rbkhan007/ollamomui/releases/latest) | ✅ Ready |
 | **Mobile APK** | [Download latest](https://github.com/rbkhan007/ollamomui/releases/latest) | ✅ Buildable |
 
+```bash
+# Talk to a free model in one line (Ollama-compatible):
+curl http://localhost:11434/api/chat -d '{"model":"free","messages":[{"role":"user","content":"Hello!"}]}'
+```
+
 ---
 
-## What Is OllamoMUI?
+## ✨ What Is OllamoMUI?
 
-OllamoMUI is a **free, self-hosted AI gateway** that emulates the Ollama API (and OpenAI / Anthropic formats) and routes your prompts to **26 completely free LLMs** via OpenRouter. It ships with:
+**OllamoMUI** is a free, self-hosted **AI gateway** that emulates the Ollama API (plus OpenAI / Anthropic formats) and routes your prompts to **26 completely free LLMs** via OpenRouter. It ships with:
 
 - A **RAG knowledge base** (upload PDFs/TXT/CSV, get grounded answers)
-- **Persistent memory** (every conversation auto-saves with facts & summaries)
+- **Persistent memory** (every conversation auto-saves facts & summaries)
 - A **desktop GUI** (PySide6 + QML, dark/light theme, auto-updater)
 - A **mobile app** (React Native / Expo with full CRUD)
-- **License management** with SSLCommerz payments and email delivery
+- **License management** with **Lemon Squeezy** payments and email delivery
 - A **freemium proxy** that works with Claude Code, Cursor, OpenCode, and any Ollama-compatible tool
+
+> 💡 Drop-in replacement for Ollama: point any tool at `http://localhost:11434` and it just works.
 
 ---
 
-## Features
+## 🧩 Features
 
 <table>
   <tr>
     <td width="33%">
       <h3>🧠 26 Free LLMs</h3>
-      <p>Qwen3 Coder 480B, NVIDIA Nemotron 550B, Llama 3.3 70B, Gemma 4, and more — all free via OpenRouter.</p>
+      <p>Qwen3 Coder 480B, NVIDIA Nemotron 550B, Llama 3.3 70B, Gemma, and more — all free via OpenRouter.</p>
     </td>
     <td width="33%">
       <h3>📚 RAG Engine</h3>
@@ -79,11 +86,11 @@ OllamoMUI is a **free, self-hosted AI gateway** that emulates the Ollama API (an
   <tr>
     <td width="33%">
       <h3>💳 Payments & Licensing</h3>
-      <p>SSLCommerz integration (Bangladesh) + Stripe Payment Links (global). Auto license generation + email delivery.</p>
+      <p>Lemon Squeezy integration (global + test mode). Auto license generation + email delivery on purchase.</p>
     </td>
     <td width="33%">
       <h3>🔒 Enterprise Security</h3>
-      <p>HTTPS redirect, secure cookies, rate limiting, IP allow/block lists, audit logging, password hashing.</p>
+      <p>HTTPS redirect (opt-in), secure cookies, rate limiting, IP allow/block lists, audit logging, password hashing.</p>
     </td>
     <td width="33%">
       <h3>🐳 Self-Hostable</h3>
@@ -94,7 +101,53 @@ OllamoMUI is a **free, self-hosted AI gateway** that emulates the Ollama API (an
 
 ---
 
-## Comparison
+## 🗺️ Architecture
+
+```mermaid
+graph TD
+  subgraph Clients
+    WEB[Web · Next.js / Vercel]
+    DESK[Desktop · PySide6 + QML EXE]
+    MOB[Mobile · React Native / Expo]
+  end
+  Clients -->|HTTPS · Ollama / OpenAI format| API[Backend · FastAPI / Render]
+  API -->|routes prompts| PROV[Model Providers<br/>OpenRouter · OpenAI · Anthropic · Gemini · Groq · DeepSeek]
+  API -->|RAG + memory + licensing| DB[(PostgreSQL + pgvector<br/>Neon DB)]
+  API -->|webhook · HMAC-SHA256| LS[Lemon Squeezy<br/>Payments + Licenses]
+```
+
+### Request Flow
+
+```mermaid
+flowchart LR
+  A[Prompt] --> B[Auth / ACL Middleware]
+  B --> C[Provider Router]
+  C --> D{Model cache + rate limit}
+  D --> E[Upstream Provider]
+  E --> F[Stream tokens back]
+```
+
+### Payment & Licensing Flow
+
+```mermaid
+sequenceDiagram
+  participant U as User
+  participant FE as Frontend
+  participant BE as Backend
+  participant LS as Lemon Squeezy
+  U->>FE: Click "Subscribe"
+  FE->>BE: POST /api/payment/lemonsqueezy/create-checkout
+  BE->>LS: Create hosted checkout (variant by plan)
+  LS-->>FE: Hosted checkout URL
+  U->>LS: Pay (test card 4242 4242 4242 4242)
+  LS->>BE: Webhook (order / subscription created)
+  BE->>BE: Verify HMAC → generate license key
+  BE-->>U: License key on screen + email
+```
+
+---
+
+## 📊 Comparison
 
 | Product | Free Cloud LLMs | RAG | Memory | Desktop GUI | Mobile App | API Proxy | Pricing |
 |---------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -108,7 +161,7 @@ OllamoMUI is a **free, self-hosted AI gateway** that emulates the Ollama API (an
 
 ---
 
-## Quick Start
+## ⚡ Quick Start
 
 ### One-Line Docker
 
@@ -139,38 +192,7 @@ Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest)
 
 ---
 
-## Architecture
-
-```
-┌────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Frontend  │     │   Backend    │     │  Providers   │
-│  (Next.js) │────▶│  (FastAPI)   │────▶│  OpenRouter  │
-│   Vercel   │     │   Render     │     │  OpenAI …    │
-└────────────┘     └──────┬───────┘     └──────────────┘
-                          │
-                    ┌─────▼────────┐
-                    │  PostgreSQL  │
-                    │  (Neon DB)   │
-                    │  + pgvector  │
-                    └──────────────┘
-
-┌──────────────────────┐   ┌──────────────────────┐
-│  Desktop GUI         │   │  Mobile App          │
-│  PySide6 + QML       │   │  React Native/Expo   │
-│  (Windows/macOS)     │   │  (Android)           │
-└──────────┬───────────┘   └──────────┬───────────┘
-           │                          │
-           └──────────┬───────────────┘
-                      ▼
-              ┌────────────────┐
-              │  Backend API   │
-              │  localhost:11434│
-              └────────────────┘
-```
-
----
-
-## Pricing
+## 💸 Pricing (via Lemon Squeezy)
 
 | Tier | Price | What You Get |
 |------|-------|-------------|
@@ -179,11 +201,12 @@ Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest)
 | **Mobile Ultimate** | $2.99/mo | Play Store app, full CRUD, notifications |
 | **Web Pro** | $9.99/mo | Unlimited RAG, cloud sync, priority support |
 
-**[View pricing →](https://ollamomui.vercel.app/pricing)**
+> Powered by [Lemon Squeezy](https://www.lemonsqueezy.com/) — supports test mode, global cards, and taxes handled for you.
+> **[View pricing →](https://ollamomui.vercel.app/pricing)**
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 ollamomui/
@@ -200,26 +223,27 @@ ollamomui/
 ├── deploy/           # Nginx, Docker configs
 ├── cloudflare/       # Cloudflare Tunnel setup
 ├── configs/          # Database schema, env examples
-├── docs/             # Full documentation (751 lines)
+├── docs/             # Full documentation
 ├── promotion/        # Product Hunt, Reddit, Twitter drafts
 └── resources/        # Logos, icons, architecture diagrams
 ```
 
 ---
 
-## Documentation
+## 📚 Documentation
 
 | Resource | Description |
 |----------|-------------|
-| [docs/README.md](docs/README.md) | Full installation, configuration & API reference (751 lines) |
+| [docs/README.md](docs/README.md) | Full installation, configuration & API reference |
 | [docs/API.md](docs/API.md) | Complete API endpoint reference |
 | [docs/MOBILE.md](docs/MOBILE.md) | Mobile app build & deploy guide |
 | [deploy/README.md](deploy/README.md) | Docker, Nginx & Cloudflare deployment |
+| [cloudflare/README.md](cloudflare/README.md) | Cloudflare Tunnel setup |
 | [CHANGELOG.md](CHANGELOG.md) | Version history |
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repo
 2. Create a feature branch: `git checkout -b feat/my-feature`
@@ -231,7 +255,7 @@ All contributions are welcome — bug fixes, new providers, UI improvements, and
 
 ---
 
-## License
+## 📜 License
 
 MIT — Copyright (c) 2024-2026 [Rhasan@dev](https://github.com/rbkhan007)
 

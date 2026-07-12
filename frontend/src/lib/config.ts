@@ -23,8 +23,8 @@ export const ASSET_BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const EXE_URL = DOWNLOAD_URL;
 
-// 🪙 Stripe Payment Links – create products at https://dashboard.stripe.com/products
-// then paste the generated payment link URLs here.
+// 🪙 Lemon Squeezy is the primary payment provider — the backend mints hosted
+// checkout URLs at /api/payment/lemonsqueezy/create-checkout.
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 
 // Lemon Squeezy is the primary payment provider. The backend

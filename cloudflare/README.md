@@ -40,7 +40,7 @@ cd ollamomui
 cp .env.production .env
 ```
 
-Edit `.env` with your values (database password, API key, SMTP, SSLCommerz).
+Edit `.env` with your values (database password, API key, SMTP, Lemon Squeezy keys).
 
 ### 1c. Start PostgreSQL + Backend
 
@@ -171,7 +171,7 @@ curl https://api.ollamomui.com/api/db/schema
 # Payment flow (sandbox)
 # 1. Go to https://ollamomui.com/pricing
 # 2. Click "Subscribe" on a plan
-# 3. Complete SSLCommerz sandbox transaction
+# 3. Complete the Lemon Squeezy checkout (use test mode + card 4242 4242 4242 4242)
 # 4. Receive license key on screen and by email
 ```
 

@@ -77,7 +77,7 @@ It's been a while since you last used OllamoMUI. Just a reminder that your gatew
 - RAG Knowledge Base with pgvector semantic search
 - Native desktop GUI (PySide6 + QML)
 - Mobile app for Android
-- SSLCommerz payment integration (for Bangladesh users)
+- Lemon Squeezy payment integration (global, with test mode)
 
 **Try it again in 30 seconds:**
 

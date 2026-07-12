@@ -45,7 +45,16 @@ mobile/dist/
 .env.development
 .env.production
 .env.test
+.envrc
+.env.*
 device.json
+secrets/
+*.secret
+*.pem
+*.key
+certs/
+ssl/
+.render/
 
 # =====================
 # IDE / Editor

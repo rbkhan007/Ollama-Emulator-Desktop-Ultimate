@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 const timeline = [
   { year: "2024", event: "Project started as a simple Ollama API emulator for free OpenRouter models." },
   { year: "2025", event: "Added RAG engine with pgvector, persistent memory system, and the first desktop GUI prototype." },
-  { year: "2026", event: "Full rebrand to OllamoMUI. Mobile app, SSLCommerz payments, license management, and marketing site launched." },
+  { year: "2026", event: "Full rebrand to OllamoMUI. Mobile app, Lemon Squeezy payments, license management, and marketing site launched." },
 ];
 
 const stats = [
@@ -100,7 +100,7 @@ export default function About() {
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
           {[
-            { title: "Backend (FastAPI)", items: ["26 free LLMs via OpenRouter", "RAG engine with hybrid search", "Persistent memory with summarization", "Multi-provider routing", "SSLCommerz + Stripe payments", "License key generation & email", "Rate limiting & audit logging"] },
+            { title: "Backend (FastAPI)", items: ["26 free LLMs via OpenRouter", "RAG engine with hybrid search", "Persistent memory with summarization", "Multi-provider routing", "Lemon Squeezy payments", "License key generation & email", "Rate limiting & audit logging"] },
             { title: "Desktop (PySide6 + QML)", items: ["Dual dark/light theme", "Chat playground", "RAG & memory browsers", "Embedded terminal", "Auto-updater", "License activation screen"] },
             { title: "Mobile (React Native)", items: ["Chat, providers, RAG, memory", "License activation", "Usage analytics", "Dark theme UI", "Bottom navigation"] },
             { title: "Frontend (Next.js)", items: ["Marketing site with pricing", "Public playground demo", "RAG & memory demo pages", "Payment result pages", "SEO-optimized pages"] },
@@ -127,7 +127,7 @@ export default function About() {
           Built with
         </h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
-          {["Python 3.14", "FastAPI", "PySide6", "QML", "Next.js", "React Native", "Expo", "PostgreSQL", "pgvector", "Redis", "Docker", "Nginx", "Vercel", "Render", "NeonDB", "SSLCommerz", "Stripe", "Cloudflare"].map((tech) => (
+           {["Python 3.14", "FastAPI", "PySide6", "QML", "Next.js", "React Native", "Expo", "PostgreSQL", "pgvector", "Docker", "Nginx", "Vercel", "Render", "NeonDB", "Lemon Squeezy", "Cloudflare"].map((tech) => (
             <span key={tech} style={{
               padding: "6px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600,
               background: "var(--surface)", border: "1px solid var(--glass-border)",

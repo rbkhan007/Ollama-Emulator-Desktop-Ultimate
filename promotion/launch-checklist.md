@@ -7,7 +7,7 @@
 - [ ] Add domain to Cloudflare (free tier)
 - [ ] Deploy backend with Docker + Cloudflare Tunnel
 - [ ] Deploy frontend to Cloudflare Pages
-- [ ] Set up SSLCommerz live credentials (not sandbox)
+- [ ] Set up Lemon Squeezy live credentials (API key, store ID, webhook secret)
 - [ ] Set up SMTP for license emails
 - [ ] Verify: `curl https://api.ollamomui.com/api/version`
 
@@ -60,7 +60,7 @@
 ### Monitoring
 - [ ] Watch server logs for errors
 - [ ] Monitor Cloudflare Tunnel uptime
-- [ ] Check SSLCommerz dashboard for payments
+- [ ] Check Lemon Squeezy dashboard for payments
 - [ ] Check email delivery rate
 - [ ] Set up Google Analytics on frontend
 
@@ -72,7 +72,7 @@
 
 ### Iteration
 - [ ] Fix bugs reported by early users
-- [ ] Add Stripe as alternative payment method
+- [ ] Add more Lemon Squeezy plans / regional payment providers
 - [ ] Write documentation for popular integrations
 - [ ] Create Docker Compose for easier setup
 - [ ] Add "What's new" popup to desktop app
