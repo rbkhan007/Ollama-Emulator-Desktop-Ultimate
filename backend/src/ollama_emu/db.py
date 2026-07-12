@@ -48,7 +48,11 @@ def get_dsn() -> str:
     user = os.environ.get("PGUSER", "ollamaemu")
     password = os.environ.get("PGPASSWORD", "ollamaemu")
     dbname = os.environ.get("PGDATABASE", "ollamaemu")
-    return f"host={host} port={port} user={user} password={password} dbname={dbname}"
+    sslmode = os.environ.get("PGSSLMODE", "")
+    dsn = f"host={host} port={port} user={user} password={password} dbname={dbname}"
+    if sslmode:
+        dsn += f" sslmode={sslmode}"
+    return dsn
 
 
 def is_connected() -> bool:
