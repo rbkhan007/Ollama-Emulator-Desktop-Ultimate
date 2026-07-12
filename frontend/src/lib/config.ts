@@ -1,4 +1,4 @@
-// Central configuration for OllamaEmu landing pages & external links.
+// Central configuration for OllamoMUI landing pages & external links.
 // Edit FREETIER_DOMAIN (or set NEXT_PUBLIC_FREETIER_DOMAIN) to point the
 // landing pages at your hosted free-tier gateway.
 
@@ -16,3 +16,9 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || FREETIER_URL;
 export const ASSET_BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 export const EXE_URL = DOWNLOAD_URL;
+
+// 🪙 Stripe Payment Links – create products at https://dashboard.stripe.com/products
+// then paste the generated payment link URLs here.
+export const STRIPE_WEB_PRO = process.env.NEXT_PUBLIC_STRIPE_WEB_PRO || "";
+export const STRIPE_DESKTOP_PRO = process.env.NEXT_PUBLIC_STRIPE_DESKTOP_PRO || "";
+export const STRIPE_MOBILE_ULTIMATE = process.env.NEXT_PUBLIC_STRIPE_MOBILE_ULTIMATE || "";

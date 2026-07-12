@@ -1,11 +1,22 @@
-import { SITE_URL } from "@/lib/config";
+import { SITE_URL, STRIPE_WEB_PRO, STRIPE_DESKTOP_PRO, STRIPE_MOBILE_ULTIMATE, REPO_URL } from "@/lib/config";
 import type { Metadata } from "next";
+
+const S = typeof document !== "undefined" ? `${document.location.origin}` : SITE_URL;
 
 export const metadata: Metadata = {
   title: "Pricing — OllamoMUI",
   description: "Choose the right plan for you: free web demo, desktop EXE, mobile app, or cloud sync.",
   alternates: { canonical: `${SITE_URL}/pricing` },
 };
+
+function stripeLink(base: string): string {
+  if (!base) return "#";
+  const params = new URLSearchParams({
+    "prefilled_email": "",
+    "allow_promotion_codes": "true",
+  });
+  return `${base}?${params.toString()}`;
+}
 
 export default function Pricing() {
   return (
@@ -18,57 +29,71 @@ export default function Pricing() {
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Free</h2>
           <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$0</p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-            <li>✅ 26 free models</li>
-            <li>✅ Playground demo</li>
-            <li>✅ RAG (limited)</li>
-            <li>⏳ 10 requests/day</li>
+            <li style={{ padding: "4px 0" }}>✅ 26 free models</li>
+            <li style={{ padding: "4px 0" }}>✅ Playground demo</li>
+            <li style={{ padding: "4px 0" }}>✅ RAG (limited)</li>
+            <li style={{ padding: "4px 0" }}>⏳ 10 requests/day</li>
           </ul>
           <a href="/playground" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Try now</a>
         </div>
 
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "2px solid var(--accent-2)" }}>
+        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "2px solid var(--accent-2)", position: "relative" }}>
+          <div style={{
+            position: "absolute", top: -10, right: 16,
+            background: "var(--accent-2)", color: "#fff",
+            fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: 20,
+            letterSpacing: "0.05em",
+          }}>POPULAR</div>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Web Pro</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$9.99</p>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$9.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-            <li>✅ Unlimited RAG storage</li>
-            <li>✅ Persistent memory sync</li>
-            <li>✅ Higher rate limits</li>
-            <li>✅ All 26 models</li>
+            <li style={{ padding: "4px 0" }}>✅ Unlimited RAG storage</li>
+            <li style={{ padding: "4px 0" }}>✅ Persistent memory sync</li>
+            <li style={{ padding: "4px 0" }}>✅ Higher rate limits</li>
+            <li style={{ padding: "4px 0" }}>✅ All 26 models</li>
           </ul>
-          <a href="https://buy.stripe.com/your-link" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Subscribe</a>
+          <a href={stripeLink(STRIPE_WEB_PRO)} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
+            Subscribe
+          </a>
         </div>
 
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Desktop Pro</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$4.99</p>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$4.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-            <li>✅ Pre-built EXE</li>
-            <li>✅ Auto-updates</li>
-            <li>✅ Local RAG & memory</li>
-            <li>✅ Works offline</li>
+            <li style={{ padding: "4px 0" }}>✅ Pre-built EXE</li>
+            <li style={{ padding: "4px 0" }}>✅ Auto-updates</li>
+            <li style={{ padding: "4px 0" }}>✅ Local RAG & memory</li>
+            <li style={{ padding: "4px 0" }}>✅ Works offline</li>
           </ul>
-          <a href="/download" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Buy now</a>
+          <a href={STRIPE_DESKTOP_PRO ? stripeLink(STRIPE_DESKTOP_PRO) : "/download"} target={STRIPE_DESKTOP_PRO ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
+            {STRIPE_DESKTOP_PRO ? "Buy now" : "Download free"}
+          </a>
         </div>
 
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Mobile Ultimate</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$2.99</p>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$2.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
-            <li>✅ Play Store app</li>
-            <li>✅ Sync with desktop</li>
-            <li>✅ Mobile RAG</li>
-            <li>✅ Usage analytics</li>
+            <li style={{ padding: "4px 0" }}>✅ Play Store app</li>
+            <li style={{ padding: "4px 0" }}>✅ Sync with desktop</li>
+            <li style={{ padding: "4px 0" }}>✅ Mobile RAG</li>
+            <li style={{ padding: "4px 0" }}>✅ Usage analytics</li>
           </ul>
-          <a href="https://play.google.com/store/apps/details?id=com.ollamomui.app" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Install</a>
+          <a href={STRIPE_MOBILE_ULTIMATE ? stripeLink(STRIPE_MOBILE_ULTIMATE) : "https://play.google.com/store/apps/details?id=com.ollamomui.app"} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
+            {STRIPE_MOBILE_ULTIMATE ? "Subscribe" : "Install"}
+          </a>
         </div>
       </div>
 
-      <p style={{ textAlign: "center", marginTop: 40, color: "var(--text-muted)" }}>
+      <p style={{ textAlign: "center", marginTop: 40, color: "var(--text-muted)", fontSize: 14 }}>
         All plans include the same 26 free models. Upgrade for convenience and extra features.
+        <br />
+        Questions? <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>Open an issue</a> on GitHub.
       </p>
     </main>
   );
