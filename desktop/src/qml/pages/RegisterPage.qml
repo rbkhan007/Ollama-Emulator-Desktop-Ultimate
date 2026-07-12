@@ -136,15 +136,33 @@ Rectangle {
                 }
             }
             onClicked: {
-                if (regPassword.text !== regConfirm.text) {
-                    console.warn("Passwords do not match")
+                var email = regEmail.text.trim()
+                var password = regPassword.text
+                var confirm = regConfirm.text
+                if (!email || !password) {
+                    window.showToast("Email and password are required", 2)
+                    return
+                }
+                if (password !== confirm) {
+                    window.showToast("Passwords do not match", 2)
+                    return
+                }
+                if (password.length < 6) {
+                    window.showToast("Password must be at least 6 characters", 2)
                     return
                 }
                 try {
-                    var result = apiClient.register(regEmail.text, regPassword.text)
-                    registerSucceeded()
+                    var result = apiClient.register(email, password)
+                    if (apiClient.token) {
+                        registerSucceeded()
+                        window.showToast("Account created and logged in", 1)
+                    } else {
+                        registerSucceeded()
+                        window.showToast("Account created. Please sign in.", 1)
+                    }
                 } catch(e) {
-                    console.warn("Registration failed:", e)
+                    var msg = e.message || "Registration failed"
+                    window.showToast(msg, 2)
                 }
             }
         }

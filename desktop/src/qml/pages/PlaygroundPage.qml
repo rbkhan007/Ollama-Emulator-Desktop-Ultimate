@@ -54,7 +54,7 @@ Rectangle {
 
                 Component.onCompleted: {
                     try {
-                        var models = apiClient.getModels()
+                        var models = apiClient.getModelList()
                         for (var i = 0; i < models.length; i++) {
                             modelCombo.append({ display: models[i].id || models[i].name, id: models[i].id || models[i].name })
                         }
@@ -211,11 +211,11 @@ Rectangle {
             messages.push({ role: role, content: chatModel.get(i).message })
         }
 
-        chatModel.append({ message: "...", isUser: false })
+        chatModel.append({ message: "", isUser: false })
         var replyIdx = chatModel.count - 1
 
         try {
-            var result = apiClient.chatCompletion(model, messages)
+            var result = apiClient.chatCompletion(model, messages, false)
             var reply = result.choices && result.choices[0] ? result.choices[0].message.content : "No response"
             chatModel.setProperty(replyIdx, "message", reply)
         } catch(e) {

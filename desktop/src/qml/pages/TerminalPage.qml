@@ -98,7 +98,7 @@ Rectangle {
                 break
             case "models":
                 try {
-                    var models = apiClient.getModels()
+                    var models = apiClient.getModelList()
                     if (models.length === 0) {
                         terminalOutput.text += "  No models found.\n"
                     } else {

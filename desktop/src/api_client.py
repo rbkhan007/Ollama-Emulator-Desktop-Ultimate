@@ -1,5 +1,6 @@
 import requests
-from typing import Optional, Dict, Any, List, Generator
+from typing import Optional, Dict, Any, List, Generator, Callable
+
 
 class ApiClient:
     def __init__(self, base_url="http://localhost:8000"):
@@ -7,7 +8,9 @@ class ApiClient:
         self.session = requests.Session()
         self.session.headers.update({"Content-Type": "application/json"})
         self._token: Optional[str] = None
+        self._preferences: Dict[str, str] = {}
 
+    # ── Token ──────────────────────────────────────────────
     @property
     def token(self):
         return self._token
@@ -33,7 +36,10 @@ class ApiClient:
         return result
 
     def register(self, email: str, password: str) -> Dict[str, Any]:
-        return self._request("POST", "/api/auth/register", json={"email": email, "password": password})
+        result = self._request("POST", "/api/auth/register", json={"email": email, "password": password})
+        if result.get("token"):
+            self.token = result["token"]
+        return result
 
     def logout(self, token: str = "") -> Dict[str, Any]:
         return self._request("POST", "/api/auth/logout", json={"token": token or self._token or ""})
@@ -83,6 +89,13 @@ class ApiClient:
     def get_models(self) -> Dict[str, Any]:
         return self._request("GET", "/api/models")
 
+    def get_model_list(self) -> List[Dict[str, Any]]:
+        result = self.get_models()
+        return result.get("models", [])
+
+    def get_free_models(self) -> Dict[str, Any]:
+        return self._request("GET", "/api/models/free")
+
     # ── Chat ──────────────────────────────────────────────
     def chat_completion(self, model: str, messages: List[Dict[str, str]], stream: bool = False) -> Any:
         payload = {"model": model, "messages": messages, "stream": stream}
@@ -90,10 +103,9 @@ class ApiClient:
             resp = self.session.post(f"{self.base_url}/v1/chat/completions", json=payload, stream=True, timeout=60)
             resp.raise_for_status()
             return self._stream_lines(resp)
-        else:
-            resp = self.session.post(f"{self.base_url}/v1/chat/completions", json=payload, timeout=60)
-            resp.raise_for_status()
-            return resp.json()
+        resp = self.session.post(f"{self.base_url}/v1/chat/completions", json=payload, timeout=60)
+        resp.raise_for_status()
+        return resp.json()
 
     def _stream_lines(self, resp: requests.Response) -> Generator[str, None, None]:
         for line in resp.iter_lines(decode_unicode=True):
@@ -199,12 +211,104 @@ class ApiClient:
     def get_device(self) -> Dict[str, Any]:
         return self._request("GET", "/api/device")
 
-    # ── Export / Import ────────────────────────────────
+    # ── Export / Import ───────────────────────────────────
     def export_all(self) -> Dict[str, Any]:
         return self._request("GET", "/api/export")
 
     def import_all(self, data: Dict[str, Any]) -> Dict[str, Any]:
         return self._request("POST", "/api/import", json=data)
 
-    def get_free_models(self) -> Dict[str, Any]:
-        return self._request("GET", "/api/models/free")
+    # ── Preferences (client-side) ─────────────────────────
+    def get_preference(self, key: str, default: str = "") -> str:
+        return self._preferences.get(key, default)
+
+    def set_preference(self, key: str, value: str) -> None:
+        self._preferences[key] = value
+
+    # ── Folder picker (stub – real integration uses QML) ─
+    def open_folder_picker(self) -> str:
+        return ""
+
+    # ── Deploy proxy environment ──────────────────────────
+    def deploy_proxy_env(self) -> Dict[str, Any]:
+        try:
+            return self._request("POST", "/api/proxy/deploy")
+        except Exception:
+            return {"status": "stub", "message": "Deploy endpoint not yet available on server"}
+
+    # ═══════════════════════════════════════════════════════
+    # CamelCase aliases for QML compatibility
+    # ═══════════════════════════════════════════════════════
+    # Auth
+    changePassword = change_password
+    verifyToken = verify_token
+    autoDetectKey = auto_detect_key
+
+    # Providers
+    listProviders = list_providers
+    getProviders = get_providers
+    getProvider = get_provider
+    addProvider = add_provider
+    updateProvider = update_provider
+    deleteProvider = delete_provider
+    activateProvider = activate_provider
+    saveConfig = save_config
+
+    # Models
+    getModels = get_models
+    getModelList = get_model_list
+    getFreeModels = get_free_models
+
+    # Chat
+    chatCompletion = chat_completion
+
+    # RAG
+    getRagDocuments = get_rag_documents
+    getRagDocument = get_rag_document
+    getRagChunks = get_rag_chunks
+    updateRagChunk = update_rag_chunk
+    deleteRagDocument = delete_rag_document
+    addRagText = add_rag_text
+    searchRag = search_rag
+    getRagStats = get_rag_stats
+
+    # Memory
+    getMemoryMessages = get_memory_messages
+    getMemoryMessage = get_memory_message
+    deleteMemoryMessage = delete_memory_message
+    clearMemoryMessages = clear_memory_messages
+    getMemorySessions = get_memory_sessions
+    getMemoryFacts = get_memory_facts
+    addMemoryFact = add_memory_fact
+    deleteMemoryFact = delete_memory_fact
+    searchMemory = search_memory
+    getMemoryStats = get_memory_stats
+
+    # Users
+    getUsers = get_users
+    getUser = get_user
+    updateUserRole = update_user_role
+    deleteUser = delete_user
+
+    # Usage
+    getUsage = get_usage_stats
+    getUsageStats = get_usage_stats
+    clearUsage = clear_usage
+
+    # System
+    getVersion = get_version
+    getStatus = get_status
+    getDevice = get_device
+    healthCheck = health_check
+
+    # Export/Import
+    exportAll = export_all
+    importAll = import_all
+
+    # Preferences
+    setPreference = set_preference
+    getPreference = get_preference
+
+    # Folder / Deploy
+    openFolderPicker = open_folder_picker
+    deployProxyEnv = deploy_proxy_env

@@ -113,11 +113,19 @@ Rectangle {
                 }
             }
             onClicked: {
+                var email = emailField.text.trim()
+                var password = passwordField.text.trim()
+                if (!email || !password) {
+                    window.showToast("Email and password are required", 2)
+                    return
+                }
                 try {
-                    var result = apiClient.login(emailField.text, passwordField.text)
+                    var result = apiClient.login(email, password)
                     loginSucceeded()
+                    window.showToast("Logged in successfully", 1)
                 } catch(e) {
-                    console.warn("Login failed:", e)
+                    var msg = e.message || "Login failed"
+                    window.showToast(msg, 2)
                 }
             }
         }
