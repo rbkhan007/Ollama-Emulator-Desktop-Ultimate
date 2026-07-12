@@ -44,5 +44,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # Cloudflare Tunnel – exposes backend to the internet without opening ports
+  # Only used in production. For local dev, comment this service out.
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    # Alternative (if using credentials file instead of token):
+    # command: tunnel --config /etc/cloudflared/config.yml run
+    # volumes:
+    #   - ./cloudflare/credentials:/home/nonroot/.cloudflared:ro
+    #   - ./cloudflare/config.yml:/etc/cloudflared/config.yml:ro
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+      TUNNEL_URL: http://backend:11434
+      TUNNEL_METRICS: 0.0.0.0:2000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   pgdata:
