@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/AuthContext";
 import { useDb } from "@/lib/DbContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
@@ -13,9 +11,7 @@ type Collection = { name: string; documents: number; chunks: number };
 type SearchResult = { source: string; score: number; content: string };
 
 export default function RagPage() {
-  const { isAuthenticated } = useAuth();
   const { databaseConnected, schema } = useDb();
-  const router = useRouter();
   const [docs, setDocs] = useState<Doc[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [collections, setCollections] = useState<Collection[]>([]);
@@ -45,7 +41,7 @@ export default function RagPage() {
     }
   }
 
-  useEffect(() => { if (!isAuthenticated) { router.push("/login"); return; } load(); }, [isAuthenticated, router]);
+  useEffect(() => { load(); }, []);
 
   async function uploadFile() {
     const file = fileRef.current?.files?.[0];

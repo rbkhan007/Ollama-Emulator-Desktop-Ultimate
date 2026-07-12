@@ -18,7 +18,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem("ollama-emu-theme") as Theme | null;
+    const saved = localStorage.getItem("ollamomui-theme") as Theme | null;
     if (saved === "light" || saved === "dark") {
       setTheme(saved);
     }
@@ -28,7 +28,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mounted) {
       document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("ollama-emu-theme", theme);
+      localStorage.setItem("ollamomui-theme", theme);
     }
   }, [theme, mounted]);
 

@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "About — OllamaEmu",
-  description: "OllamaEmu emulates the Ollama API and routes prompts to 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file. Compare with Ollama, LM Studio, Jan, and GPT4All.",
+  title: "About — OllamoMUI",
+  description: "OllamoMUI emulates the Ollama API and routes prompts to 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file. Compare with Ollama, LM Studio, Jan, and GPT4All.",
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
-    title: "About OllamaEmu — Free Local LLM Proxy with RAG & Memory",
-    description: "Learn how OllamaEmu emulates the Ollama API and routes prompts to 100% free LLMs with RAG, memory, and a polished dashboard.",
+    title: "About OllamoMUI — Free Local LLM Proxy with RAG & Memory",
+    description: "Learn how OllamoMUI emulates the Ollama API and routes prompts to 100% free LLMs with RAG, memory, and a polished dashboard.",
     url: `${SITE_URL}/about`,
   },
 };
@@ -29,7 +29,7 @@ const compares = [
   { name: "LM Studio", free: "Partial", note: "Local model runner; no Ollama-compatible cloud proxy or multi-provider routing." },
   { name: "Jan", free: "Partial", note: "Local-first chat; lacks a public API gateway for coding tools and free cloud models." },
   { name: "GPT4All", free: "Partial", note: "Local models only; no routing to free cloud providers or RAG UI." },
-  { name: "OllamaEmu", free: "Yes", note: "Routes to 100% free cloud LLMs, emulates Ollama/OpenAI/Anthropic APIs, ships RAG + memory + dashboard in one file." },
+  { name: "OllamoMUI", free: "Yes", note: "Routes to 100% free cloud LLMs, emulates Ollama/OpenAI/Anthropic APIs, ships RAG + memory + dashboard in one file." },
 ];
 
 export default function About() {
@@ -43,7 +43,7 @@ export default function About() {
           One server. Every page. Free.
         </h1>
         <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", lineHeight: 1.6, maxWidth: 640, margin: "0 auto" }}>
-          <b>OllamaEmu</b> emulates the Ollama API and silently routes your prompts to real,
+          <b>OllamoMUI</b> emulates the Ollama API and silently routes your prompts to real,
           <b style={{ color: "var(--text)" }}> 100% free</b> LLMs — then gives you RAG, memory, analytics,
           and a polished dashboard. Below is the full map of the app.
         </p>
@@ -84,7 +84,7 @@ export default function About() {
         </p>
         <div style={{ display: "grid", gap: 12 }}>
           {compares.map((c) => {
-            const isUs = c.name === "OllamaEmu";
+            const isUs = c.name === "OllamoMUI";
             return (
               <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
                 padding: "16px 22px", borderRadius: 14,

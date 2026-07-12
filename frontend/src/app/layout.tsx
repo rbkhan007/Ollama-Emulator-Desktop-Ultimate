@@ -7,7 +7,6 @@ import { Particles, GradientOrbs, MeshGrid, ComicHalftone, WaterRipple, WaterCau
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import { DbProvider } from "@/lib/DbContext";
-import MobileSetup from "@/components/MobileSetup";
 import { SITE_URL, ASSET_BASE } from "@/lib/config";
 
 const inter = Inter({
@@ -27,7 +26,7 @@ const jetbrains = JetBrains_Mono({
 });
 
 const themeScript = `
-(function(){try{var t=localStorage.getItem('ollama-emu-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}catch(e){}})()
+(function(){try{var t=localStorage.getItem('ollamomui-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}catch(e){}})()
 window.addEventListener('unhandledrejection',function(e){var m=(e.reason||'').toString();if(m.includes('listener indicated')||m.includes('message channel closed'))e.preventDefault();});
 window.addEventListener('error',function(e){var m=(e.error||'').toString();if(m.includes('listener indicated')||m.includes('message channel closed'))e.preventDefault();});
 `;
@@ -35,11 +34,11 @@ window.addEventListener('error',function(e){var m=(e.error||'').toString();if(m.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
-    template: "%s · OllamaEmu",
+    default: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
+    template: "%s · OllamoMUI",
   },
-  description: "OllamaEmu emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent PostgreSQL memory with pgvector, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
-  applicationName: "OllamaEmu",
+  description: "OllamoMUI emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent PostgreSQL memory with pgvector, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
+  applicationName: "OllamoMUI",
   keywords: [
     "ollama emulator", "ollama alternative", "local LLM", "free AI models", "free LLM proxy",
     "free AI coding assistant", "RAG knowledge base", "retrieval augmented generation",
@@ -53,28 +52,28 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Rhasan@dev" }, { name: "rbkhan007" }],
   creator: "Rhasan@dev",
-  publisher: "OllamaEmu",
+  publisher: "OllamoMUI",
   category: "technology",
   alternates: { canonical: SITE_URL },
   manifest: `${ASSET_BASE}/manifest.webmanifest`,
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "OllamaEmu",
+    title: "OllamoMUI",
   },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: SITE_URL,
-    siteName: "OllamaEmu",
-    title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+    siteName: "OllamoMUI",
+    title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator that silently routes your prompts to real, 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file.",
-    images: [{ url: `${ASSET_BASE}/og-image.png`, width: 1200, height: 630, alt: "OllamaEmu — free local LLM proxy" }],
+    images: [{ url: `${ASSET_BASE}/og-image.png`, width: 1200, height: 630, alt: "OllamoMUI — free local LLM proxy" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+    title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
     description: "Free & Open Source local Ollama API emulator routing prompts to 100% free LLMs. RAG, memory, analytics in one file.",
     images: [`${ASSET_BASE}/og-image.png`],
     creator: "@rbkhan007",
@@ -106,7 +105,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         </head>
       <body>
-        <MobileSetup />
         <ThemeProvider>
           <AuthProvider>
             <DbProvider>

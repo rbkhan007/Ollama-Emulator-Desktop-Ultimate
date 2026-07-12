@@ -1,5 +1,5 @@
 {
-  "name": "ollama-emu-dashboard",
+  "name": "ollamomui-dashboard",
   "version": "1.0.2",
   "private": true,
   "scripts": {

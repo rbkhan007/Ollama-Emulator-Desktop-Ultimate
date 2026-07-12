@@ -4,17 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
-import { useAuth } from "@/lib/AuthContext";
 import { BrandIcon } from "./BrandIcon";
 
 const links = [
   { href: "/", label: "Home", icon: "home" },
   { href: "/playground", label: "Playground", icon: "chat" },
-  { href: "/models", label: "Models", icon: "models" },
-  { href: "/usage", label: "Usage", icon: "usage" },
-  { href: "/settings", label: "Settings", icon: "settings" },
   { href: "/rag", label: "Knowledge", icon: "book" },
   { href: "/memory", label: "Memory", icon: "brain" },
+  { href: "/pricing", label: "Pricing", icon: "pricing" },
+  { href: "/download", label: "Download", icon: "download" },
   { href: "/about", label: "About", icon: "info" },
 ];
 
@@ -60,11 +58,17 @@ function NavIcon({ type }: { type: string }) {
         <path d="M9 16h6" />
       </svg>
     ),
-    usage: (
+    pricing: (
       <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </svg>
+    ),
+    download: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
     ),
     info: (
@@ -105,7 +109,6 @@ function MoonIcon() {
 export default function Navbar() {
   const path = usePathname();
   const { theme, toggle } = useTheme();
-  const { user, logout, isAuthenticated } = useAuth();
   const [open, setOpen] = useState(false);
 
   useEffect(() => { setOpen(false); }, [path]);
@@ -136,7 +139,7 @@ export default function Navbar() {
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
           }}>
-            OllamaEmu
+            OllamoMUI
           </span>
           <span style={{
             fontSize: 10,
@@ -146,7 +149,7 @@ export default function Navbar() {
             color: "#6c5ce7",
             fontWeight: 600,
             letterSpacing: "0.05em",
-            }}>v1.0.2</span>
+            }}>v1.0.4</span>
         </Link>
         <div className="nav-links" style={{ display: "flex", alignItems: "center", gap: 6, flex: 1 }}>
           {links.map((l) => {
@@ -191,55 +194,16 @@ export default function Navbar() {
           {theme === "dark" ? <SunIcon /> : <MoonIcon />}
         </button>
 
-        {isAuthenticated ? (
-          <div className="nav-auth" style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 6 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: "var(--gradient-1)", color: "white",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 13, fontWeight: 700,
-            }}>
-              {user?.email?.charAt(0).toUpperCase() || "U"}
-            </div>
-            <button
-              onClick={logout}
-              title="Sign out"
-              style={{
-                padding: "6px 10px", borderRadius: 8, fontSize: 12, fontWeight: 500,
-                border: "1px solid var(--glass-border)", background: "var(--surface)",
-                color: "var(--text-muted)", cursor: "pointer",
-                fontFamily: "inherit", transition: "all 0.2s",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: "middle" }}>
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-              {" Sign Out"}
-            </button>
-          </div>
-        ) : (
-          <Link
-            href="/login"
-            className="nav-auth"
-            style={{
-              marginLeft: 8,
-              padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-              background: "var(--gradient-1)", color: "white",
-              display: "flex", alignItems: "center", gap: 6,
-              boxShadow: "0 4px 16px rgba(108,92,231,0.3)",
-              transition: "all 0.2s",
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-              <polyline points="10 17 15 12 10 7" />
-              <line x1="15" y1="12" x2="3" y2="12" />
-            </svg>
-            Sign In
-          </Link>
-        )}
+        <a href="https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" style={{
+          marginLeft: 8,
+          padding: "7px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+          background: "var(--surface)", color: "var(--text)",
+          display: "flex", alignItems: "center", gap: 6,
+          border: "1px solid var(--glass-border)", textDecoration: "none",
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z" /></svg>
+          Star on GitHub
+        </a>
 
         <button
           className="nav-burger"
@@ -262,21 +226,9 @@ export default function Navbar() {
             {l.label}
           </Link>
         ))}
-        <div className="nav-mobile-auth">
-          {isAuthenticated ? (
-            <button
-              onClick={logout}
-              className="btn btn-ghost btn-sm"
-              style={{ flex: 1, justifyContent: "center" }}
-            >
-              Sign Out
-            </button>
-          ) : (
-            <Link href="/login" className="btn btn-primary btn-sm" style={{ flex: 1, justifyContent: "center" }}>
-              Sign In
-            </Link>
-          )}
-        </div>
+        <a href="https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: "center" }}>
+          ⭐ Star on GitHub
+        </a>
       </div>
     </>
   );

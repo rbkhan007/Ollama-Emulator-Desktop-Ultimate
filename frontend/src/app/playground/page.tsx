@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/AuthContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
 import { ProviderIcon } from "@/components/BrandIcon";
@@ -11,8 +9,6 @@ type Msg = { role: "user" | "assistant" | "error"; content: string };
 type Model = { name: string; free: boolean };
 
 export default function PlaygroundPage() {
-  const { isAuthenticated } = useAuth();
-  const router = useRouter();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [models, setModels] = useState<Model[]>([]);
@@ -23,14 +19,13 @@ export default function PlaygroundPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) { router.push("/login"); return; }
     apiJson<{ models: Model[] }>("/api/models").then(d => {
       const filtered = freeOnly ? d.models.filter(m => m.free) : d.models;
       setModels(filtered);
       if (filtered.length && !model) setModel(filtered[0].name);
     }).catch(() => {});
     apiJson<{ active_provider: string }>("/api/status").then(d => setProvider(d.active_provider)).catch(() => {});
-  }, [freeOnly, isAuthenticated, router]);
+  }, [freeOnly]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

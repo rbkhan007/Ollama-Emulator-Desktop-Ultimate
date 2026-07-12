@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/AuthContext";
 import { useDb } from "@/lib/DbContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
@@ -13,9 +11,7 @@ type Fact = { id: string; fact: string; source: string; importance: string; sess
 type Session = { id: string; name: string; model: string; provider: string; message_count: number; created_at: string; updated_at: string };
 
 export default function MemoryPage() {
-  const { isAuthenticated } = useAuth();
   const { databaseConnected, schema } = useDb();
-  const router = useRouter();
   const [stats, setStats] = useState<Stats | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [facts, setFacts] = useState<Fact[]>([]);
@@ -43,7 +39,7 @@ export default function MemoryPage() {
     }
   }
 
-  useEffect(() => { if (!isAuthenticated) { router.push("/login"); return; } load(); }, [isAuthenticated, router]);
+  useEffect(() => { load(); }, []);
 
   async function addFact() {
     if (!factText.trim()) { toast("Enter a fact", true); return; }

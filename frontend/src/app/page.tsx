@@ -11,11 +11,11 @@ import {
 } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
-  description: "Stop paying $20/mo for Claude & ChatGPT. OllamaEmu gives you 26 free LLMs on one port. RAG knowledge base, persistent memory, usage analytics, and a polished dashboard.",
+  title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
+  description: "Stop paying $20/mo for Claude & ChatGPT. OllamoMUI gives you 26 free LLMs on one port. RAG knowledge base, persistent memory, usage analytics, and a polished dashboard.",
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
+    title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
     description: "26 free LLMs on one port. RAG, memory, analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, and more.",
     url: SITE_URL,
   },
@@ -44,7 +44,7 @@ const compares = [
   { name: "LM Studio", free: "Partial", note: "Local model runner; no Ollama-compatible cloud proxy or multi-provider routing." },
   { name: "Jan", free: "Partial", note: "Local-first chat; lacks a public API gateway for coding tools and free cloud models." },
   { name: "GPT4All", free: "Partial", note: "Local models only; no routing to free cloud providers or RAG UI." },
-  { name: "OllamaEmu", free: "Yes", note: "Routes to 100% free cloud LLMs, emulates Ollama/OpenAI/Anthropic APIs, ships RAG + memory + dashboard in one file." },
+  { name: "OllamoMUI", free: "Yes", note: "Routes to 100% free cloud LLMs, emulates Ollama/OpenAI/Anthropic APIs, ships RAG + memory + dashboard in one file." },
 ];
 
 function FeatureGlyph({ type, color }: { type: string; color: string }) {
@@ -66,7 +66,7 @@ export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "OllamaEmu",
+    name: "OllamoMUI",
     operatingSystem: "Windows, macOS, Linux, Android",
     applicationCategory: "DeveloperApplication",
     author: { "@type": "Person", name: "Rhasan@dev" },
@@ -78,10 +78,10 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: [
-      { question: "What is OllamaEmu?", answer: "OllamaEmu is a free, open-source local server that emulates the Ollama API and silently routes your prompts to real, 100% free LLMs from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more." },
-      { question: "Is OllamaEmu really free?", answer: "Yes. OllamaEmu is 100% free and open source. It connects to free model tiers (such as OpenRouter's free models) so you can code and chat without paying for a subscription." },
-      { question: "Which AI coding tools work with OllamaEmu?", answer: "Any Ollama- or OpenAI-compatible tool works, including Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI SDK." },
-      { question: "Does OllamaEmu keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in PostgreSQL on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
+      { question: "What is OllamoMUI?", answer: "OllamoMUI is a free, open-source local server that emulates the Ollama API and silently routes your prompts to real, 100% free LLMs from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more." },
+      { question: "Is OllamoMUI really free?", answer: "Yes. OllamoMUI is 100% free and open source. It connects to free model tiers (such as OpenRouter's free models) so you can code and chat without paying for a subscription." },
+      { question: "Which AI coding tools work with OllamoMUI?", answer: "Any Ollama- or OpenAI-compatible tool works, including Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI SDK." },
+      { question: "Does OllamoMUI keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in PostgreSQL on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
       { question: "Do I need to install anything to try it?", answer: "You can download the single-file Windows EXE, or run it from source with run.bat / run.sh. On macOS and Linux use run.sh. No Docker required." },
     ],
   };
@@ -123,7 +123,7 @@ export default function Home() {
           maxWidth: 620, margin: "0 auto 36px", fontSize: "1.15rem",
           color: "var(--text-muted)", lineHeight: 1.6,
         }}>
-          OllamaEmu emulates the Ollama API and silently routes your prompts to real,
+          OllamoMUI emulates the Ollama API and silently routes your prompts to real,
           <b style={{ color: "var(--text)" }}> 100% free</b> models — then gives you RAG, memory,
           analytics, and a polished dashboard.
         </p>
@@ -165,7 +165,7 @@ export default function Home() {
         <div style={{ position: "relative", maxWidth: 760, margin: "48px auto 0" }}>
           <img
             src={`${ASSET_BASE}/neural-proxy.svg`}
-            alt="OllamaEmu neural proxy — routes your prompts to free LLMs"
+            alt="OllamoMUI neural proxy — routes your prompts to free LLMs"
             className="spidey-panel"
             style={{ width: "100%", height: "auto", display: "block", borderRadius: 22, animation: "floatSlow 7s ease-in-out infinite" }}
           />
@@ -248,14 +248,14 @@ export default function Home() {
       {/* Comparison — go viral */}
       <section style={{ padding: "0 24px 56px", maxWidth: 1000, margin: "0 auto" }}>
         <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
-          Why OllamaEmu wins
+          Why OllamoMUI wins
         </h2>
         <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 28, fontSize: "1.05rem" }}>
           The only option that is <b style={{ color: "var(--green)" }}>100% free</b> <i>and</i> gives you a coding-tool-ready API gateway.
         </p>
         <div style={{ display: "grid", gap: 12 }}>
           {compares.map((c) => {
-            const isUs = c.name === "OllamaEmu";
+            const isUs = c.name === "OllamoMUI";
             return (
               <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
                 padding: "16px 22px", borderRadius: 14,

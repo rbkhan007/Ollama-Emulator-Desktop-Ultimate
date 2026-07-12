@@ -1,6 +1,6 @@
 {
-  "name": "OllamaEmu — Free Local LLM Proxy with RAG & Memory",
-  "short_name": "OllamaEmu",
+  "name": "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
+  "short_name": "OllamoMUI",
   "description": "Free & open-source local Ollama API emulator that routes your prompts to 100% free LLMs. RAG, memory, analytics and a polished dashboard in one file.",
   "start_url": "/",
   "scope": "/",
