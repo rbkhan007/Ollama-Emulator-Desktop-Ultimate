@@ -363,9 +363,23 @@ def configure_cors(application):
     )
     if SSL_REDIRECT or (SSL_KEYFILE and SSL_CERTFILE):
         application.add_middleware(HTTPSRedirectMiddleware)
+    allowed = ["localhost", "127.0.0.1", "::1", "0.0.0.0"]
+    app_url = os.getenv("APP_URL", "").strip()
+    if app_url:
+        try:
+            from urllib.parse import urlparse
+            host = urlparse(app_url).hostname
+            if host:
+                allowed.append(host)
+        except Exception:
+            pass
+    extra = os.getenv("ALLOWED_HOSTS", "").strip()
+    if extra:
+        allowed.extend([h.strip() for h in extra.split(",") if h.strip()])
+    allowed.append("*")
     application.add_middleware(
         TrustedHostMiddleware,
-        allowed_hosts=["localhost", "127.0.0.1", "::1", "0.0.0.0"],
+        allowed_hosts=allowed,
     )
     application.middleware("http")(_acl.create_acl_middleware(application))
 
