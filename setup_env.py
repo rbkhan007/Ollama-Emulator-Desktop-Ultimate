@@ -139,11 +139,28 @@ def main():
                 print(f"  -> Available services: {[s.get('name') for s in services]}")
             else:
                 print(f"  v Found service ID: {service_id}")
-                env_vars = [{"key": k, "value": v} for k, v in RENDER_ENV_VARS.items()]
+                # Merge with existing env vars so we never wipe vars we don't
+                # manage (e.g. the Neon DB connection string, OLLAMA_EMU_DATABASE_URL).
+                existing = {}
+                try:
+                    get_resp = requests.get(
+                        f"https://api.render.com/v1/services/{service_id}/env-vars",
+                        headers=headers,
+                    )
+                    if get_resp.status_code == 200:
+                        for item in get_resp.json():
+                            ev = item.get("envVar", {})
+                            if ev.get("key"):
+                                existing[ev["key"]] = ev.get("value", "")
+                        print(f"  v Read {len(existing)} existing env vars")
+                except Exception as e:
+                    print(f"  ? Could not read existing env vars: {e}")
+                existing.update(RENDER_ENV_VARS)
+                env_vars = [{"key": k, "value": v} for k, v in existing.items()]
                 url = f"https://api.render.com/v1/services/{service_id}/env-vars"
                 resp = requests.put(url, headers=headers, json=env_vars)
                 if resp.status_code in [200, 201]:
-                    print(f"  v All {len(env_vars)} env vars set")
+                    print(f"  v {len(env_vars)} env vars set (merged with existing)")
                 else:
                     print(f"  x Failed: {resp.status_code} - {resp.text}")
         except Exception as e:
