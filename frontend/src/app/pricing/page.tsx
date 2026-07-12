@@ -2,6 +2,12 @@ import { SITE_URL, REPO_URL } from "@/lib/config";
 import type { Metadata } from "next";
 import BuyButton from "@/components/BuyButton";
 
+// Replace with your own number in international format (no + or spaces).
+const WHATSAPP_NUMBER = "8801774471120";
+const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Hi, I want to buy OllamoMUI Pro — please send me payment details."
+)}`;
+
 
 export const metadata: Metadata = {
   title: "Pricing — OllamoMUI",
@@ -75,10 +81,26 @@ export default function Pricing() {
         </div>
       </div>
 
+      <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)", marginTop: 32, textAlign: "center" }}>
+        <h2 style={{ fontSize: "1.25rem", marginBottom: 8 }}>Prefer to pay directly?</h2>
+        <p style={{ color: "var(--text-muted)", marginBottom: 16 }}>
+          No automated checkout yet — message me and I&apos;ll send payment details (Bkash / Nagad / bank transfer) and your license key.
+        </p>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "inline-block", background: "#25D366", color: "#fff", padding: "12px 24px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}
+        >
+          💬 Contact me on WhatsApp to buy
+        </a>
+      </div>
+
       <p style={{ textAlign: "center", marginTop: 40, color: "var(--text-muted)", fontSize: 14 }}>
         All plans include the same 26 free models. Upgrade for convenience and extra features.
         <br />
-        Questions? <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>Open an issue</a> on GitHub.
+        Questions? <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>Open an issue</a> on GitHub,
+        or <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>message me on WhatsApp</a>.
       </p>
     </main>
   );
