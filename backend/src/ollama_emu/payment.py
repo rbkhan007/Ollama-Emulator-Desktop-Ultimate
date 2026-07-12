@@ -16,6 +16,7 @@ from fastapi.responses import RedirectResponse, JSONResponse
 from pydantic import BaseModel, EmailStr, field_validator
 
 from ollama_emu import db
+from ollama_emu import acl as _acl
 
 log = logging.getLogger("ollama-emu")
 
@@ -82,14 +83,17 @@ def _save_license(user_id: str, raw_key: str, plan: str, expiry_days: int = 30):
     with db.get_cursor() as cur:
         cur.execute(
             """
-            INSERT INTO licenses (user_id, key_hash, plan, expiry_date)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO licenses (user_id, key_hash, raw_key, plan, expiry_date)
+            VALUES (%s, %s, %s, %s, %s)
             ON CONFLICT (user_id, plan) DO UPDATE
             SET key_hash = EXCLUDED.key_hash,
+                raw_key = EXCLUDED.raw_key,
                 expiry_date = EXCLUDED.expiry_date,
-                activated = false
+                activated = false,
+                activated_at = NULL,
+                device_id = ''
             """,
-            (user_id, key_hash, plan, expiry),
+            (user_id, key_hash, raw_key, plan, expiry),
         )
     return raw_key, key_hash
 
@@ -231,6 +235,46 @@ async def ls_create_checkout(req: CheckoutRequest):
     if not checkout_url:
         raise HTTPException(status_code=502, detail="No checkout URL returned")
     return {"checkout_url": checkout_url}
+
+
+class AdminLicenseRequest(BaseModel):
+    email: EmailStr
+    plan: str
+    days: int = 30
+
+
+@router.post("/admin/license")
+async def admin_create_license(req: AdminLicenseRequest, request: Request):
+    """Manually issue a license key (for direct/WhatsApp sales, no gateway).
+
+    Protected by the existing admin role (Bearer token or X-API-Key from an
+    admin user). Mirrors the Lemon Squeezy webhook's issuance path.
+    """
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    if not _acl.has_permission(auth.get("role", "guest"), _acl.Permission.ADMIN):
+        raise HTTPException(status_code=403, detail="Admin permission required")
+
+    email = req.email.strip().lower()
+    with db.get_cursor(commit=False) as cur:
+        cur.execute("SELECT email FROM users WHERE email = %s", (email,))
+        if cur.fetchone() is None:
+            raise HTTPException(
+                status_code=404,
+                detail="No user with that email. The customer must register in the app first.",
+            )
+
+    raw_key = generate_license_key(email, req.plan)
+    _save_license(email, raw_key, req.plan, req.days)
+    _update_user_subscription(email, req.days)
+    _acl.audit_log(
+        "license_manual_issue",
+        email=auth.get("email"),
+        ip=_acl._get_client_ip(request),
+        details={"customer": email, "plan": req.plan, "days": req.days},
+    )
+    return {"ok": True, "email": email, "plan": req.plan, "license": raw_key}
 
 
 @router.post("/lemonsqueezy/webhook")

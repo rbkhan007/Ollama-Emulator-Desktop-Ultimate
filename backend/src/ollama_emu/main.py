@@ -2387,7 +2387,7 @@ async def get_usage_stats():
 
 @app.get("/api/export")
 async def export_all_data():
-    """Export all providers, memory facts, and RAG documents as JSON."""
+    """Export all providers, memory, RAG documents, and chat history as JSON."""
     with state_lock:
         providers = [
             {"name": n, **{k: cfg[k] for k in ("url", "models_url", "auth_type", "default_model", "free_heuristic", "type")},
@@ -2396,14 +2396,25 @@ async def export_all_data():
         ]
     facts = []
     sessions = []
+    messages = []
     try:
         facts = MEMORY.get_facts()
         sessions = MEMORY.get_sessions()
+        messages = MEMORY.get_messages(limit=100000)
     except Exception:
         pass
     docs = []
     try:
-        docs = RAG.list_documents()
+        for d in RAG.list_documents():
+            texts = []
+            try:
+                chunks = _db.list_rag_chunks(d["id"])
+                texts = [c.get("content", "") for c in chunks if c.get("content")]
+            except Exception:
+                pass
+            doc = {k: d[k] for k in ("id", "filename", "collection", "metadata") if k in d}
+            doc["texts"] = texts
+            docs.append(doc)
     except Exception:
         pass
     return {
@@ -2412,14 +2423,15 @@ async def export_all_data():
         "providers": providers,
         "memory_facts": facts,
         "memory_sessions": sessions,
+        "memory_messages": messages,
         "rag_documents": docs,
     }
 
 
 @app.post("/api/import")
 async def import_all_data(data: dict):
-    """Import providers, memory facts, and optionally wipe existing data."""
-    imported = {"providers": 0, "facts": 0}
+    """Import providers, memory, RAG documents, and chat history."""
+    imported = {"providers": 0, "facts": 0, "messages": 0, "documents": 0}
     with state_lock:
         for prov in data.get("providers", []):
             name = prov.get("name", "")
@@ -2434,11 +2446,42 @@ async def import_all_data(data: dict):
             imported["providers"] += 1
         for fact_data in data.get("memory_facts", []):
             fact = fact_data.get("fact", "")
-            if fact:
+            if not fact:
+                continue
+            try:
                 MEMORY.add_fact(fact, source=fact_data.get("source", ""),
                                 importance=fact_data.get("importance", "normal"),
                                 session_id=fact_data.get("session_id", "default"))
                 imported["facts"] += 1
+            except Exception:
+                pass
+    for msg in data.get("memory_messages", []):
+        content = msg.get("content", "")
+        if not content:
+            continue
+        try:
+            MEMORY.add(
+                role=msg.get("role", "user"),
+                content=content,
+                model=msg.get("model", ""),
+                provider=msg.get("provider", ""),
+                session_id=msg.get("session_id", "default"),
+                tokens=int(msg.get("tokens", 0) or 0),
+            )
+            imported["messages"] += 1
+        except Exception:
+            pass
+    for doc in data.get("rag_documents", []):
+        texts = doc.get("texts") or []
+        full = "\n\n".join(t for t in texts if t)
+        if not full:
+            continue
+        try:
+            RAG.add_text(full, name=doc.get("filename", "imported"),
+                         collection=doc.get("collection", "default"))
+            imported["documents"] += 1
+        except Exception:
+            pass
     return {"status": "imported", **imported}
 
 
