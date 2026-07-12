@@ -264,8 +264,13 @@ async def init_payment(user_id: str, plan: str, amount: float):
     fail_url = f"{APP_URL}/api/payment/sslcommerz/fail"
     cancel_url = f"{APP_URL}/api/payment/sslcommerz/cancel"
 
+    sslcz_base = (
+        "https://secure.sslcommerz.com"
+        if os.getenv("SSLCOMMERZ_SANDBOX", "true").lower() == "false"
+        else "https://sandbox.sslcommerz.com"
+    )
     checkout_url = (
-        f"https://sandbox.sslcommerz.com/gwprocess/v3/api.php"
+        f"{sslcz_base}/gwprocess/v3/api.php"
         f"?store_id={store_id}"
         f"&store_passwd={store_passwd}"
         f"&total_amount={amount}"
