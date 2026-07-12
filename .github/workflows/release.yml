@@ -76,7 +76,7 @@ jobs:
             --add-data "frontend\out;frontend\out" ^
             --add-data "backend\src\ollama_emu;ollama_emu" ^
             --hidden-import numpy --collect-data numpy ^
-            --hidden-import psycopg2 --collect-submodules psycopg2 ^
+            --hidden-import psycopg --collect-submodules psycopg ^
             --hidden-import pgvector --collect-submodules pgvector ^
             --hidden-import dotenv --collect-data dotenv ^
             --hidden-import python_multipart --hidden-import multipart ^

@@ -91,7 +91,7 @@ def run_pyinstaller(onefile: bool = False):
             "--hidden-import", "PySide6.QtNetwork",
             "--collect-all", "PySide6",
             "--collect-all", "ollama_emu",
-            "--collect-submodules", "psycopg2",
+            "--collect-submodules", "psycopg",
             "--collect-submodules", "pgvector",
             "--collect-data", "numpy",
             "--hidden-import", "uvicorn.workers",

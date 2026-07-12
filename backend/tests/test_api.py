@@ -66,11 +66,11 @@ def test_dependencies():
     except ImportError: deps.append(("httpx", False, "not installed"))
 
     try:
-        import psycopg2; deps.append(("psycopg2", True, "ok"))
-    except ImportError: deps.append(("psycopg2", False, "not installed — pip install psycopg2-binary"))
+        import psycopg; deps.append(("psycopg", True, "ok"))
+    except ImportError: deps.append(("psycopg", False, "not installed — pip install psycopg"))
 
     try:
-        from pgvector.psycopg2 import register_vector; deps.append(("pgvector", True, "ok"))
+        from pgvector.psycopg3 import register_vector; deps.append(("pgvector", True, "ok"))
     except ImportError: deps.append(("pgvector", False, "not installed — pip install pgvector"))
 
     try:
@@ -89,13 +89,13 @@ def test_postgres_connection():
     try:
         from dotenv import load_dotenv
         load_dotenv()
-        import psycopg2
+        import psycopg
         host = os.environ.get("PGHOST", "127.0.0.1")
         port = os.environ.get("PGPORT", "5432")
         user = os.environ.get("PGUSER", "ollamaemu")
         password = os.environ.get("PGPASSWORD", "")
         dbname = os.environ.get("PGDATABASE", "ollamaemu")
-        conn = psycopg2.connect(host=host, port=port, user=user, password=password, dbname=dbname)
+        conn = psycopg.connect(host=host, port=port, user=user, password=password, dbname=dbname)
         cur = conn.cursor()
         cur.execute("SELECT current_user, current_database()")
         row = cur.fetchone()

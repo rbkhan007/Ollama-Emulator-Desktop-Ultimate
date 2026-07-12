@@ -24,10 +24,10 @@ from typing import Dict, List, Optional, Tuple
 from dotenv import load_dotenv
 load_dotenv()
 
-import psycopg2
-import psycopg2.pool
-import psycopg2.extras
-import psycopg2.errors
+import psycopg
+import psycopg.rows
+import psycopg.errors
+import psycopg_pool
 
 log = logging.getLogger("ollama-emu.db")
 
@@ -35,7 +35,7 @@ log = logging.getLogger("ollama-emu.db")
 # CONNECTION POOL
 # ============================================================
 
-_pool: Optional[psycopg2.pool.ThreadedConnectionPool] = None
+_pool: Optional[psycopg_pool.ConnectionPool] = None
 _connected: bool = False
 
 
@@ -56,7 +56,7 @@ def get_dsn() -> str:
 
 
 def _sanitize_dsn(url: str) -> str:
-    """Strip connection options that psycopg2's bundled libpq / Neon's
+    """Strip connection options that psycopg (v3) / Neon's
     pooler (transaction mode) may reject. `sslmode=require` is sufficient
     for TLS; `channel_binding` is only needed for direct SCRAM binding."""
     if "channel_binding" in url:
@@ -77,8 +77,10 @@ def init_pool(minconn: int = 1, maxconn: int = 10) -> bool:
     url = os.environ.get("OLLAMA_EMU_DATABASE_URL", "").strip()
     try:
         if url:
-            _pool = psycopg2.pool.ThreadedConnectionPool(
-                minconn, maxconn, _sanitize_dsn(url), connect_timeout=10,
+            _pool = psycopg_pool.ConnectionPool(
+                conninfo=_sanitize_dsn(url),
+                min_size=0, max_size=maxconn,
+                open=True, kwargs={"connect_timeout": 10},
             )
         else:
             host = os.environ.get("PGHOST", "127.0.0.1")
@@ -86,9 +88,10 @@ def init_pool(minconn: int = 1, maxconn: int = 10) -> bool:
             user = os.environ.get("PGUSER", "ollamaemu")
             password = os.environ.get("PGPASSWORD", "")
             dbname = os.environ.get("PGDATABASE", "ollamaemu")
-            _pool = psycopg2.pool.ThreadedConnectionPool(
-                minconn, maxconn,
-                host=host, port=port, user=user, password=password, dbname=dbname,
+            _pool = psycopg_pool.ConnectionPool(
+                conninfo=f"host={host} port={port} user={user} password={password} dbname={dbname}",
+                min_size=0, max_size=maxconn,
+                open=True, kwargs={"connect_timeout": 10},
             )
         _connected = True
         log.info("PostgreSQL pool created (min=%d, max=%d)", minconn, maxconn)
@@ -136,7 +139,7 @@ def get_conn():
 def get_cursor(commit: bool = True):
     """Yield a RealDictCursor from a pooled connection."""
     with get_conn() as conn:
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur = conn.cursor(row_factory=psycopg.rows.dict_row)
         yield cur
         if commit:
             conn.commit()
@@ -658,7 +661,7 @@ def create_user(email: str, pw_hash: str) -> bool:
         try:
             cur.execute("INSERT INTO users (email, password_hash) VALUES (%s,%s)", (email, pw_hash))
             return True
-        except psycopg2.errors.UniqueViolation:
+        except psycopg.errors.UniqueViolation:
             return False
 
 

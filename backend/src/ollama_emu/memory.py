@@ -45,7 +45,7 @@ class MemorySystem:
         if not batch:
             return
         try:
-            from psycopg2.extras import execute_values
+            from psycopg.extras import execute_values
             with get_cursor() as cur:
                 execute_values(
                     cur,

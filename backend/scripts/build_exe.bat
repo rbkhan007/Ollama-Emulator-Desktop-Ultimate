@@ -35,15 +35,13 @@ python -m PyInstaller --onefile --console ^
     --add-data "backend\src\ollama_emu;ollama_emu" ^
     --hidden-import numpy ^
     --collect-data numpy ^
-    --hidden-import psycopg2 ^
-    --hidden-import psycopg2._psycopg ^
-    --hidden-import psycopg2.extensions ^
-    --hidden-import psycopg2.pool ^
-    --hidden-import psycopg2.extras ^
-    --hidden-import psycopg2.errors ^
-    --collect-submodules psycopg2 ^
+    --hidden-import psycopg ^
+    --hidden-import psycopg.rows ^
+    --hidden-import psycopg.errors ^
+    --hidden-import psycopg_pool ^
+    --collect-submodules psycopg ^
     --hidden-import pgvector ^
-    --hidden-import pgvector.psycopg2 ^
+    --hidden-import pgvector.psycopg3 ^
     --collect-submodules pgvector ^
     --hidden-import dotenv ^
     --collect-data dotenv ^
