@@ -1,11 +1,11 @@
 @echo off
-title OllamaEmu — Build EXE
+title OllamoMUI — Build EXE
 chcp 65001 >nul
 cd /d "%~dp0\..\.."
 
 echo ============================================
-echo  Building OllamaEmu Desktop EXE
-echo  v1.0.2 - Copyright (c) 2024-2026 Rhasan@dev
+echo  Building OllamoMUI Desktop EXE
+echo  v1.0.4 - Copyright (c) 2024-2026 Rhasan@dev
 echo ============================================
 echo.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cross-platform build script for OllamaEmu Desktop.
+Cross-platform build script for OllamoMUI Desktop.
 Builds a standalone executable with PyInstaller.
 
 Usage:
@@ -80,7 +80,7 @@ def run_pyinstaller(onefile: bool = False):
         cmd = [
             sys.executable, "-m", "PyInstaller",
             "--onefile",
-            "--name", "OllamaEmuDesktop",
+            "--name", "ollamomui",
             "--add-data", f"{PROJECT_ROOT / 'desktop' / 'src' / 'qml'}{os.pathsep}qml",
             "--add-data", f"{PROJECT_ROOT / 'frontend' / 'out'}{os.pathsep}frontend/out",
             "--hidden-import", "PySide6",
@@ -105,7 +105,7 @@ def run_pyinstaller(onefile: bool = False):
             str(PROJECT_ROOT / "desktop" / "src" / "launcher.py"),
         ]
         if sys.platform == "win32":
-            cmd += ["--icon", str(PROJECT_ROOT / "resources" / "brand-mark.ico")]
+            cmd += ["--icon", str(PROJECT_ROOT / "resources" / "ollamomui.ico")]
 
     print(f"[BUILD] Running: {' '.join(cmd)}")
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -137,14 +137,14 @@ def copy_artifacts():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="OllamaEmu Desktop Build Script")
+    parser = argparse.ArgumentParser(description="OllamoMUI Desktop Build Script")
     parser.add_argument("--onefile", action="store_true", help="Build single executable (Windows/macOS)")
     parser.add_argument("--clean", action="store_true", help="Clean before building")
     parser.add_argument("--skip-frontend", action="store_true", help="Skip frontend build check")
     args = parser.parse_args()
 
     print("=" * 55)
-    print("  OllamaEmu Desktop — Build Script")
+    print("  OllamoMUI Desktop — Build Script")
     print(f"  Platform: {sys.platform}  Python: {sys.version_info.major}.{sys.version_info.minor}")
     print("=" * 55)
 
@@ -165,7 +165,7 @@ def main():
 
     print()
     print("=" * 55)
-    exe_name = "OllamaEmuDesktop.exe" if sys.platform == "win32" else "OllamaEmuDesktop"
+    exe_name = "ollamomui.exe" if sys.platform == "win32" else "ollamomui"
     print(f"  Build complete!")
     print(f"  Executable: dist/{exe_name}")
     print(f"  Run: dist/{exe_name}")

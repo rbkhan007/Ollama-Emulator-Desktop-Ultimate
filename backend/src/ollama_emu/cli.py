@@ -1,7 +1,7 @@
 """
 ollamaemu — command line interface (drop-in style for `ollama`).
 
-Routes to the local Ollama Emulator server (default http://localhost:11434).
+Routes to the local OllamoMUI server (default http://localhost:11434).
 Usable by CLI coding agents exactly like `ollama`, e.g.:
 
     ollamaemu serve                 # start the proxy server
@@ -116,7 +116,7 @@ def cmd_version(_args):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="ollamaemu", description="Ollama Emulator CLI")
+    p = argparse.ArgumentParser(prog="ollamomui", description="OllamoMUI CLI")
     sub = p.add_subparsers(dest="command")
 
     serve = sub.add_parser("serve", help="Start the proxy server")

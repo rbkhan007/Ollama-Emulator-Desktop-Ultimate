@@ -1,10 +1,10 @@
 #!/bin/bash
-# === Ollama Emulator + Claude Code turnkey launcher ===
+# === OllamoMUI + Claude Code turnkey launcher ===
 # v1.0.2 - Copyright (c) 2024-2026 Rhasan@dev
 set -e
 
 echo "============================================"
-echo " Ollama Emulator + Claude Code Launcher"
+echo " OllamoMUI + Claude Code Launcher"
 echo " v1.0.2 - Copyright (c) 2024-2026 Rhasan@dev"
 echo "============================================"
 echo
@@ -29,7 +29,7 @@ export ANTHROPIC_BASE_URL=http://localhost:11434
 export ANTHROPIC_API_KEY=sk-local
 export ANTHROPIC_MODEL=openrouter/auto
 
-echo "[1/2] Starting Ollama Emulator on http://localhost:11434 ..."
+echo "[1/2] Starting OllamoMUI on http://localhost:11434 ..."
 python3 ollama_emu_desktop.py &
 EMU_PID=$!
 sleep 5

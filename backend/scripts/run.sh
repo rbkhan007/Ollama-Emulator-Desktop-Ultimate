@@ -1,5 +1,5 @@
 #!/bin/bash
-# OllamaEmu Desktop Ultimate - One-click launcher
+# OllamoMUI - One-click launcher
 # Starts: Backend + Frontend + Database (all in one)
 set -e
 
@@ -7,7 +7,7 @@ cd "$(dirname "$0")/../.."
 
 echo ""
 echo "  ============================================"
-echo "   OllamaEmu Desktop Ultimate v1.0.2"
+echo "   OllamoMUI v1.0.4 – Free AI Gateway"
 echo "   Backend + Frontend + Database — all in one"
 echo "   Copyright (c) 2024-2026 Rhasan@dev"
 echo "  ============================================"

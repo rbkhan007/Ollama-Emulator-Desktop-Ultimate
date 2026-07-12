@@ -1,6 +1,12 @@
 # Changelog
 
-All notable changes to the Ollama Emulator Desktop Ultimate project are documented here.
+All notable changes to the OllamoMUI project are documented here.
+
+## [1.0.4] — 2026-07-12
+
+### Changed
+- Rebranded to **OllamoMUI** – new name, logo, and identity
+- Updated all documentation and references
 
 ## [1.0.2] — 2026-07-12
 

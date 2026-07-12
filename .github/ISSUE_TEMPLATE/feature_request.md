@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for OllamaEmu
+about: Suggest an idea for OllamoMUI
 title: "[Feature] "
 labels: enhancement
 assignees: ""

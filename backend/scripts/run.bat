@@ -1,11 +1,11 @@
 @echo off
-title OllamaEmu — Desktop Ultimate
+title OllamoMUI — Free AI Gateway
 chcp 65001 >nul
 cd /d "%~dp0\..\.."
 
 echo.
 echo  ============================================
-echo   OllamaEmu Desktop Ultimate v1.0.2
+echo   OllamoMUI v1.0.4 – Free AI Gateway
 echo   Backend + Frontend + Database — all in one
 echo   Copyright (c) 2024-2026 Rhasan@dev
 echo  ============================================

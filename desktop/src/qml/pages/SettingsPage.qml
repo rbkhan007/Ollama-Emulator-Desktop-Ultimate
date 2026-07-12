@@ -374,8 +374,8 @@ Rectangle {
 
                 ColumnLayout {
                     Layout.fillWidth: true; spacing: 6
-                    Text { text: "Ollama Emulator Desktop Ultimate"; font: Theme.fontSubheading; color: Theme.textPrimary }
-                    Text { text: "Version 1.0.2"; font: Theme.fontBody; color: Theme.textSecondary }
+                    Text { text: "OllamoMUI – Free AI Gateway"; font: Theme.fontSubheading; color: Theme.textPrimary }
+                    Text { text: "Version 1.0.4"; font: Theme.fontBody; color: Theme.textSecondary }
                     Text { text: "Copyright (c) 2024-2026 Rhasan@dev"; font: Theme.fontSmall; color: Theme.textMuted }
                 }
             }

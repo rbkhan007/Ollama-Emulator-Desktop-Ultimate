@@ -22,7 +22,7 @@ Rectangle {
             GradientText {
                 Layout.fillWidth: true
                 fontSize: 36
-                text: "Welcome to Ollama Emulator"
+                text: "Welcome to OllamoMUI"
                 horizontalAlignment: Text.AlignHCenter
             }
 
@@ -142,7 +142,7 @@ Rectangle {
                         border.color: Theme.accentPrimary
                         border.width: 1
                     }
-                    onClicked: Qt.openUrlExternally("https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate")
+                    onClicked: Qt.openUrlExternally("https://github.com/rbkhan007/ollamomui")
                 }
             }
 

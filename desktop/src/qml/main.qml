@@ -10,7 +10,7 @@ ApplicationWindow {
     height: 800
     minimumWidth: 900
     minimumHeight: 600
-    title: "Ollama Emulator Desktop"
+    title: "OllamoMUI – Free AI Gateway"
 
     property var currentPage: homePage
 

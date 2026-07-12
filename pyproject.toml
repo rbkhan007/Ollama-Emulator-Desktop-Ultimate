@@ -3,9 +3,9 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ollama-emu"
-version = "1.0.2"
-description = "Stop paying $20/mo for Claude & ChatGPT. Get 26 free models on one port."
+name = "ollamomui"
+version = "1.0.4"
+description = "OllamoMUI – A free, self-hosted AI gateway with RAG, memory, and a stunning desktop GUI."
 readme = "docs/README.md"
 license = {text = "MIT"}
 requires-python = ">=3.11"
@@ -44,12 +44,12 @@ sentence-transformers = [
 ]
 
 [project.scripts]
-ollamaemu = "ollama_emu.cli:main"
+ollamomui = "ollama_emu.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate"
-Repository = "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate"
-Issues = "https://github.com/rbkhan007/Ollama-Emulator-Desktop-Ultimate/issues"
+Homepage = "https://github.com/rbkhan007/ollamomui"
+Repository = "https://github.com/rbkhan007/ollamomui"
+Issues = "https://github.com/rbkhan007/ollamomui/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

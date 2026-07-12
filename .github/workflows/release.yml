@@ -72,7 +72,7 @@ jobs:
           pip install -r requirements.txt
       - name: Build EXE with PyInstaller
         run: |
-          python -m PyInstaller --onefile --console --name "OllamaEmu" ^
+          python -m PyInstaller --onefile --console --name "ollamomui" ^
             --add-data "frontend\out;frontend\out" ^
             --add-data "backend\src\ollama_emu;ollama_emu" ^
             --hidden-import numpy --collect-data numpy ^
@@ -82,13 +82,13 @@ jobs:
             --hidden-import python_multipart --hidden-import multipart ^
             --hidden-import uvicorn.workers --hidden-import uvicorn.logging ^
             --distpath "dist" --workpath "build" --specpath "." --clean ^
-            --icon "resources\brand-mark.ico" ^
+            --icon "resources\ollamomui.ico" ^
             backend\src\ollama_emu\main.py
       - name: Upload server EXE
         uses: softprops/action-gh-release@v2
         with:
           make_latest: true
-          files: dist/OllamaEmu.exe
+          files: dist/ollamomui.exe
 
   exe-desktop:
     name: Build Windows Desktop EXE (QML)
@@ -119,7 +119,7 @@ jobs:
       - name: Upload desktop EXE
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/OllamaEmuDesktop.exe
+          files: dist/ollamomui.exe
 
   appimage:
     name: Build Linux AppImage
@@ -151,8 +151,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/OllamaEmuDesktop
-            dist/OllamaEmuDesktop-*.AppImage
+            dist/ollamomui
+            dist/ollamomui-*.AppImage
 
   apk:
     name: Build Android APK (EAS)
@@ -178,9 +178,9 @@ jobs:
             echo "::error::No APK artifact URL returned"
             exit 1
           fi
-          curl -L -o OllamaEmu.apk "$ARTIFACT_URL"
+          curl -L -o ollamomui.apk "$ARTIFACT_URL"
       - name: Upload APK
         if: ${{ success() }}
         uses: softprops/action-gh-release@v2
         with:
-          files: mobile/OllamaEmu.apk
+          files: mobile/ollamomui.apk

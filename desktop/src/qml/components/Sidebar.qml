@@ -49,7 +49,7 @@ Rectangle {
                 }
 
                 Text {
-                    text: "OllamaEmu"
+                    text: "OllamoMUI"
                     font: Theme.fontHeading
                     font.pixelSize: 18
                     color: Theme.textPrimary

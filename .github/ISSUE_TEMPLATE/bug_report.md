@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help improve OllamaEmu
+about: Create a report to help improve OllamoMUI
 title: "[Bug] "
 labels: bug
 assignees: ""
@@ -20,7 +20,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 ## Screenshots / Logs
-If applicable, add screenshots or server logs (`ollama_emu.log`) to help explain.
+If applicable, add screenshots or server logs (`ollamomui.log`) to help explain.
 
 ## Environment (please complete):
 - OS: [e.g. Windows 11, macOS 14, Ubuntu 22.04]

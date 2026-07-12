@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================
-# OllamaEmu Desktop — Build Script (macOS/Linux)
+# OllamoMUI Desktop — Build Script (macOS/Linux)
 # ============================================
 set -euo pipefail
 
@@ -8,7 +8,7 @@ PROJECT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo "============================================"
-echo "  OllamaEmu Desktop — Build Script"
+echo "  OllamoMUI Desktop — Build Script"
 echo "  Platform: $(uname -s)"
 echo "============================================"
 
@@ -42,8 +42,8 @@ cp configs/.env.example dist/ 2>/dev/null || true
 echo ""
 echo "============================================"
 echo "  Build complete!"
-echo "  Executable: dist/OllamaEmuDesktop"
+echo "  Executable: dist/ollamomui"
 if [[ "$(uname -s)" == "Darwin" ]]; then
-    echo "  App Bundle: dist/OllamaEmuDesktop.app"
+    echo "  App Bundle: dist/ollamomui.app"
 fi
 echo "============================================"

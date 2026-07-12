@@ -1,6 +1,6 @@
 ﻿"""
-Ollama Emulator Desktop â€“ Ultimate Edition v1.0.2
-================================================
+OllamoMUI v1.0.4 â€“ Free AI Gateway
+====================================
 Copyright (c) 2024-2026 Rhasan@dev.
 
 Licensed under the MIT License. See the LICENSE file
@@ -325,7 +325,7 @@ log.info("Startup active provider: %s (has_key=%s)", ACTIVE_PROVIDER, bool(API_K
 # ============================================================
 # FASTAPI APP
 # ============================================================
-app = FastAPI(title="Ollama Emulator Desktop", version=VERSION)
+app = FastAPI(title="OllamoMUI – Free AI Gateway", version=VERSION)
 
 
 def _cors_origins() -> list:
@@ -2494,7 +2494,7 @@ async def serve_spa(full_path: str):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Ollama Emulator Desktop Ultimate")
+    parser = argparse.ArgumentParser(description="OllamoMUI – Free AI Gateway")
     parser.add_argument("--host", default=os.environ.get("OLLAMA_EMU_BIND", "127.0.0.1"),
                         help="Bind host. Default 127.0.0.1 (local only). Use 0.0.0.0 to expose on the LAN (less secure).")
     parser.add_argument("--port", type=int, default=int(os.environ.get("OLLAMA_EMU_PORT", "11434")),

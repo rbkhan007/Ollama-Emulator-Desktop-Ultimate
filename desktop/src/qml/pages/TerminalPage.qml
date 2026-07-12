@@ -18,7 +18,7 @@ Rectangle {
         }
 
         Text {
-            text: "Direct CLI interface to the Ollama Emulator backend."
+            text: "Direct CLI interface to the OllamoMUI backend."
             font: Theme.fontBody
             color: Theme.textSecondary
         }
@@ -45,7 +45,7 @@ Rectangle {
                     font.pixelSize: 13
                     readOnly: true
                     wrapMode: Text.Wrap
-                    text: "Ollama Emulator Terminal v1.0\n" +
+                    text: "OllamoMUI Terminal v1.0.4\n" +
                           "Copyright (c) 2024-2026 Rhasan@dev\n" +
                           "Type 'help' for available commands.\n\n" +
                           "> "

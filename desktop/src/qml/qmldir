@@ -1,2 +1,2 @@
-module OllamaEmu
+module OllamoMUI
 singleton Theme 1.0 styles/Theme.qml

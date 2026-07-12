@@ -105,7 +105,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name="OllamaEmuDesktop",
+    name="ollamomui",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -118,7 +118,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=str(PROJECT_ROOT / "resources" / "brand-mark.ico") if sys.platform == "win32" else None,
+    icon=str(PROJECT_ROOT / "resources" / "ollamomui.ico") if sys.platform == "win32" else None,
 )
 
 # ── Also create a one-dir bundle (faster startup, easier to debug) ──
@@ -129,5 +129,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name="OllamaEmuDesktop",
+    name="ollamomui",
 )

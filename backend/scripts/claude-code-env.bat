@@ -1,10 +1,10 @@
 @echo off
-title Ollama Emulator + Claude Code
+title OllamoMUI + Claude Code
 chcp 65001 >nul
 cd /d "%~dp0"
 
 echo ============================================
-echo  Ollama Emulator + Claude Code Launcher
+echo  OllamoMUI + Claude Code Launcher
 echo  v1.0.2 - Copyright (c) 2024-2026 Rhasan@dev
 echo ============================================
 echo.
@@ -30,7 +30,7 @@ set ANTHROPIC_BASE_URL=http://localhost:11434
 set ANTHROPIC_API_KEY=sk-local
 set ANTHROPIC_MODEL=openrouter/auto
 
-echo [1/2] Starting Ollama Emulator on http://localhost:11434 ...
+echo [1/2] Starting OllamoMUI on http://localhost:11434 ...
 start "OllamaEmu" /B python ollama_emu_desktop.py
 timeout /t 5 >nul
 
