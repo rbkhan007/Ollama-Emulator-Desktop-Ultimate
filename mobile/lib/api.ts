@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const KEY_URL = "ollama-emu-base";
-const KEY_TOKEN = "ollama-emu-token";
+const KEY_URL = "ollamomui-base";
+const KEY_TOKEN = "ollamomui-token";
 
 export async function getBase(): Promise<string> {
   const s = await AsyncStorage.getItem(KEY_URL);

@@ -5,7 +5,7 @@ import { Card, SectionTitle, PrimaryButton } from "../components/ui";
 import { BottomNav } from "../components/BottomNav";
 import { useResponsive } from "../lib/layout";
 
-const SITE = "https://rbkhan007.github.io/Ollama-Emulator-Desktop-Ultimate";
+const SITE = "https://rbkhan007.github.io/ollamomui";
 
 const FEATURES = [
   ["💸", "100% free tier", "Routes to real free LLMs via OpenRouter, Groq, DeepSeek and more."],
@@ -26,7 +26,7 @@ export default function About() {
         <View style={responsive.inner}>
           <View style={styles.hero}>
             <Text style={styles.logo}>🧠</Text>
-            <Text style={styles.title}>OllamaEmu</Text>
+            <Text style={styles.title}>OllamoMUI</Text>
             <Text style={styles.tag}>
               Free, private, unified AI gateway — running on your desktop, in your pocket.
             </Text>
@@ -55,7 +55,7 @@ export default function About() {
           <SectionTitle>This app</SectionTitle>
           <Card>
             <Text style={styles.fDesc}>
-              OllamaEmu Mobile is the phone client for the Ollama Emulator Desktop. Connect it to
+              OllamoMUI Mobile is the phone client for the Ollama Emulator Desktop. Connect it to
               your server over Wi-Fi to chat, manage knowledge (RAG), browse memory, switch
               providers, and view usage — the same features as the desktop app, on any device.
             </Text>
@@ -65,7 +65,7 @@ export default function About() {
             <Text style={styles.linkText}>Open free web app ↗</Text>
           </Pressable>
 
-          <Text style={styles.footer}>OllamaEmu · v1.0.0 · by Rhasan@dev</Text>
+          <Text style={styles.footer}>OllamoMUI · v1.0.0 · by Rhasan@dev</Text>
         </View>
       </ScrollView>
       <BottomNav />

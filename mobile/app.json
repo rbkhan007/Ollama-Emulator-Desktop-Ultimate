@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "OllamaEmu",
-    "slug": "ollama-emu-mobile",
+    "name": "OllamoMUI",
+    "slug": "ollamomui-mobile",
     "version": "1.0.2",
     "orientation": "portrait",
-    "scheme": "ollamaemu",
+    "scheme": "ollamomui",
     "userInterfaceStyle": "dark",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,11 +17,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ollamaemu.app",
+      "bundleIdentifier": "com.ollamomui.app",
       "icon": "./assets/icon.png"
     },
     "android": {
-      "package": "com.ollamaemu.app",
+      "package": "com.ollamomui.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon-foreground.png",
         "backgroundImage": "./assets/adaptive-icon-background.png",

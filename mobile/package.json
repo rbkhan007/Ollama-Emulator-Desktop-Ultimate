@@ -1,5 +1,5 @@
 {
-  "name": "ollama-emu-mobile",
+  "name": "ollamomui-mobile",
   "version": "1.0.2",
   "main": "expo-router/entry",
   "scripts": {
