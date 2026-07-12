@@ -24,10 +24,14 @@ VERCEL_ENV_VARS = {
 }
 
 RENDER_ENV_VARS = {
-    "COOKIE_SECURE": "true",
-    "SSLCOMMERZ_SANDBOX": os.environ.get("SSLCOMMERZ_SANDBOX", "true"),
-    "SSLCOMMERZ_STORE_ID": os.environ.get("SSLCOMMERZ_STORE_ID", ""),
-    "SSLCOMMERZ_STORE_PASSWORD": os.environ.get("SSLCOMMERZ_STORE_PASSWORD", ""),
+    "COOKIE_SECURE": "false",
+    "APP_URL": os.environ.get("APP_URL", "https://ollamomui.vercel.app"),
+    "LEMON_SQUEEZY_API_KEY": os.environ.get("LEMON_SQUEEZY_API_KEY", ""),
+    "LEMON_SQUEEZY_STORE_ID": os.environ.get("LEMON_SQUEEZY_STORE_ID", ""),
+    "LEMON_SQUEEZY_WEBHOOK_SECRET": os.environ.get("LEMON_SQUEEZY_WEBHOOK_SECRET", ""),
+    "LEMON_SQUEEZY_VARIANT_WEB_PRO": os.environ.get("LEMON_SQUEEZY_VARIANT_WEB_PRO", ""),
+    "LEMON_SQUEEZY_VARIANT_DESKTOP_PRO": os.environ.get("LEMON_SQUEEZY_VARIANT_DESKTOP_PRO", ""),
+    "LEMON_SQUEEZY_VARIANT_MOBILE_ULTIMATE": os.environ.get("LEMON_SQUEEZY_VARIANT_MOBILE_ULTIMATE", ""),
 }
 
 def run_cmd(cmd, check=True, capture=False):
@@ -157,8 +161,8 @@ def main():
     print("="*60)
     print("\nNext steps:")
     print("  1. Verify Render deploy at: https://dashboard.render.com")
-    print("  2. Test payment flow with sandbox")
-    print("  3. When ready, set SSLCOMMERZ_SANDBOX=false with live keys")
+    print("  2. In Lemon Squeezy, create a webhook -> <APP_URL>/api/payment/lemonsqueezy/webhook")
+    print("  3. Set LEMON_SQUEEZY_* env vars (API key, store id, webhook secret, variant ids)")
 
 if __name__ == "__main__":
     main()

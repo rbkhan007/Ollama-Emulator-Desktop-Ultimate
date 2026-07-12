@@ -1,5 +1,6 @@
-import { SITE_URL, STRIPE_WEB_PRO, STRIPE_DESKTOP_PRO, STRIPE_MOBILE_ULTIMATE, REPO_URL } from "@/lib/config";
+import { SITE_URL, REPO_URL } from "@/lib/config";
 import type { Metadata } from "next";
+import BuyButton from "@/components/BuyButton";
 
 
 export const metadata: Metadata = {
@@ -7,15 +8,6 @@ export const metadata: Metadata = {
   description: "Choose the right plan for you: free web demo, desktop EXE, mobile app, or cloud sync.",
   alternates: { canonical: `${SITE_URL}/pricing` },
 };
-
-function stripeLink(base: string): string {
-  if (!base) return "#";
-  const params = new URLSearchParams({
-    "prefilled_email": "",
-    "allow_promotion_codes": "true",
-  });
-  return `${base}?${params.toString()}`;
-}
 
 export default function Pricing() {
   return (
@@ -55,9 +47,7 @@ export default function Pricing() {
             <li style={{ padding: "4px 0" }}>✅ Higher rate limits</li>
             <li style={{ padding: "4px 0" }}>✅ All 26 models</li>
           </ul>
-          <a href={stripeLink(STRIPE_WEB_PRO)} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
-            Subscribe
-          </a>
+          <BuyButton plan="web_pro" label="Subscribe" />
         </div>
 
         <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
@@ -69,9 +59,7 @@ export default function Pricing() {
             <li style={{ padding: "4px 0" }}>✅ Local RAG & memory</li>
             <li style={{ padding: "4px 0" }}>✅ Works offline</li>
           </ul>
-          <a href={STRIPE_DESKTOP_PRO ? stripeLink(STRIPE_DESKTOP_PRO) : "/download"} target={STRIPE_DESKTOP_PRO ? "_blank" : "_self"} rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
-            {STRIPE_DESKTOP_PRO ? "Buy now" : "Download free"}
-          </a>
+          <BuyButton plan="desktop_pro" label="Buy now" />
         </div>
 
         <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
@@ -83,9 +71,7 @@ export default function Pricing() {
             <li style={{ padding: "4px 0" }}>✅ Mobile RAG</li>
             <li style={{ padding: "4px 0" }}>✅ Usage analytics</li>
           </ul>
-          <a href={STRIPE_MOBILE_ULTIMATE ? stripeLink(STRIPE_MOBILE_ULTIMATE) : "https://play.google.com/store/apps/details?id=com.ollamomui.app"} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
-            {STRIPE_MOBILE_ULTIMATE ? "Subscribe" : "Install"}
-          </a>
+          <BuyButton plan="mobile_ultimate" label="Subscribe" />
         </div>
       </div>
 

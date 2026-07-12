@@ -27,6 +27,5 @@ export const EXE_URL = DOWNLOAD_URL;
 // then paste the generated payment link URLs here.
 export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 
-export const STRIPE_WEB_PRO = process.env.NEXT_PUBLIC_STRIPE_WEB_PRO || "";
-export const STRIPE_DESKTOP_PRO = process.env.NEXT_PUBLIC_STRIPE_DESKTOP_PRO || "";
-export const STRIPE_MOBILE_ULTIMATE = process.env.NEXT_PUBLIC_STRIPE_MOBILE_ULTIMATE || "";
+// Lemon Squeezy is the primary payment provider. The backend
+// (/api/payment/lemonsqueezy/create-checkout) mints hosted checkout URLs.

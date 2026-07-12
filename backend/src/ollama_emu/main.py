@@ -44,9 +44,12 @@ BIND_HOST = "127.0.0.1"
 BIND_PORT = 11434
 
 # SSL / Security
+# SSL enforcement is OFF by default so the app works over plain HTTP (local
+# dev, LAN, or behind a TLS-terminating proxy). Enable per-deployment with env vars.
 SSL_KEYFILE = os.environ.get("SSL_KEYFILE", "")
 SSL_CERTFILE = os.environ.get("SSL_CERTFILE", "")
-COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() in ("1", "true", "yes")
+SSL_REDIRECT = os.environ.get("SSL_REDIRECT", "false").lower() in ("1", "true", "yes")
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "false").lower() in ("1", "true", "yes")
 
 
 def validate_url(url: str, name: str = "URL") -> str:
@@ -358,7 +361,7 @@ def configure_cors(application):
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    if SSL_KEYFILE and SSL_CERTFILE:
+    if SSL_REDIRECT or (SSL_KEYFILE and SSL_CERTFILE):
         application.add_middleware(HTTPSRedirectMiddleware)
     application.add_middleware(
         TrustedHostMiddleware,

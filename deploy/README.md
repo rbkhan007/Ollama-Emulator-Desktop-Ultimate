@@ -99,7 +99,7 @@ This combo costs **$0/month**: Vercel hosts the frontend with a free `*.vercel.a
 
 1. Deploy the `/frontend` folder to **Vercel** (or **Cloudflare Pages**).
 2. Set `NEXT_PUBLIC_API_BASE` to your backend URL.
-3. Set `NEXT_PUBLIC_STRIPE_*` vars for pricing links.
+3. Set `NEXT_PUBLIC_API_BASE` (already required) — pricing uses the backend `/api/payment/lemonsqueezy/create-checkout` endpoint.
 4. Connect custom domain `ollamomui.com`.
 
 ---
@@ -223,8 +223,12 @@ For Vercel: use their provided CNAME target instead of A records.
 | `PGHOST` | ✅ | PostgreSQL host |
 | `PGPASSWORD` | ✅ | Database password |
 | `OLLAMA_EMU_API_KEY` | ✅ | Default LLM provider API key |
-| `SSLCOMMERZ_STORE_ID` | ✅ for payments | SSLCommerz store ID |
-| `SSLCOMMERZ_STORE_PASSWORD` | ✅ for payments | SSLCommerz store password |
+| `LEMON_SQUEEZY_API_KEY` | ✅ for payments | Lemon Squeezy API key |
+| `LEMON_SQUEEZY_STORE_ID` | ✅ for payments | Lemon Squeezy store ID |
+| `LEMON_SQUEEZY_WEBHOOK_SECRET` | ✅ for payments | Lemon Squeezy webhook secret |
+| `LEMON_SQUEEZY_VARIANT_WEB_PRO` | ✅ for payments | Variant ID for Web Pro |
+| `LEMON_SQUEEZY_VARIANT_DESKTOP_PRO` | ✅ for payments | Variant ID for Desktop Pro |
+| `LEMON_SQUEEZY_VARIANT_MOBILE_ULTIMATE` | ✅ for payments | Variant ID for Mobile Ultimate |
 | `SMTP_SENDER` | ✅ for emails | SMTP sender email |
 | `SMTP_PASSWORD` | ✅ for emails | SMTP app password |
 | `APP_URL` | ✅ | Public backend URL (e.g. `https://api.ollamomui.com`) |

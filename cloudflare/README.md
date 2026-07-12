@@ -132,9 +132,8 @@ curl https://api.ollamomui.com/api/version
 |----------|-------|
 | `NEXT_PUBLIC_API_BASE` | `https://api.ollamomui.com` |
 | `NEXT_PUBLIC_SITE_URL` | `https://ollamomui.com` |
-| `NEXT_PUBLIC_STRIPE_WEB_PRO` | *(your Stripe Payment Link)* |
-| `NEXT_PUBLIC_STRIPE_DESKTOP_PRO` | *(your Stripe Payment Link)* |
-| `NEXT_PUBLIC_STRIPE_MOBILE_ULTIMATE` | *(your Stripe Payment Link)* |
+
+> Pricing uses the backend Lemon Squeezy integration (`/api/payment/lemonsqueezy/create-checkout`). No client-side payment env vars are required.
 
 ### 3c. Custom domain
 

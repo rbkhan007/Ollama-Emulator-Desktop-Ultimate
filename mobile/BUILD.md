@@ -92,8 +92,9 @@ Create `.env.production` in the `mobile/` directory:
 
 ```env
 EXPO_PUBLIC_API_BASE=https://api.ollamomui.com
-EXPO_PUBLIC_STRIPE_WEB_PRO=https://buy.stripe.com/your_link
 ```
+
+> Payments run through the backend Lemon Squeezy integration; the mobile app only needs `EXPO_PUBLIC_API_BASE`.
 
 ---
 

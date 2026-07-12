@@ -1,11 +1,13 @@
 import os
 import re
+import json
 import uuid
 import hashlib
 import secrets
 import smtplib
 import hmac
 import logging
+import httpx
 from email.mime.text import MIMEText
 from datetime import datetime, timezone, timedelta
 from typing import Optional
@@ -142,151 +144,139 @@ def activate_license(req: LicenseActivateRequest):
     }
 
 
-@router.post("/sslcommerz/success")
-async def sslcommerz_success(request: Request):
-    """
-    SSLCommerz IPN / success redirect handler.
-    Expects form data with 'tran_id', 'status', 'amount', etc.
-    Generates license key and redirects user to result page.
-    """
-    form = await request.form()
-    session_key = form.get("tran_id")
-    payment_status = form.get("status")
-    amount = form.get("amount", "0")
+# ============================================================
+# LEMON SQUEEZY — primary payment provider (global, tax handled)
+# ============================================================
+LEMON_SQUEEZY_API_KEY = os.getenv("LEMON_SQUEEZY_API_KEY", "")
+LEMON_SQUEEZY_STORE_ID = os.getenv("LEMON_SQUEEZY_STORE_ID", "")
+LEMON_SQUEEZY_WEBHOOK_SECRET = os.getenv("LEMON_SQUEEZY_WEBHOOK_SECRET", "")
+LEMON_SQUEEZY_API = "https://api.lemonsqueezy.com/v1"
 
-    if not session_key:
-        return RedirectResponse(f"{APP_URL}/payment-result?status=error&message=Missing transaction ID")
+# Plan -> env var that holds its Lemon Squeezy variant id.
+_VARIANT_ENV = {
+    "web_pro": "LEMON_SQUEEZY_VARIANT_WEB_PRO",
+    "desktop_pro": "LEMON_SQUEEZY_VARIANT_DESKTOP_PRO",
+    "mobile_ultimate": "LEMON_SQUEEZY_VARIANT_MOBILE_ULTIMATE",
+}
+# Reverse map: variant_id (str) -> plan
+PLAN_VARIANTS = {os.getenv(v): k for k, v in _VARIANT_ENV.items() if os.getenv(v)}
 
-    with db.get_cursor(commit=False) as cur:
-        cur.execute(
-            "SELECT id, user_id, plan, status FROM payment_sessions WHERE session_key = %s",
-            (session_key,),
-        )
-        row = cur.fetchone()
 
-    if not row:
-        return RedirectResponse(f"{APP_URL}/payment-result?status=error&message=Invalid session")
+def _plan_for_variant(variant_id) -> Optional[str]:
+    if variant_id is None:
+        return None
+    return PLAN_VARIANTS.get(str(variant_id))
 
-    if row["status"] == "success":
-        with db.get_cursor(commit=False) as cur:
-            cur.execute(
-                "SELECT raw_key, plan FROM licenses WHERE user_id = %s AND plan = %s",
-                (row["user_id"], row["plan"]),
+
+class CheckoutRequest(BaseModel):
+    email: Optional[EmailStr] = None
+    plan: str
+
+    @field_validator("plan")
+    @classmethod
+    def validate_plan(cls, v):
+        v = (v or "").strip().lower()
+        if v not in _VARIANT_ENV:
+            raise ValueError("Invalid plan")
+        return v
+
+
+@router.post("/lemonsqueezy/create-checkout")
+async def ls_create_checkout(req: CheckoutRequest):
+    """Create a Lemon Squeezy hosted checkout and return its URL."""
+    if not LEMON_SQUEEZY_API_KEY or not LEMON_SQUEEZY_STORE_ID:
+        raise HTTPException(status_code=500, detail="Payment provider not configured")
+    variant_id = os.getenv(_VARIANT_ENV.get(req.plan, ""), "")
+    if not variant_id:
+        raise HTTPException(status_code=400, detail="Plan variant not configured")
+
+    checkout_data = {"redirect_url": f"{APP_URL}/payment-result?status=success&plan={req.plan}"}
+    if req.email:
+        checkout_data["email"] = req.email
+        checkout_data["custom"] = {"user_email": req.email, "plan": req.plan}
+
+    payload = {
+        "data": {
+            "type": "checkouts",
+            "attributes": {
+                "variant_id": int(variant_id),
+                "checkout_data": checkout_data,
+            },
+            "relationships": {
+                "store": {"data": {"type": "stores", "id": str(LEMON_SQUEEZY_STORE_ID)}}
+            },
+        }
+    }
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"{LEMON_SQUEEZY_API}/checkouts",
+                json=payload,
+                headers={
+                    "Authorization": f"Bearer {LEMON_SQUEEZY_API_KEY}",
+                    "Content-Type": "application/vnd.api+json",
+                    "Accept": "application/vnd.api+json",
+                },
             )
-            lic = cur.fetchone()
-        if lic:
-            return RedirectResponse(
-                f"{APP_URL}/payment-result?status=success&key={lic['raw_key']}&plan={lic['plan']}"
-            )
-        return RedirectResponse(f"{APP_URL}/payment-result?status=error&message=License not found")
+    except Exception as e:
+        log.error("Lemon Squeezy checkout request failed: %s", e)
+        raise HTTPException(status_code=502, detail="Payment provider unreachable")
 
-    if payment_status != "VALID":
-        with db.get_cursor() as cur:
-            cur.execute(
-                "UPDATE payment_sessions SET status = 'failed' WHERE session_key = %s",
-                (session_key,),
-            )
-        return RedirectResponse(
-            f"{APP_URL}/payment-result?status=fail&message=Payment+{payment_status}"
-        )
+    if resp.status_code >= 400:
+        log.error("Lemon Squeezy checkout error %d: %s", resp.status_code, resp.text[:500])
+        raise HTTPException(status_code=502, detail="Failed to create checkout")
 
-    plan = row["plan"]
-    raw_key = generate_license_key(row["user_id"], plan)
-    _save_license(row["user_id"], raw_key, plan)
-    _update_user_subscription(row["user_id"])
-
-    transaction_id = form.get("bank_tran_id", session_key)
-    with db.get_cursor() as cur:
-        cur.execute(
-            "UPDATE payment_sessions SET status = 'success', transaction_id = %s WHERE session_key = %s",
-            (transaction_id, session_key),
-        )
-
-    with db.get_cursor(commit=False) as cur:
-        cur.execute("SELECT email FROM users WHERE email = %s", (row["user_id"],))
-        user_row = cur.fetchone()
-    if user_row:
-        send_license_email(user_row["email"], raw_key, plan)
-
-    return RedirectResponse(
-        f"{APP_URL}/payment-result?status=success&key={raw_key}&plan={plan}"
-    )
+    data = resp.json()
+    checkout_url = data.get("data", {}).get("attributes", {}).get("url")
+    if not checkout_url:
+        raise HTTPException(status_code=502, detail="No checkout URL returned")
+    return {"checkout_url": checkout_url}
 
 
-@router.post("/sslcommerz/fail")
-async def sslcommerz_fail(request: Request):
-    form = await request.form()
-    session_key = form.get("tran_id")
-    if session_key:
-        with db.get_cursor() as cur:
-            cur.execute(
-                "UPDATE payment_sessions SET status = 'failed' WHERE session_key = %s",
-                (session_key,),
-            )
-    return RedirectResponse(f"{APP_URL}/payment-result?status=fail")
+@router.post("/lemonsqueezy/webhook")
+async def ls_webhook(request: Request):
+    """Lemon Squeezy webhook: verifies signature, issues a license on purchase."""
+    raw = await request.body()
+    signature = request.headers.get("X-Signature", "")
+    if not LEMON_SQUEEZY_WEBHOOK_SECRET:
+        log.error("Lemon Squeezy webhook secret not configured")
+        raise HTTPException(status_code=500, detail="Webhook not configured")
+    expected = hmac.new(
+        LEMON_SQUEEZY_WEBHOOK_SECRET.encode(), raw, hashlib.sha256
+    ).hexdigest()
+    if not hmac.compare_digest(expected, signature):
+        log.warning("Lemon Squeezy webhook signature mismatch")
+        raise HTTPException(status_code=401, detail="Invalid signature")
 
+    try:
+        event = json.loads(raw)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
 
-@router.post("/sslcommerz/cancel")
-async def sslcommerz_cancel(request: Request):
-    form = await request.form()
-    session_key = form.get("tran_id")
-    if session_key:
-        with db.get_cursor() as cur:
-            cur.execute(
-                "UPDATE payment_sessions SET status = 'cancelled' WHERE session_key = %s",
-                (session_key,),
-            )
-    return RedirectResponse(f"{APP_URL}/payment-result?status=cancel")
+    event_name = event.get("meta", {}).get("event_name", "")
+    attrs = event.get("data", {}).get("attributes", {})
+    log.info("Lemon Squeezy webhook: %s", event_name)
 
+    if event_name in ("order_created", "subscription_created", "subscription_payment_success"):
+        email = attrs.get("user_email") or (
+            (attrs.get("checkout_data") or {}).get("custom") or {}
+        ).get("user_email")
+        if not email:
+            return JSONResponse({"ok": True, "note": "no email in payload"})
+        variant_id = attrs.get("variant_id")
+        if variant_id is None and event_name == "order_created":
+            variant_id = (attrs.get("first_order_item") or {}).get("variant_id")
+        plan = _plan_for_variant(variant_id)
+        if not plan:
+            return JSONResponse({"ok": True, "note": "unknown variant"})
 
-@router.post("/init")
-async def init_payment(user_id: str, plan: str, amount: float):
-    """
-    Initialize a payment session. Creates a session_key and returns it
-    along with the SSLCommerz checkout URL.
-    """
-    import secrets
+        raw_key = generate_license_key(email, plan)
+        _save_license(email, raw_key, plan)
+        _update_user_subscription(email)
+        send_license_email(email, raw_key, plan)
+        return JSONResponse({"ok": True, "plan": plan, "license": raw_key})
 
-    session_key = f"OLLAMOMUI-{secrets.token_hex(12).upper()}"
-    with db.get_cursor() as cur:
-        cur.execute(
-            """
-            INSERT INTO payment_sessions (session_key, user_id, plan, amount, status)
-            VALUES (%s, %s, %s, %s, 'pending')
-            """,
-            (session_key, user_id, plan, amount),
-        )
-
-    store_id = os.getenv("SSLCOMMERZ_STORE_ID", "")
-    store_passwd = os.getenv("SSLCOMMERZ_STORE_PASSWORD", "")
-    success_url = f"{APP_URL}/api/payment/sslcommerz/success"
-    fail_url = f"{APP_URL}/api/payment/sslcommerz/fail"
-    cancel_url = f"{APP_URL}/api/payment/sslcommerz/cancel"
-
-    sslcz_base = (
-        "https://secure.sslcommerz.com"
-        if os.getenv("SSLCOMMERZ_SANDBOX", "true").lower() == "false"
-        else "https://sandbox.sslcommerz.com"
-    )
-    checkout_url = (
-        f"{sslcz_base}/gwprocess/v3/api.php"
-        f"?store_id={store_id}"
-        f"&store_passwd={store_passwd}"
-        f"&total_amount={amount}"
-        f"&currency=BDT"
-        f"&tran_id={session_key}"
-        f"&success_url={success_url}"
-        f"&fail_url={fail_url}"
-        f"&cancel_url={cancel_url}"
-        f"&cus_name={user_id}"
-        f"&cus_email={user_id}"
-        f"&cus_phone=01XXXXXXX"
-        f"&product_name={plan}"
-        f"&product_category=software"
-        f"&product_profile=general"
-    )
-
-    return {"session_key": session_key, "checkout_url": checkout_url}
+    return JSONResponse({"ok": True})
 
 
 @router.get("/license/{user_id}")
