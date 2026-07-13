@@ -137,6 +137,32 @@ export default function About() {
         </div>
       </section>
 
+      {/* Security Case Study */}
+      <section style={{ padding: "40px 24px", maxWidth: 800, margin: "0 auto" }}>
+        <div style={{
+          background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
+          padding: "32px 28px",
+        }}>
+          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 12 }}>🔒 Security Philosophy</h2>
+          <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7 }}>
+            When I built OllamoMUI, I started with a simple API wrapper. As the project grew, I realised that
+            security couldn't be an afterthought. I implemented <strong style={{ color: "var(--text)" }}>PBKDF2-HMAC-SHA256</strong> password
+            hashing with per-user salts, <strong style={{ color: "var(--text)" }}>Role-Based Access Control</strong> with fine-grained permissions,
+            and <strong style={{ color: "var(--text)" }}>SSRF protection</strong> to block malicious requests. The desktop version bundles its own
+            database, ensuring user data never leaves their machine. These security measures are not just
+            features — they are part of a philosophy of data sovereignty and enterprise-grade protection.
+            I am ready to bring this same level of architectural thinking to your remote team.
+          </p>
+          <div style={{ marginTop: 16 }}>
+            <Link href="/security" style={{
+              fontSize: 13, fontWeight: 600, color: "#6c5ce7", textDecoration: "none",
+            }}>
+              View full security architecture →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Tech Stack */}
       <section style={{ padding: "24px 24px 48px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
         <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 20 }}>
