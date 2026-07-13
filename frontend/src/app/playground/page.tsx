@@ -140,7 +140,7 @@ export default function PlaygroundPage() {
   }
 
   return (
-    <div className="page-container" style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 140px)" }}>
+    <div className="page-container" style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 140px)", minHeight: 0 }}>
       {/* Header bar */}
       <div className="stagger-1" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

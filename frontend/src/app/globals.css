@@ -618,6 +618,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 @media (max-width: 600px) {
   .cta-row { flex-direction: column !important; align-items: stretch !important; }
   .cta-row > a, .cta-row > button, .cta-row > Link { justify-content: center !important; }
+  main > section:first-child { padding-top: 32px !important; }
 }
 @media (max-width: 560px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }

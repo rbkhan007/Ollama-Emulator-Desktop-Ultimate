@@ -30,7 +30,7 @@ export default function About() {
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       {/* Hero */}
-      <section style={{ padding: "72px 24px 40px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
+      <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 40px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", fontWeight: 800, marginBottom: 16 }}>
           The story behind OllamoMUI
         </h1>
@@ -71,7 +71,7 @@ export default function About() {
         <h2 style={{ textAlign: "center", fontSize: "1.6rem", fontWeight: 800, marginBottom: 28 }}>
           Timeline
         </h2>
-        <div style={{ position: "relative", paddingLeft: 28 }}>
+        <div style={{ position: "relative", paddingLeft: "clamp(20px, 4vw, 28px)" }}>
           <div style={{
             position: "absolute", left: 8, top: 0, bottom: 0, width: 2,
             background: "var(--accent-2)", opacity: 0.3,

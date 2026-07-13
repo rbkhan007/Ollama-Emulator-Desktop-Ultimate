@@ -8,9 +8,9 @@ export default function NotFound() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      minHeight: "calc(100vh - 80px)",
+      minHeight: "calc(100dvh - 80px)",
       textAlign: "center",
-      padding: 40,
+      padding: "clamp(24px, 5vw, 40px)",
     }}>
       <div style={{
         width: 80,
@@ -27,7 +27,7 @@ export default function NotFound() {
       </div>
 
       <h1 style={{
-        fontSize: 72,
+        fontSize: "clamp(3rem, 15vw, 72px)",
         fontWeight: 800,
         letterSpacing: "-0.04em",
         lineHeight: 1,

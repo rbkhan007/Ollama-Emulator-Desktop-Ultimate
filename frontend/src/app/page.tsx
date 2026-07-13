@@ -93,7 +93,7 @@ export default function Home() {
       <JsonLd data={faqLd} />
       {/* Hero */}
       <section style={{
-        padding: "88px 24px 64px", textAlign: "center",
+        padding: "clamp(48px, 8vw, 88px) 24px 64px", textAlign: "center",
       }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
@@ -130,7 +130,7 @@ export default function Home() {
         </p>
 
         <div className="hero-cta" style={{
-          display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 14,
+          display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 14, minWidth: 0,
         }}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
             padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function SuccessPage() {
   return (
-    <main style={{ maxWidth: 600, margin: "0 auto", padding: "80px 24px", textAlign: "center" }}>
+    <main style={{ maxWidth: 600, margin: "0 auto", padding: "clamp(40px, 10vw, 80px) 24px", textAlign: "center" }}>
       <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
       <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 8 }}>Payment Successful!</h1>
       <p style={{ color: "var(--text-muted)", marginBottom: 32, lineHeight: 1.6 }}>
