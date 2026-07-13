@@ -365,17 +365,46 @@ def _cors_origins() -> list:
     # known local/mobile origins. When explicitly bound to a LAN address,
     # open CORS to all origins and log a warning.
     if BIND_HOST in ("127.0.0.1", "localhost", "::1", "0:0:0:0:0:0:0:1"):
-        return [
+        origins = [
             "http://localhost:11434",
             "http://127.0.0.1:11434",
             "http://localhost",
             "expo://localhost",
             "capacitor://localhost",
         ]
-    return ["*"]
+    else:
+        origins = ["*"]
+
+    # Always allow the hosted web frontend (Vercel) and any explicitly
+    # configured extra origins via CORS_ORIGINS (comma-separated).
+    # This is required because the web SPA is served from a different
+    # origin than the backend (e.g. vercel.app -> onrender.com) and the
+    # backend is launched as an imported module (uvicorn/gunicorn/Render),
+    # so BIND_HOST is still the default localhost at import time.
+    web_origins = [
+        "https://ollamomui.vercel.app",
+        "https://www.ollamomui.vercel.app",
+    ]
+    extra = os.getenv("CORS_ORIGINS", "").strip()
+    if extra:
+        web_origins.extend([o.strip() for o in extra.split(",") if o.strip()])
+
+    if "*" in origins:
+        return origins
+    return origins + web_origins
+
+
+_cors_configured = False
 
 
 def configure_cors(application):
+    global _cors_configured
+    # Idempotent: also called at module import time so the middleware is
+    # installed even when the app is launched as an imported module
+    # (uvicorn/gunicorn/Render), not just via `python main.py`.
+    if _cors_configured:
+        return
+    _cors_configured = True
     application.add_middleware(
         CORSMiddleware,
         allow_origins=_cors_origins(),
@@ -2668,4 +2697,12 @@ if __name__ == "__main__":
     finally:
         MEMORY.shutdown()
         _db.close_pool()
+
+# ── Always configure middleware on import ──
+# When the backend is launched as an imported module (uvicorn/gunicorn/Render,
+# e.g. `uvicorn ollama_emu.main:app`), the `if __name__ == "__main__"` block
+# below never runs, so CORS + ACL middleware would otherwise never be installed.
+# Configuring at import time guarantees they are always present.
+configure_cors(app)
+
 
