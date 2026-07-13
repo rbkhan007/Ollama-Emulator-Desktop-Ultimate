@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
 import { SITE_URL, REPO_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -34,9 +35,17 @@ const stats = [
 ];
 
 export default function About() {
+  const breadLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "About", item: `${SITE_URL}/about` },
+    ],
+  };
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
-      {/* Hero */}
+      <JsonLd data={breadLd} />
       <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 40px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", fontWeight: 800, marginBottom: 16 }}>
           The story behind OllamoMUI

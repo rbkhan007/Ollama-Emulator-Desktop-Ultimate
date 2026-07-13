@@ -102,6 +102,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable}`}>
         <head>
+          <link rel="dns-prefetch" href="https://github.com" />
+          <link rel="preconnect" href="https://github.com" />
+          <link rel="dns-prefetch" href="https://api.ollamomui.com" />
+          <link rel="preconnect" href="https://api.ollamomui.com" />
+          <link rel="dns-prefetch" href={SITE_URL} />
+          <link rel="preconnect" href={SITE_URL} />
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
@@ -114,6 +120,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             applicationCategory: "DeveloperApplication",
             operatingSystem: "Windows, macOS, Linux, Web, Android",
             url: SITE_URL,
+            image: `${ASSET_BASE}/og-image.png`,
+            screenshot: `${ASSET_BASE}/og-image.png`,
             description:
               "Free, self-hosted AI gateway that emulates the Ollama API and routes prompts to 26 free LLMs with RAG, memory, desktop and mobile clients.",
             offers: [

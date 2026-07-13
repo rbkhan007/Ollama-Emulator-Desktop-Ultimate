@@ -86,11 +86,19 @@ export default function Home() {
       { question: "Do I need to install anything to try it?", answer: "You can download the single-file Windows EXE, or run it from source with run.bat / run.sh. On macOS and Linux use run.sh. No Docker required." },
     ],
   };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    ],
+  };
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <JsonLd data={jsonLd} />
       <JsonLd data={faqLd} />
+      <JsonLd data={breadcrumbLd} />
       {/* Hero */}
       <section style={{
         padding: "clamp(48px, 8vw, 88px) 24px 64px", textAlign: "center",
