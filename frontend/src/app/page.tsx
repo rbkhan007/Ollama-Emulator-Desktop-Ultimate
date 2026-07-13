@@ -12,12 +12,12 @@ import {
 } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
-  description: "Stop paying $20/mo for Claude & ChatGPT. OllamoMUI gives you 26 free LLMs on one port. RAG knowledge base, persistent memory, usage analytics, and a polished dashboard.",
+  title: "The #1 Ollama Alternative with 26 Free LLMs",
+  description: "Stop paying $20/mo for ChatGPT. OllamoMUI is the best free Ollama alternative — a local LLM proxy that routes your prompts to 26 free models. RAG knowledge base, persistent AI memory, usage analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, Continue.dev.",
   alternates: { canonical: SITE_URL },
   openGraph: {
-    title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
-    description: "26 free LLMs on one port. RAG, memory, analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, and more.",
+  title: "The #1 Ollama Alternative with 26 Free LLMs",
+    description: "Best free Ollama alternative. 26 free LLMs, RAG knowledge base, persistent memory, and analytics. Works with Claude Code, Cursor, OpenCode.",
     url: SITE_URL,
   },
 };

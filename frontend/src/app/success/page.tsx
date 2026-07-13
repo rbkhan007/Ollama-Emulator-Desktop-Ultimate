@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Payment Successful – OllamoMUI",
+  title: "Payment Successful",
   description: "Your payment was successful. Welcome to OllamoMUI Pro!",
   robots: { index: false },
   alternates: { canonical: `${SITE_URL}/success` },

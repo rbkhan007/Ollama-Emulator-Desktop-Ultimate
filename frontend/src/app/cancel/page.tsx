@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "Payment Cancelled – OllamoMUI",
+  title: "Payment Cancelled",
   description: "Your payment was cancelled. No charges were made.",
   robots: { index: false },
   alternates: { canonical: `${SITE_URL}/cancel` },

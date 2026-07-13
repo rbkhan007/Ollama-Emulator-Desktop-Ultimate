@@ -2,9 +2,21 @@ import { SITE_URL, REPO_URL, RELEASES_URL } from "@/lib/config";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Download — OllamoMUI",
-  description: "Download the pre-built Windows EXE, get the mobile app, or build from source.",
+  title: "Download",
+  description: "Download the free Ollama alternative. Pre-built Windows EXE (single file, no install), Android mobile app, or build from source on GitHub. macOS/Linux via run.sh.",
   alternates: { canonical: `${SITE_URL}/download` },
+  openGraph: {
+    title: "Download — Free Ollama Alternative",
+    description: "Download the pre-built Windows EXE, Android mobile app, or build from source. The best free Ollama alternative with 26 LLMs, RAG, and memory.",
+    url: `${SITE_URL}/download`,
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "Download OllamoMUI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Download — Free Ollama Alternative",
+    description: "Download the pre-built Windows EXE, Android mobile app, or build from source.",
+    images: [`${SITE_URL}/og-image.png`],
+  },
 };
 
 export default function Download() {

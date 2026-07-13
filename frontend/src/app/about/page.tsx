@@ -3,13 +3,20 @@ import type { Metadata } from "next";
 import { SITE_URL, REPO_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
-  title: "About — OllamoMUI",
-  description: "OllamoMUI is a free, self-hosted AI gateway with 26 free LLMs, RAG, memory, desktop and mobile clients. Built by Rhasan@dev.",
+  title: "About",
+  description: "OllamoMUI is the best free Ollama alternative — a self-hosted AI gateway with 26 free LLMs, RAG knowledge base, persistent memory, desktop and mobile clients. Built by Rhasan@dev.",
   alternates: { canonical: `${SITE_URL}/about` },
   openGraph: {
-    title: "About OllamoMUI — Free AI Gateway",
-    description: "26 free LLMs, RAG knowledge base, persistent memory, desktop EXE, mobile app — all in one self-hosted platform.",
+    title: "About — Free Ollama Alternative",
+    description: "The story behind the best free Ollama alternative. 26 free LLMs, RAG knowledge base, persistent memory, desktop EXE, mobile app — all self-hosted.",
     url: `${SITE_URL}/about`,
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "About OllamoMUI" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About — Free Ollama Alternative",
+    description: "The story behind the best free Ollama alternative. 26 free LLMs, RAG, memory, desktop & mobile.",
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 

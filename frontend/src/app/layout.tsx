@@ -36,14 +36,15 @@ window.addEventListener('error',function(e){var m=(e.error||'').toString();if(m.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
+    default: "OllamoMUI — The #1 Ollama Alternative with 26 Free LLMs & RAG",
     template: "%s · OllamoMUI",
   },
-  description: "OllamoMUI emulates the Ollama API locally and silently routes your prompts to real, 100% FREE LLMs — OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent PostgreSQL memory with pgvector, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
+  description: "OllamoMUI is the best free Ollama alternative — a local LLM proxy that emulates the Ollama API and routes your prompts to 26 real, 100% FREE models from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini and more. Built-in RAG knowledge base, persistent PostgreSQL memory with pgvector, usage analytics, and a polished dashboard. Works with Claude Code, OpenCode, Cursor, Continue.dev and any Ollama-compatible AI coding tool.",
   applicationName: "OllamoMUI",
   keywords: [
-    "ollama emulator", "ollama alternative", "local LLM", "free AI models", "free LLM proxy",
-    "free AI coding assistant", "RAG knowledge base", "retrieval augmented generation",
+    "ollamomui", "ollama alternative", "ollama emulator", "free Ollama alternative",
+    "free AI coding assistant", "best Ollama alternative", "free LLM proxy",
+    "local LLM", "free AI models", "RAG knowledge base", "retrieval augmented generation",
     "TF-IDF search", "vector search", "AI coding assistant", "Claude Code", "OpenCode", "Cursor", "Continue.dev",
     "multi-provider AI", "OpenRouter free models", "OpenAI compatible", "Anthropic compatible",
     "local AI proxy", "AI chat playground", "persistent memory", "PostgreSQL AI memory",
@@ -69,9 +70,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "OllamoMUI",
-    title: "OllamoMUI — Free Local LLM Proxy with RAG & Memory",
-    description: "Free & Open Source local Ollama API emulator that silently routes your prompts to real, 100% free LLMs. RAG, memory, analytics, and a polished dashboard in one file.",
-    images: [{ url: `${ASSET_BASE}/og-image.png`, width: 1200, height: 630, alt: "OllamoMUI — free local LLM proxy" }],
+    title: "OllamoMUI — The #1 Ollama Alternative with 26 Free LLMs",
+    description: "Best free Ollama alternative. Local LLM proxy routing prompts to 26 free models. RAG knowledge base, persistent AI memory, analytics, and dashboard in one file.",
+    images: [{ url: `${ASSET_BASE}/og-image.png`, width: 1200, height: 630, alt: "OllamoMUI — free Ollama alternative with 26 LLMs" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -122,6 +123,41 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               { "@type": "Offer", name: "Web Pro", price: "9.99", priceCurrency: "USD" },
             ],
           }} />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                name: "OllamoMUI",
+                url: SITE_URL,
+                logo: `${ASSET_BASE}/icon-192.png`,
+                sameAs: [
+                  "https://github.com/rbkhan007/ollamomui",
+                ],
+              }),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "OllamoMUI",
+                url: SITE_URL,
+                description: "Best free Ollama alternative — local LLM proxy with 26 free models, RAG, and persistent AI memory.",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: {
+                    "@type": "EntryPoint",
+                    urlTemplate: `${SITE_URL}/playground`,
+                  },
+                  "query-input": "required",
+                },
+              }),
+            }}
+          />
         </head>
       <body>
         <ThemeProvider>

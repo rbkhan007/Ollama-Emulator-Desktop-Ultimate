@@ -10,9 +10,21 @@ const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent
 
 
 export const metadata: Metadata = {
-  title: "Pricing — OllamoMUI",
-  description: "Choose the right plan for you: free web demo, desktop EXE, mobile app, or cloud sync.",
+  title: "Pricing",
+  description: "Choose your plan: free tier with 26 LLMs, Web Pro ($9.99/mo), Desktop Pro ($4.99/mo), or Mobile Ultimate ($2.99/mo). Start free, upgrade anytime.",
   alternates: { canonical: `${SITE_URL}/pricing` },
+  openGraph: {
+    title: "Pricing Plans — Free to Pro",
+    description: "Free AI coding assistant with 26 LLMs. Upgrade to Pro for unlimited RAG, memory sync, and higher rate limits.",
+    url: `${SITE_URL}/pricing`,
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630, alt: "OllamoMUI Pricing Plans" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing Plans — Free to Pro",
+    description: "Free AI coding assistant with 26 LLMs. Upgrade to Pro for unlimited RAG, memory sync, and higher rate limits.",
+    images: [`${SITE_URL}/og-image.png`],
+  },
 };
 
 export default function Pricing() {
