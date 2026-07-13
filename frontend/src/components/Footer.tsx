@@ -3,6 +3,7 @@ import { REPO_URL } from "@/lib/config";
 const PERSONAL_SITE = "https://rhasan-dev-bd-com.vercel.app";
 const FREELANCER = "https://www.freelancer.com/u/Rakibul0007";
 const WHATSAPP = "https://wa.me/8801774471120";
+const FACEBOOK = "https://www.facebook.com/rakibul.hassan.269825";
 
 export default function Footer() {
   return (
@@ -18,6 +19,7 @@ export default function Footer() {
           <a href="mailto:rbkhan00009@gmail.com" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>Email</a>
           <a href={FREELANCER} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>Freelancer</a>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>GitHub</a>
+          <a href={FACEBOOK} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>Facebook</a>
           <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>WhatsApp</a>
           <a href={PERSONAL_SITE} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)", fontWeight: 500, textDecoration: "none" }}>Portfolio</a>
         </div>

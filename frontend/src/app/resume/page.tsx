@@ -33,6 +33,7 @@ const skills = [
 const FREELANCER = "https://www.freelancer.com/u/Rakibul0007";
 const WHATSAPP = "https://wa.me/8801774471120";
 const PERSONAL_SITE = "https://rhasan-dev-bd-com.vercel.app";
+const FACEBOOK = "https://www.facebook.com/rakibul.hassan.269825";
 
 export default function ResumePage() {
   return (
@@ -59,6 +60,13 @@ export default function ResumePage() {
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
           }}>
             Email Me
+          </a>
+          <a href={`${REPO_URL}/raw/main/resources/CV_Rakibul_Hasan.md`} target="_blank" rel="noopener noreferrer" style={{
+            padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            background: "var(--surface)", color: "var(--text)", textDecoration: "none",
+            border: "1px solid var(--glass-border)",
+          }}>
+            Download CV
           </a>
           <PrintButton />
         </div>
@@ -172,6 +180,7 @@ export default function ResumePage() {
           <a href="mailto:rbkhan00009@gmail.com" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>Email</a>
           <a href={FREELANCER} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>Freelancer</a>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>GitHub</a>
+          <a href={FACEBOOK} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>Facebook</a>
           <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>WhatsApp</a>
           <a href={PERSONAL_SITE} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>Portfolio</a>
         </div>
