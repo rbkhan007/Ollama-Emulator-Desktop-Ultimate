@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { JsonLd } from "@/components/JsonLd";
 import {
   REPO_URL,
   RELEASES_URL,
@@ -88,8 +89,8 @@ export default function Home() {
 
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <JsonLd data={jsonLd} />
+      <JsonLd data={faqLd} />
       {/* Hero */}
       <section style={{
         padding: "88px 24px 64px", textAlign: "center",

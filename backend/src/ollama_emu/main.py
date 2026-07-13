@@ -547,6 +547,10 @@ async def auth_logout(request: Request):
 @app.get("/api/auth/verify")
 async def auth_verify(request: Request, token: str = ""):
     if not token:
+        auth_header = request.headers.get("Authorization", "")
+        if auth_header.startswith("Bearer "):
+            token = auth_header[len("Bearer "):]
+    if not token:
         raise HTTPException(status_code=401, detail="No token provided")
     session_info = _acl.session_manager.verify(token)
     if not session_info:

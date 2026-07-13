@@ -27,7 +27,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const saved = sessionStorage.getItem(TOKEN_KEY);
     if (saved) {
-      fetch(`${API_BASE}/api/auth/verify?token=${encodeURIComponent(saved)}`)
+      fetch(`${API_BASE}/api/auth/verify`, {
+        headers: { "Authorization": `Bearer ${saved}` },
+      })
         .then(r => r.ok ? r.json() : null)
         .then(data => {
           if (data?.valid) {

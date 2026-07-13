@@ -44,6 +44,7 @@ def get_dsn() -> str:
     if url:
         return url
     host = os.environ.get("PGHOST", "127.0.0.1")
+
     port = os.environ.get("PGPORT", "5432")
     user = os.environ.get("PGUSER", "ollamaemu")
     password = os.environ.get("PGPASSWORD", "")
@@ -77,11 +78,13 @@ def init_pool(minconn: int = 1, maxconn: int = 10) -> bool:
     url = os.environ.get("OLLAMA_EMU_DATABASE_URL", "").strip()
     try:
         if url:
+            is_neon = "neon.tech" in url.lower()
             _pool = psycopg_pool.ConnectionPool(
                 conninfo=_sanitize_dsn(url),
                 min_size=0, max_size=maxconn,
                 open=True, kwargs={"connect_timeout": 10},
             )
+            log.info("PostgreSQL pool created from OLLAMA_EMU_DATABASE_URL%s", " (NeonDB)" if is_neon else "")
         else:
             host = os.environ.get("PGHOST", "127.0.0.1")
             port = os.environ.get("PGPORT", "5432")
@@ -476,12 +479,22 @@ def check_schema_sync() -> dict:
     }
 
 
+def _generate_password() -> str:
+    return secrets.token_urlsafe(24)
+
+
 def seed_demo_user():
-    """Insert the demo account if it doesn't exist."""
+    """Insert the demo account if it doesn't exist.
+
+    The password is read from OLLAMA_EMU_DEMO_PASSWORD. If unset, a strong
+    random password is generated and logged once so the operator can capture it.
+    """
     if not is_connected():
         return
     email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
-    password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD", "changeme123")
+    password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD") or _generate_password()
+    if not os.environ.get("OLLAMA_EMU_DEMO_PASSWORD"):
+        log.warning("OLLAMA_EMU_DEMO_PASSWORD not set — generated random password for %s: %s", email, password)
     pw_hash = hash_password(email, password)
     with get_cursor() as cur:
         cur.execute(
@@ -565,25 +578,32 @@ def delete_provider(name: str):
         cur.execute("DELETE FROM providers WHERE name=%s", (name,))
 
 
+ALLOWED_PROVIDER_FIELDS = frozenset({
+    "url", "models_url", "auth_type", "default_model", "type", "api_key", "free_heuristic",
+})
+
+
 def update_provider(name: str, data: dict):
-    """Partial update of a provider's fields. Only sets non-None keys."""
+    """Partial update of a provider's fields. Only sets whitelisted keys."""
     if not is_connected():
         return {"status": "skipped", "reason": "db not connected"}
     fields = []
     values = []
-    for key in ("url", "models_url", "auth_type", "default_model", "type", "api_key"):
-        if key in data and data[key] is not None:
-            fields.append(f"{key}=%s")
-            values.append(data[key])
-    if "free_heuristic" in data and data["free_heuristic"] is not None:
-        fields.append("free_heuristic=%s")
-        values.append(str(data["free_heuristic"]))
+    for key, val in data.items():
+        if key not in ALLOWED_PROVIDER_FIELDS or val is None:
+            continue
+        if key == "free_heuristic":
+            val = str(val)
+        fields.append(f"{key}=%s")
+        values.append(val)
     if not fields:
         return {"status": "no_changes"}
     values.append(name)
-    sql = f"UPDATE providers SET {', '.join(fields)} WHERE name=%s"
     with get_cursor() as cur:
-        cur.execute(sql, tuple(values))
+        cur.execute(
+            f"UPDATE providers SET {', '.join(fields)} WHERE name=%s",
+            tuple(values),
+        )
         return {"status": "updated", "rowcount": cur.rowcount}
 
 

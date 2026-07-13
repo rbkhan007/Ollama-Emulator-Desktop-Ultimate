@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { JsonLd } from "@/components/JsonLd";
 import { GradientOrbs, MeshGrid } from "@/components/Background";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
@@ -103,28 +105,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <meta name="google-site-verification" content="B9BhgbOr0QhuTmOzNOmBvFMm5d8wuyjyMqKgGFRPbTc" />
-          <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "SoftwareApplication",
-                name: "OllamoMUI",
-                applicationCategory: "DeveloperApplication",
-                operatingSystem: "Windows, macOS, Linux, Web, Android",
-                url: SITE_URL,
-                description:
-                  "Free, self-hosted AI gateway that emulates the Ollama API and routes prompts to 26 free LLMs with RAG, memory, desktop and mobile clients.",
-                offers: [
-                  { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
-                  { "@type": "Offer", name: "Desktop Pro", price: "4.99", priceCurrency: "USD" },
-                  { "@type": "Offer", name: "Mobile Ultimate", price: "2.99", priceCurrency: "USD" },
-                  { "@type": "Offer", name: "Web Pro", price: "9.99", priceCurrency: "USD" },
-                ],
-              }),
-            }}
-          />
+          <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
+          <JsonLd data={{
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "OllamoMUI",
+            applicationCategory: "DeveloperApplication",
+            operatingSystem: "Windows, macOS, Linux, Web, Android",
+            url: SITE_URL,
+            description:
+              "Free, self-hosted AI gateway that emulates the Ollama API and routes prompts to 26 free LLMs with RAG, memory, desktop and mobile clients.",
+            offers: [
+              { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
+              { "@type": "Offer", name: "Desktop Pro", price: "4.99", priceCurrency: "USD" },
+              { "@type": "Offer", name: "Mobile Ultimate", price: "2.99", priceCurrency: "USD" },
+              { "@type": "Offer", name: "Web Pro", price: "9.99", priceCurrency: "USD" },
+            ],
+          }} />
         </head>
       <body>
         <ThemeProvider>

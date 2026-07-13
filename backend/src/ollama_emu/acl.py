@@ -15,12 +15,13 @@ Provides:
 import os
 import re
 import time
+import json
 import uuid
 import secrets
 import hashlib
 import logging
 import threading
-from collections import defaultdict
+from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, List, Set, Callable
 from functools import wraps
@@ -499,9 +500,51 @@ def is_ip_allowed(ip: str) -> bool:
 # AUDIT LOGGING
 # ============================================================
 
-_audit_log: List[dict] = []
+_audit_log: "deque[dict]" = deque(maxlen=10000)
 _audit_lock = threading.Lock()
-MAX_AUDIT_ENTRIES = 10000
+_AUDIT_FLUSH_INTERVAL = 60
+_AUDIT_MAX_DETAILS_KEYS = 20
+
+
+def _truncate_details(details: dict | None) -> dict:
+    if not details:
+        return {}
+    if isinstance(details, dict) and len(details) > _AUDIT_MAX_DETAILS_KEYS:
+        return dict(list(details.items())[:_AUDIT_MAX_DETAILS_KEYS])
+    return details
+
+
+def _flush_audit_to_db():
+    """Persist in-memory audit entries to the database audit_log table."""
+    try:
+        from ollama_emu.db import is_connected, get_cursor
+        if not is_connected():
+            return
+        with _audit_lock:
+            if not _audit_log:
+                return
+            batch = list(_audit_log)
+            _audit_log.clear()
+        with get_cursor() as cur:
+            for entry in batch:
+                cur.execute(
+                    "INSERT INTO audit_log (event, email, ip, success, details) VALUES (%s,%s,%s,%s,%s::jsonb)",
+                    (entry["event"], entry.get("email"), entry.get("ip"),
+                     entry.get("success", True),
+                     json.dumps(entry.get("details", {}))),
+                )
+        log.info("Flushed %d audit entries to database", len(batch))
+    except Exception:
+        log.warning("Audit flush to database failed", exc_info=True)
+
+
+def _audit_flush_loop():
+    while True:
+        time.sleep(_AUDIT_FLUSH_INTERVAL)
+        _flush_audit_to_db()
+
+
+threading.Thread(target=_audit_flush_loop, daemon=True).start()
 
 
 def audit_log(event: str, email: str = None, ip: str = None, details: dict = None, success: bool = True):
@@ -511,12 +554,10 @@ def audit_log(event: str, email: str = None, ip: str = None, details: dict = Non
         "email": email,
         "ip": ip,
         "success": success,
-        "details": details or {},
+        "details": _truncate_details(details),
     }
     with _audit_lock:
         _audit_log.append(entry)
-        if len(_audit_log) > MAX_AUDIT_ENTRIES:
-            _audit_log.pop(0)
     level = logging.INFO if success else logging.WARNING
     log.log(level, "AUDIT: %s email=%s ip=%s success=%s", event, email, ip, success)
 
