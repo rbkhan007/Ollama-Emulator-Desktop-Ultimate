@@ -14,6 +14,7 @@ const links = [
   { href: "/memory", label: "Memory", icon: "brain" },
   { href: "/pricing", label: "Pricing", icon: "pricing" },
   { href: "/download", label: "Download", icon: "download" },
+  { href: "/settings", label: "Settings", icon: "settings" },
   { href: "/about", label: "About", icon: "info" },
 ];
 

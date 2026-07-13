@@ -7,17 +7,24 @@ export const REPO_RAW = "https://raw.githubusercontent.com/rbkhan007/ollamomui/m
 export const RELEASES_URL = `${REPO_URL}/releases/latest`;
 export const DOWNLOAD_URL = `${REPO_URL}/releases/latest/download/ollamomui.exe`;
 
-export const SITE_DOMAIN = process.env.NEXT_PUBLIC_VERCEL_URL
-  ? `${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  : process.env.NEXT_PUBLIC_SITE_URL
-    ? new URL(process.env.NEXT_PUBLIC_SITE_URL).hostname
-    : "vercel.app";
+// Canonical production URL. Priority:
+//   1. Explicit NEXT_PUBLIC_SITE_URL (set this to override, e.g. a custom domain)
+//   2. Vercel's STABLE production domain (never the per-deployment *.vercel.app URL)
+//   3. Sensible default
+// NOTE: We intentionally do NOT use NEXT_PUBLIC_VERCEL_URL here — that resolves to
+// the per-deployment hostname (e.g. ollamomui-abc123.vercel.app), which is not
+// canonical and is blocked by Vercel deployment protection, breaking sitemaps/SEO.
+const PROD_URL = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL}`
+  : "https://ollamomui.vercel.app";
+
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || PROD_URL;
+
+export const SITE_DOMAIN = new URL(SITE_URL).hostname;
 
 export const FREETIER_DOMAIN =
   process.env.NEXT_PUBLIC_FREETIER_DOMAIN || SITE_DOMAIN;
 export const FREETIER_URL = `https://${FREETIER_DOMAIN}`;
-
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || FREETIER_URL;
 
 export const ASSET_BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
