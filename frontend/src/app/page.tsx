@@ -308,6 +308,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Hire Me CTA */}
+      <section style={{ padding: "0 24px 60px", maxWidth: 600, margin: "0 auto" }}>
+        <div style={{
+          padding: "28px 24px", borderRadius: 16, textAlign: "center",
+          background: "var(--surface)", border: "1px solid var(--glass-border)",
+        }}>
+          <p style={{ margin: "0 0 14px", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
+            <strong style={{ color: "var(--text)" }}>I built this.</strong> Full-stack developer specializing in
+            AI/LLM, cross-platform desktop/mobile, and developer tools. Available for remote roles.
+          </p>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/about" style={{
+              padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+              background: "var(--gradient-1)", color: "white", textDecoration: "none",
+              display: "inline-flex", alignItems: "center", gap: 6,
+            }}>
+              View Portfolio &rarr;
+            </Link>
+            <a href="mailto:rbkhan00009@gmail.com" style={{
+              padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+              background: "var(--surface)", color: "var(--text)", textDecoration: "none",
+              border: "1px solid var(--glass-border)", display: "inline-flex", alignItems: "center", gap: 6,
+            }}>
+              Contact Me
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section style={{ padding: "0 24px 80px", textAlign: "center" }}>
         <h2 style={{ fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 12 }}>

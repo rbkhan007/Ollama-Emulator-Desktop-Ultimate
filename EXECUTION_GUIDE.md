@@ -1,4 +1,4 @@
-﻿# 🚀 Execution Guide – From Code to Launch
+# 🚀 Execution Guide – From Code to Launch
 
 Runnable commands for the remaining manual steps: building the EXE, running the
 test suite, building the APK, setting up a custom domain, and launching promotion.
@@ -52,12 +52,8 @@ endpoints).
 
 ### 2.1 Install Desktop Dependencies
 ```bash
-# From the repo root: install the backend package (importable as `ollama_emu`)
-pip install -e .
-# Then the desktop GUI toolkit + requirements
 cd desktop
-pip install -r requirements.txt   # PySide6, requests, markdown, psutil
-pip install pyinstaller
+pip install -r requirements.txt   # PySide6, PyInstaller, psycopg3, etc.
 ```
 
 ### 2.2 Download PostgreSQL Binaries (one time)

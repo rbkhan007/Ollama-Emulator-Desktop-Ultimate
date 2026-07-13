@@ -15,10 +15,12 @@ ApplicationWindow {
 
     property var currentPage: homePage
 
+    // Expose toast globally so all pages can call window.showToast(msg, type)
     function showToast(msg, type, dur) {
         toast.show(msg, type, dur)
     }
 
+    // Global loading state
     property bool isLoading: false
     function showLoading(loading) {
         isLoading = loading
@@ -81,11 +83,13 @@ ApplicationWindow {
         }
     }
 
+    // Toast overlay
     Toast {
         id: toast
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
+    // Global loading spinner
     ProgressSpinner {
         id: loadingSpinner
         anchors.centerIn: parent
@@ -94,10 +98,12 @@ ApplicationWindow {
         z: 9998
     }
 
+    // Auto-update notification
     UpdateDialog {
         id: updateDialog
     }
 
+    // ── Keyboard Shortcuts ──
     Shortcut { sequence: "Ctrl+1"; onActivated: { stackLayout.currentIndex = 0; sidebar.currentIndex = 0 } }
     Shortcut { sequence: "Ctrl+2"; onActivated: { stackLayout.currentIndex = 1; sidebar.currentIndex = 1 } }
     Shortcut { sequence: "Ctrl+3"; onActivated: { stackLayout.currentIndex = 2; sidebar.currentIndex = 2 } }

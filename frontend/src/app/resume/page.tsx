@@ -1,0 +1,165 @@
+import type { Metadata } from "next";
+import { SITE_URL, REPO_URL } from "@/lib/config";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Resume — Rhasan@dev — Full-Stack Developer",
+  description: "Full-stack developer specializing in AI/LLM, cross-platform desktop/mobile, and developer tools. FastAPI, Next.js, React Native, PySide6, PostgreSQL, Docker.",
+  alternates: { canonical: `${SITE_URL}/resume` },
+  openGraph: {
+    title: "Resume — Rhasan@dev",
+    description: "Full-stack developer · AI/LLM · Cross-platform · FastAPI, Next.js, React Native, PySide6, PostgreSQL, Docker.",
+    url: `${SITE_URL}/resume`,
+    images: [{ url: `${SITE_URL}/og-image.png`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Resume — Rhasan@dev",
+    description: "Full-stack developer · AI/LLM · Cross-platform",
+    images: [`${SITE_URL}/og-image.png`],
+  },
+};
+
+const skills = [
+  { category: "Backend", items: ["Python 3.14", "FastAPI", "SQLAlchemy", "PostgreSQL + pgvector", "REST API design", "JWT / OAuth", "Rate limiting", "Audit logging"] },
+  { category: "Frontend", items: ["Next.js 15", "TypeScript", "React 19", "SSR / SSG", "CSS design systems", "Responsive design", "PWA", "SEO / structured data"] },
+  { category: "Desktop", items: ["PySide6", "QML", "Tauri", "Auto-updaters", "System tray", "Cross-compilation"] },
+  { category: "Mobile", items: ["React Native", "Expo", "Hermes", "Push notifications", "Biometric auth", "Offline-first"] },
+  { category: "DevOps", items: ["Docker", "Nginx", "Cloudflare Tunnel", "Vercel", "Render", "NeonDB", "GitHub Actions"] },
+  { category: "Security", items: ["PBKDF2-HMAC-SHA256", "JWT auth", "RBAC", "SSRF protection", "CSP / HSTS", "CSRF", "Input sanitization"] },
+];
+
+const projects = [
+  {
+    title: "OllamoMUI",
+    url: "https://ollamomui.vercel.app",
+    repo: REPO_URL,
+    desc: "Full-stack AI gateway with 22 static pages, 26 free LLMs, RAG pipeline, persistent memory, cross-platform desktop/mobile/web clients. Enterprise security (4-pillar architecture).",
+    stack: ["FastAPI", "Next.js", "TypeScript", "React Native", "PySide6", "PostgreSQL", "pgvector", "Docker"],
+  },
+];
+
+export default function ResumePage() {
+  return (
+    <main style={{ maxWidth: 880, margin: "0 auto", padding: "40px 24px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>Rhasan@dev</h1>
+          <p style={{ color: "var(--text-muted)", fontSize: "1rem", margin: "4px 0 0" }}>
+            Full-Stack Developer · AI/LLM · Cross-Platform
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+          <a href="mailto:rbkhan00009@gmail.com" style={{
+            padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            background: "var(--gradient-1)", color: "white", textDecoration: "none",
+          }}>
+            Email Me
+          </a>
+          <a href={`${REPO_URL}/raw/main/resources/resume.pdf`} target="_blank" rel="noopener noreferrer" style={{
+            padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            background: "var(--surface)", color: "var(--text)", textDecoration: "none",
+            border: "1px solid var(--glass-border)",
+          }}>
+            Download PDF
+          </a>
+        </div>
+      </div>
+
+      {/* About */}
+      <section style={{ marginBottom: 36 }}>
+        <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+          I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
+          developer tools. I care about security, performance, and user experience at every layer of the
+          stack — from database schema design to CSS animations. Available for remote roles.
+        </p>
+      </section>
+
+      {/* Skills */}
+      <section style={{ marginBottom: 36 }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Skills</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 14 }}>
+          {skills.map((group) => (
+            <div key={group.category} style={{
+              background: "var(--surface)", borderRadius: 12, border: "1px solid var(--glass-border)", padding: 16,
+            }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, color: "#6c5ce7", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                {group.category}
+              </h3>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {group.items.map((item) => (
+                  <span key={item} style={{
+                    fontSize: 12, padding: "3px 10px", borderRadius: 6,
+                    background: "rgba(108,92,231,0.08)", color: "var(--text-muted)", fontWeight: 500,
+                  }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Project */}
+      <section style={{ marginBottom: 36 }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Featured Project</h2>
+        {projects.map((p) => (
+          <div key={p.title} style={{
+            background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)", padding: 24,
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
+              <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>{p.title}</h3>
+              <div style={{ display: "flex", gap: 10 }}>
+                <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>Live Site</a>
+                <a href={p.repo} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 600, textDecoration: "none" }}>Source</a>
+              </div>
+            </div>
+            <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, margin: "0 0 12px" }}>{p.desc}</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {p.stack.map((tech) => (
+                <span key={tech} style={{
+                  fontSize: 12, padding: "3px 10px", borderRadius: 6,
+                  background: "rgba(0,206,201,0.08)", color: "#00cec9", fontWeight: 500,
+                }}>
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Portfolio Links */}
+      <section style={{ marginBottom: 36 }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Portfolio Deep Dives</h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
+          {[
+            { href: "/architecture", label: "Architecture", desc: "Request lifecycle & RAG pipeline" },
+            { href: "/security", label: "Security", desc: "4-pillar enterprise security" },
+            { href: "/api-docs", label: "API Docs", desc: "16-endpoint reference" },
+            { href: "/status", label: "Status", desc: "Live health dashboard" },
+            { href: "/case-study", label: "Case Study", desc: "Cross-platform analysis" },
+          ].map((link) => (
+            <Link key={link.href} href={link.href} style={{
+              padding: "14px 16px", borderRadius: 10, textDecoration: "none",
+              background: "var(--surface)", border: "1px solid var(--glass-border)",
+              transition: "all 0.2s",
+            }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "var(--text)", marginBottom: 2 }}>{link.label}</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{link.desc}</div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section style={{ textAlign: "center" }}>
+        <p style={{ color: "var(--text-muted)", fontSize: 14 }}>
+          Email: <a href="mailto:rbkhan00009@gmail.com" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>rbkhan00009@gmail.com</a>
+          &nbsp;·&nbsp; GitHub: <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "#6c5ce7", fontWeight: 600, textDecoration: "none" }}>rbkhan007</a>
+        </p>
+      </section>
+    </main>
+  );
+}

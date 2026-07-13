@@ -30,6 +30,7 @@ class ApiWorker(QRunnable):
 
 
 class ApiClient(QObject):
+    # ── Async signals (QML connects via Connections) ──
     requestFinished = Signal(str, str)
     requestError = Signal(str, str)
     loadingChanged = Signal(bool)
@@ -56,6 +57,7 @@ class ApiClient(QObject):
 
     base_url = Property(str, _get_base_url, _set_base_url, notify=base_url_changed)
 
+    # ── Async executor: run any ApiClient method on a worker thread ──
     @Slot(str, str, str, str)
     def executeAsync(self, requestId: str, method: str, argsJson: str = "[]", kwargsJson: str = "{}"):
         try:
@@ -87,6 +89,7 @@ class ApiClient(QObject):
             self.loadingChanged.emit(False)
         self.requestError.emit(requestId, err)
 
+    # ── Token ──────────────────────────────────────────────
     @property
     def token(self):
         return self._token
@@ -107,6 +110,7 @@ class ApiClient(QObject):
         resp.raise_for_status()
         return resp.json()
 
+    # ── Auth ──────────────────────────────────────────────
     def login(self, email: str, password: str) -> Dict[str, Any]:
         result = self._request("POST", "/api/auth/login", json={"email": email, "password": password})
         return result
@@ -127,12 +131,14 @@ class ApiClient(QObject):
     def change_password(self, old_password: str, new_password: str) -> Dict[str, Any]:
         return self._request("POST", "/api/auth/change-password", json={"old_password": old_password, "new_password": new_password})
 
+    # ── License activation ───────────────────────────────
     def activate_license(self, license_key: str, device_id: str = "") -> Dict[str, Any]:
         return self._request("POST", "/api/payment/activate", json={
             "license_key": license_key,
             "device_id": device_id,
         })
 
+    # ── Providers ─────────────────────────────────────────
     def get_providers(self) -> List[Dict[str, Any]]:
         return self._request("GET", "/api/providers")
 
@@ -168,6 +174,7 @@ class ApiClient(QObject):
     def auto_detect_key(self, api_key: str) -> Dict[str, Any]:
         return self._request("POST", "/api/auth/auto-detect", json={"api_key": api_key})
 
+    # ── Models ────────────────────────────────────────────
     def get_models(self) -> Dict[str, Any]:
         return self._request("GET", "/api/models")
 
@@ -178,6 +185,7 @@ class ApiClient(QObject):
     def get_free_models(self) -> Dict[str, Any]:
         return self._request("GET", "/api/models/free")
 
+    # ── Chat ──────────────────────────────────────────────
     def chat_completion(self, model: str, messages: List[Dict[str, str]], stream: bool = False) -> Any:
         payload = {"model": model, "messages": messages, "stream": stream}
         resp = self.session.post(f"{self.base_url}/v1/chat/completions", json=payload,
@@ -195,6 +203,7 @@ class ApiClient(QObject):
                         continue
                     yield data
 
+    # ── RAG ───────────────────────────────────────────────
     def get_rag_documents(self) -> List[Dict[str, Any]]:
         return self._request("GET", "/api/rag/documents")
 
@@ -228,6 +237,7 @@ class ApiClient(QObject):
             resp.raise_for_status()
             return resp.json()
 
+    # ── Memory ────────────────────────────────────────────
     def get_memory_messages(self, session_id: str = None, limit: int = 100, offset: int = 0) -> List[Dict[str, Any]]:
         params = {"limit": limit, "offset": offset}
         if session_id:
@@ -264,6 +274,7 @@ class ApiClient(QObject):
     def get_memory_stats(self) -> Dict[str, Any]:
         return self._request("GET", "/api/memory/stats")
 
+    # ── Users ─────────────────────────────────────────────
     def get_users(self) -> List[Dict[str, Any]]:
         return self._request("GET", "/api/users")
 
@@ -276,12 +287,14 @@ class ApiClient(QObject):
     def delete_user(self, email: str) -> Dict[str, Any]:
         return self._request("DELETE", f"/api/users/{email}")
 
+    # ── Usage ─────────────────────────────────────────────
     def get_usage_stats(self) -> Dict[str, Any]:
         return self._request("GET", "/api/usage/stats")
 
     def clear_usage(self) -> Dict[str, Any]:
         return self._request("POST", "/api/usage/clear")
 
+    # ── System ────────────────────────────────────────────
     def health_check(self) -> Dict[str, Any]:
         return self._request("GET", "/api/status")
 
@@ -294,6 +307,7 @@ class ApiClient(QObject):
     def get_device(self) -> Dict[str, Any]:
         return self._request("GET", "/api/device")
 
+    # ── Export / Import ───────────────────────────────────
     def export_all(self) -> Dict[str, Any]:
         return self._request("GET", "/api/export")
 
@@ -314,15 +328,18 @@ class ApiClient(QObject):
             data = json.load(f)
         return self.import_all(data)
 
+    # ── Preferences (client-side) ─────────────────────────
     def get_preference(self, key: str, default: str = "") -> str:
         return self._preferences.get(key, default)
 
     def set_preference(self, key: str, value: str) -> None:
         self._preferences[key] = value
 
+    # ── Folder picker (stub – real integration uses QML) ─
     def open_folder_picker(self) -> str:
         return ""
 
+    # ── Deploy proxy environment ──────────────────────────
     def deploy_proxy_env(self) -> Dict[str, Any]:
         try:
             return self._request("POST", "/api/proxy/deploy")

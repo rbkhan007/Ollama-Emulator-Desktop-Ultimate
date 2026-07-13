@@ -44,6 +44,7 @@ class QmlEngine:
         self.engine.addImportPath(str(QML_DIR))
         self.engine.addImportPath(str(QML_DIR / "components"))
         self.engine.addImportPath(str(QML_DIR / "styles"))
+        self.engine.addImportPath(str(QML_DIR / "pages"))
 
         self.engine.rootContext().setContextProperty("apiClient", self.api)
         self.engine.rootContext().setContextProperty("themeManager", self.theme)

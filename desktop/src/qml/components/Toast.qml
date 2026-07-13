@@ -6,7 +6,7 @@ Rectangle {
     id: root
 
     property string message: ""
-    property int toastType: 0
+    property int toastType: 0  // 0=info, 1=success, 2=error
     property int duration: 3000
 
     signal dismissed()
