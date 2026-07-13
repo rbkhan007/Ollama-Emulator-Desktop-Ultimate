@@ -155,21 +155,41 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding: "0 24px 72px", textAlign: "center" }}>
-        <Link href="/pricing" style={{
-          display: "inline-flex", alignItems: "center", gap: 10, padding: "14px 26px",
-          borderRadius: 14, textDecoration: "none", fontWeight: 700, fontSize: 15,
-          background: "var(--gradient-1)", color: "white",
+      {/* Hire Me */}
+      <section style={{ padding: "40px 24px", maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+        <div style={{
+          background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
+          padding: "40px 32px",
         }}>
-          View Pricing →
-        </Link>
-        <br /><br />
-        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className="break-all" style={{
-          color: "var(--text-muted)", fontSize: 13, wordBreak: "break-all", overflowWrap: "anywhere",
-        }}>
-          GitHub → {REPO_URL}
-        </a>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 12 }}>👋 Hire Me</h2>
+          <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, marginBottom: 20, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
+            I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
+            developer tools. If you have a project, an idea, or a problem to solve — let's talk.
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <a href="mailto:rhasan@dev.com" style={{
+              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
+              borderRadius: 12, background: "var(--gradient-1)", color: "#fff",
+              textDecoration: "none", fontWeight: 700, fontSize: 14,
+            }}>
+              ✉️ Email me
+            </a>
+            <a href="https://github.com/sponsors/rbkhan007" target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
+              borderRadius: 12, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            }}>
+              💖 Sponsor on GitHub
+            </a>
+            <Link href="/pricing" style={{
+              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
+              borderRadius: 12, background: "transparent", color: "var(--text-muted)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            }}>
+              View Pricing →
+            </Link>
+          </div>
+        </div>
       </section>
     </div>
   );

@@ -86,6 +86,40 @@ export default function Download() {
           </div>
         ))}
       </div>
+
+      {/* Deploy Buttons */}
+      <section style={{ marginTop: 48 }}>
+        <h2 style={{ fontSize: "1.3rem", fontWeight: 700, textAlign: "center", marginBottom: 8 }}>Deploy Your Own Instance</h2>
+        <p style={{ textAlign: "center", color: "var(--text-muted)", fontSize: 14, marginBottom: 20 }}>
+          One-click deployment to your preferred cloud provider.
+        </p>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+          <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frbkhan007%2Followomui%2Ftree%2Fmain&project-name=ollamomui&repository-name=ollamomui" target="_blank" rel="noopener noreferrer" style={{
+            display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
+            borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+            Deploy to Vercel
+          </a>
+          <a href="https://render.com/deploy?repo=https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" style={{
+            display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
+            borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
+            Deploy to Render
+          </a>
+          <a href="https://railway.app/template/ollamomui?referralCode=ollamomui" target="_blank" rel="noopener noreferrer" style={{
+            display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
+            borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+            Deploy to Railway
+          </a>
+        </div>
+      </section>
     </main>
   );
 }

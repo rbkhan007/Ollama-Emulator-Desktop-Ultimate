@@ -12,6 +12,10 @@ const links = [
   { href: "/playground", label: "Playground", icon: "chat" },
   { href: "/rag", label: "Knowledge", icon: "book" },
   { href: "/memory", label: "Memory", icon: "brain" },
+  { href: "/architecture", label: "Architecture", icon: "arch" },
+  { href: "/api-docs", label: "API Docs", icon: "api" },
+  { href: "/status", label: "Status", icon: "status" },
+  { href: "/security", label: "Security", icon: "shield" },
   { href: "/pricing", label: "Pricing", icon: "pricing" },
   { href: "/download", label: "Download", icon: "download" },
   { href: "/settings", label: "Settings", icon: "settings" },
@@ -78,6 +82,33 @@ function NavIcon({ type }: { type: string }) {
         <circle cx="12" cy="12" r="10" />
         <line x1="12" y1="16" x2="12" y2="12" />
         <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+    ),
+    arch: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+        <line x1="12" y1="2" x2="12" y2="22" />
+      </svg>
+    ),
+    api: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 3 21 3 21 8" />
+        <line x1="4" y1="20" x2="21" y2="3" />
+        <polyline points="21 16 21 21 16 21" />
+        <line x1="15" y1="15" x2="21" y2="21" />
+        <line x1="4" y1="4" x2="9" y2="9" />
+      </svg>
+    ),
+    status: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    ),
+    shield: (
+      <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <polyline points="9 12 11 14 15 10" />
       </svg>
     ),
   };
