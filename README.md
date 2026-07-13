@@ -37,6 +37,20 @@ curl http://localhost:11434/api/chat -d '{"model":"free","messages":[{"role":"us
 
 ---
 
+## 📝 Work Log
+
+- **2026-07-13 — Responsive overhaul & Settings page**
+  - Added a website **Settings** page (`/settings`) to connect to any backend and add an API key for **any model/provider** — auto-detect via `/api/auth/auto-detect`, per-provider key + default-model management, and custom-provider registration.
+  - Fixed the **backend CORS / ACL** middleware: `configure_cors(app)` now runs at module-import time (so it is installed when the app is launched as an imported module on Render/uvicorn), and the Vercel frontend origins are always allowed — resolves the `blocked by CORS policy` error when the web app calls the onRender backend.
+  - Made **every page fit mobile → desktop**: the navbar no longer overflows on phones (the inline GitHub button moves into the hamburger and nav padding tightens), fixed-width `<select>`s are now fluid, dual-button rows stack, and long URLs/text wrap.
+
+- **2026-07-12 — Search Console & deploy fixes**
+  - Added the Google Search Console verification `<meta>` tag to `layout.tsx`.
+  - Fixed `vercel.json`: removed the invalid `rootDirectory` property that rejected the config and failed every build.
+  - Fixed `config.ts` `SITE_URL` to use the canonical Vercel production URL (not the per-deployment `NEXT_PUBLIC_VERCEL_URL`), so `sitemap.xml` / `robots.txt` resolve correctly.
+
+---
+
 ## ✨ What Is OllamoMUI?
 
 **OllamoMUI** is a free, self-hosted **AI gateway** that emulates the Ollama API (plus OpenAI / Anthropic formats) and routes your prompts to **26 completely free LLMs** via OpenRouter. It ships with:
