@@ -33,6 +33,7 @@
   height: 28px;
   border-radius: 8px;
   background: linear-gradient(135deg, #6c5ce7, #00cec9);
+  flex-shrink: 0;
 }
 
 .brandText {
@@ -56,7 +57,6 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  height: 100%;
 }
 
 .link {
@@ -155,6 +155,7 @@
 @media (max-width: 768px) {
   .nav {
     height: 56px;
+    background: var(--bg);
   }
 
   .actions .desktopBtn {
@@ -182,6 +183,7 @@
     transition: opacity 0.25s ease, visibility 0.25s ease;
     overflow-y: auto;
     height: auto;
+    z-index: 999;
   }
 
   .menuOpen {
