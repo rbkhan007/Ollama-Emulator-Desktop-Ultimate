@@ -20,7 +20,7 @@ export default function Footer() {
       <div style={{
         maxWidth: 1100,
         margin: "0 auto",
-        padding: "28px 24px 20px",
+        padding: "clamp(20px, 3vw, 28px) clamp(12px, 3vw, 24px) clamp(16px, 2.5vw, 20px)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -28,7 +28,7 @@ export default function Footer() {
       }}>
         <div style={{
           display: "flex",
-          gap: 8,
+          gap: "clamp(4px, 1vw, 8px)",
           flexWrap: "wrap",
           justifyContent: "center",
         }}>
@@ -38,12 +38,13 @@ export default function Footer() {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
+              className="footer-link"
               style={{
                 color: "var(--text-muted)",
                 fontWeight: 500,
-                fontSize: 13,
+                fontSize: "clamp(12px, 1.2vw, 13px)",
                 textDecoration: "none",
-                padding: "6px 14px",
+                padding: "clamp(5px, 0.6vw, 6px) clamp(10px, 1.2vw, 14px)",
                 borderRadius: 8,
                 border: "1px solid var(--glass-border)",
                 background: "var(--surface)",
@@ -51,6 +52,7 @@ export default function Footer() {
                 alignItems: "center",
                 gap: 6,
                 transition: "all 0.2s",
+                whiteSpace: "nowrap",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "var(--accent)";
@@ -70,9 +72,11 @@ export default function Footer() {
           flexDirection: "column",
           alignItems: "center",
           gap: 4,
-          fontSize: 12,
+          fontSize: "clamp(11px, 1.2vw, 12px)",
           color: "var(--text-muted)",
           lineHeight: 1.6,
+          textAlign: "center",
+          padding: "0 12px",
         }}>
           <span style={{ fontWeight: 600, color: "var(--text)", letterSpacing: "0.01em" }}>
             &copy; 2024-2026 Rhasan@dev. All rights reserved.

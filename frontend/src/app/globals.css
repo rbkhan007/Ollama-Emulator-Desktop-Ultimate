@@ -663,6 +663,12 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   .spidey-burst { display: none; }
 }
 
+/* Footer social links */
+.footer-link:hover {
+  color: var(--accent) !important;
+  border-color: rgba(108,92,231,0.3) !important;
+}
+
 /* Two-column form/grid helper that collapses on small screens */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 

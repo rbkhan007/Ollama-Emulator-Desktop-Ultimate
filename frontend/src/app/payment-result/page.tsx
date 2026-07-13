@@ -12,7 +12,7 @@ function PaymentResultInner() {
   const message = params.get("message") || "";
 
   return (
-    <main style={{ maxWidth: 600, margin: "40px auto", padding: 24, textAlign: "center" }}>
+    <main style={{ maxWidth: 600, margin: "0 auto", padding: "clamp(32px, 6vw, 48px) clamp(16px, 4vw, 24px)", textAlign: "center" }}>
       {status === "success" && (
         <>
           <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>

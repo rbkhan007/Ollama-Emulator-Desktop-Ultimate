@@ -57,6 +57,14 @@
   display: flex;
   align-items: center;
   gap: 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.menu::-webkit-scrollbar {
+  display: none;
 }
 
 .link {
@@ -152,7 +160,7 @@
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .nav {
     height: 56px;
     background: var(--bg);
@@ -182,7 +190,7 @@
     visibility: hidden;
     transition: opacity 0.25s ease, visibility 0.25s ease;
     overflow-y: auto;
-    height: auto;
+    -webkit-overflow-scrolling: touch;
     z-index: 999;
   }
 
@@ -226,5 +234,31 @@
   .menuActionBtn:hover {
     color: var(--text);
     border-color: rgba(108, 92, 231, 0.3);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .menu {
+    padding: 8px 12px 20px;
+  }
+
+  .link {
+    font-size: 15px;
+    padding: 10px 12px;
+  }
+
+  .menuActions {
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .menuActionBtn {
+    padding: 8px 10px;
+    font-size: 13px;
   }
 }
