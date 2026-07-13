@@ -187,33 +187,49 @@ export default function About() {
           background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
           padding: "40px 32px",
         }}>
-          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 12 }}>👋 Hire Me</h2>
+          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 12 }}>Hire Me</h2>
           <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, marginBottom: 20, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
             I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
             developer tools. If you have a project, an idea, or a problem to solve — let's talk.
           </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:rbkhan00009@gmail.com" style={{
-              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
-              borderRadius: 12, background: "var(--gradient-1)", color: "#fff",
-              textDecoration: "none", fontWeight: 700, fontSize: 14,
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
+              borderRadius: 10, background: "var(--gradient-1)", color: "#fff",
+              textDecoration: "none", fontWeight: 700, fontSize: 13,
             }}>
-              ✉️ Email me
+              Email me
             </a>
-            <a href="https://github.com/sponsors/rbkhan007" target="_blank" rel="noopener noreferrer" style={{
-              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
-              borderRadius: 12, background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            <a href="https://www.freelancer.com/u/Rakibul0007" target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
+              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
             }}>
-              💖 Sponsor on GitHub
+              Freelancer
             </a>
-            <Link href="/pricing" style={{
-              display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
-              borderRadius: 12, background: "transparent", color: "var(--text-muted)",
-              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            <a href="https://wa.me/8801774471120" target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
+              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
             }}>
-              View Pricing →
+              WhatsApp
+            </a>
+            <Link href="/resume" style={{
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
+              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
+            }}>
+              Resume
             </Link>
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "10px 20px", borderRadius: 10,
+              background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)",
+              textDecoration: "none", fontWeight: 600, fontSize: 13,
+            }}>
+              GitHub
+            </a>
           </div>
         </div>
       </section>
