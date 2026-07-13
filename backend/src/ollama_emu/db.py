@@ -494,7 +494,8 @@ def seed_demo_user():
     email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
     password = os.environ.get("OLLAMA_EMU_DEMO_PASSWORD") or _generate_password()
     if not os.environ.get("OLLAMA_EMU_DEMO_PASSWORD"):
-        log.warning("OLLAMA_EMU_DEMO_PASSWORD not set — generated random password for %s: %s", email, password)
+        log.warning("OLLAMA_EMU_DEMO_PASSWORD not set — generated random password for %s (check stderr)", email)
+        print(f"[SECURITY] Generated admin password for {email}: {password}", file=sys.stderr)
     pw_hash = hash_password(email, password)
     with get_cursor() as cur:
         cur.execute(

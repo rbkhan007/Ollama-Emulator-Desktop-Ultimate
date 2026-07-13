@@ -21,6 +21,7 @@ import secrets
 import hashlib
 import logging
 import threading
+import urllib.parse
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, List, Set, Callable
@@ -582,6 +583,8 @@ SECURITY_HEADERS = {
     "X-XSS-Protection": "1; mode=block",
     "Referrer-Policy": "strict-origin-when-cross-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'none'; object-src 'none'",
     "X-Request-ID": None,  # filled per-request
 }
 
@@ -600,6 +603,33 @@ def create_acl_middleware(app):
     """Create an ACL middleware function for FastAPI."""
     async def acl_middleware(request: Request, call_next):
         ip = _get_client_ip(request)
+
+        # CSRF protection: validate Origin/Referer for state-changing requests
+        if request.method in ("POST", "PUT", "DELETE", "PATCH"):
+            origin = request.headers.get("origin") or request.headers.get("referer") or ""
+            if origin:
+                try:
+                    parsed = urllib.parse.urlparse(origin)
+                    host = parsed.hostname or ""
+                    # Allow same-origin (no origin header), localhost, and known frontends
+                    if host and host not in ("localhost", "127.0.0.1", "::1"):
+                        allowed_hosts = {
+                            "ollamomui.vercel.app", "www.ollamomui.vercel.app",
+                            "api.ollamomui.com", "www.api.ollamomui.com",
+                        }
+                        extra = os.environ.get("CORS_ORIGINS", "")
+                        for eo in extra.split(","):
+                            eo = eo.strip()
+                            if eo:
+                                try:
+                                    allowed_hosts.add(urllib.parse.urlparse(eo).hostname or "")
+                                except Exception:
+                                    pass
+                        if host not in allowed_hosts:
+                            audit_log("csrf_blocked", email="", ip=ip, success=False)
+                            return JSONResponse(status_code=403, content={"error": "Cross-origin request denied"})
+                except Exception:
+                    pass
 
         if not is_ip_allowed(ip):
             audit_log("ip_blocked", ip=ip)

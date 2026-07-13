@@ -91,6 +91,14 @@ def sanitize_filename(filename: str) -> str:
 def mask_error(msg: str) -> str:
     return msg.replace(os.sep, "/").split("Traceback")[0].strip()[:200]
 
+def _require_auth(request: Request, admin: bool = False):
+    auth = _acl.get_auth_context(request)
+    if not auth or not auth.get("authenticated"):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    if admin and auth.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return auth
+
 from ollama_emu.rag import RAGEngine
 from ollama_emu.memory import MemorySystem
 from ollama_emu.device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
@@ -1646,7 +1654,8 @@ async def get_providers():
 
 
 @app.post("/api/config")
-async def save_config(body: ConfigRequest):
+async def save_config(request: Request, body: ConfigRequest):
+    _require_auth(request)
     global ACTIVE_PROVIDER
     log.info("POST /api/config provider=%s key_len=%d", body.provider, len(body.api_key))
     with state_lock:
@@ -1723,7 +1732,8 @@ async def list_providers():
 
 
 @app.post("/api/providers/add")
-async def add_provider(body: ProviderAddRequest):
+async def add_provider(request: Request, body: ProviderAddRequest):
+    _require_auth(request)
     if not body.name or not body.url or not body.type:
         return JSONResponse({"error": "name, url and type are required"}, status_code=400)
     validate_url(body.url, "provider URL")
@@ -1765,7 +1775,8 @@ async def get_provider_detail(name: str):
 
 
 @app.put("/api/providers/{name}")
-async def update_provider_endpoint(name: str, body: ProviderUpdateRequest):
+async def update_provider_endpoint(request: Request, name: str, body: ProviderUpdateRequest):
+    _require_auth(request)
     global ACTIVE_PROVIDER
     with state_lock:
         if name not in PROVIDER_CONFIGS:
@@ -1798,7 +1809,8 @@ async def update_provider_endpoint(name: str, body: ProviderUpdateRequest):
 
 
 @app.delete("/api/providers/{name}")
-async def del_provider(name: str):
+async def del_provider(request: Request, name: str):
+    _require_auth(request)
     global ACTIVE_PROVIDER
     with state_lock:
         if name not in PROVIDER_CONFIGS:
@@ -1812,7 +1824,8 @@ async def del_provider(name: str):
 
 
 @app.post("/api/providers/activate")
-async def activate_provider(body: ProviderActivateRequest):
+async def activate_provider(request: Request, body: ProviderActivateRequest):
+    _require_auth(request)
     global ACTIVE_PROVIDER
     with state_lock:
         if body.name not in PROVIDER_CONFIGS:
@@ -2238,7 +2251,8 @@ async def rag_reindex(doc_id: str):
 
 
 @app.post("/api/rag/clear")
-async def rag_clear(body: RagClearRequest = None):
+async def rag_clear(request: Request, body: RagClearRequest = None):
+    _require_auth(request)
     collection = body.collection if body else None
     return RAG.clear(collection)
 
@@ -2250,7 +2264,8 @@ async def rag_vector_stats():
 
 
 @app.post("/api/rag/rebuild-index")
-async def rag_rebuild_index():
+async def rag_rebuild_index(request: Request):
+    _require_auth(request)
     from ollama_emu.rag import drop_embedding_index, create_embedding_index
     drop_embedding_index()
     create_embedding_index()
@@ -2335,7 +2350,8 @@ async def memory_delete_fact(fact_id: str):
 
 
 @app.post("/api/memory/clear")
-async def memory_clear(body: MemoryClearRequest = None):
+async def memory_clear(request: Request, body: MemoryClearRequest = None):
+    _require_auth(request)
     session_id = body.session_id if body else None
     MEMORY.clear(session_id)
     return {"cleared": True, "session": session_id or "all"}
@@ -2453,8 +2469,9 @@ async def get_usage_stats():
 # ============================================================
 
 @app.get("/api/export")
-async def export_all_data():
+async def export_all_data(request: Request):
     """Export all providers, memory, RAG documents, and chat history as JSON."""
+    _require_auth(request, admin=True)
     with state_lock:
         providers = [
             {"name": n, **{k: cfg[k] for k in ("url", "models_url", "auth_type", "default_model", "free_heuristic", "type")},
@@ -2496,8 +2513,9 @@ async def export_all_data():
 
 
 @app.post("/api/import")
-async def import_all_data(data: dict):
+async def import_all_data(request: Request, data: dict):
     """Import providers, memory, RAG documents, and chat history."""
+    _require_auth(request, admin=True)
     imported = {"providers": 0, "facts": 0, "messages": 0, "documents": 0}
     with state_lock:
         for prov in data.get("providers", []):

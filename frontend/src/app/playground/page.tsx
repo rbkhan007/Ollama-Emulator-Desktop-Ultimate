@@ -19,6 +19,22 @@ const SUGGESTS = [
 
 const STORAGE_KEY = "ollamomui-playground";
 
+function isSafeImageUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" || parsed.protocol === "data:";
+  } catch {
+    return false;
+  }
+}
+
+function sanitizeSvg(svg: string): string {
+  return svg.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+            .replace(/on\w+\s*=\s*"[^"]*"/gi, "")
+            .replace(/on\w+\s*=\s*'[^']*'/gi, "")
+            .replace(/javascript\s*:/gi, "");
+}
+
 export default function PlaygroundPage() {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -72,7 +88,7 @@ export default function PlaygroundPage() {
         const code = el.getAttribute("data-code");
         const id = el.id;
         if (code && !el.querySelector("svg")) {
-          mermaid.default.render(id, code).then(({ svg }) => { el.innerHTML = svg; }).catch(() => {});
+          mermaid.default.render(id, code).then(({ svg }) => { el.innerHTML = sanitizeSvg(svg); }).catch(() => {});
         }
       });
     }).catch(() => {});
@@ -209,9 +225,13 @@ export default function PlaygroundPage() {
           );
         }
         if (lang === "image" || lang === "img") {
+          const src = code.trim();
+          if (!isSafeImageUrl(src)) {
+            return <p key={i} style={{ color: "var(--red)", fontSize: 12, margin: "8px 0" }}>Blocked unsafe image URL</p>;
+          }
           return (
             <div key={i} style={{ margin: "8px 0", textAlign: "center" }}>
-              <img src={code.trim()} alt="Generated image" style={{ maxWidth: "100%", borderRadius: 12, border: "1px solid var(--border)" }}
+              <img src={src} alt="Generated image" style={{ maxWidth: "100%", borderRadius: 12, border: "1px solid var(--border)" }}
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
             </div>
           );
@@ -226,9 +246,13 @@ export default function PlaygroundPage() {
       return lines.map((line, j) => {
         const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
         if (imgMatch) {
+          const src = imgMatch[2];
+          if (!isSafeImageUrl(src)) {
+            return <p key={`${i}-${j}`} style={{ color: "var(--red)", fontSize: 12, margin: "2px 0" }}>Blocked unsafe image URL</p>;
+          }
           return (
             <div key={`${i}-${j}`} style={{ margin: "8px 0", textAlign: "center" }}>
-              <img src={imgMatch[2]} alt={imgMatch[1]} style={{ maxWidth: "100%", borderRadius: 12, border: "1px solid var(--border)" }}
+              <img src={src} alt={imgMatch[1]} style={{ maxWidth: "100%", borderRadius: 12, border: "1px solid var(--border)" }}
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
             </div>
           );
