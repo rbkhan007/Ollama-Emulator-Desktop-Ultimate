@@ -23,6 +23,10 @@
   <a href="https://github.com/rbkhan007/ollamomui/stargazers"><img src="https://img.shields.io/github/stars/rbkhan007/ollamomui?style=social" alt="Stars" /></a>
   <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/test.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/test.yml/badge.svg" alt="Test Backend" /></a>
   <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/lighthouse.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/lighthouse.yml/badge.svg" alt="Lighthouse CI" /></a>
+  <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/lint.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/lint.yml/badge.svg" alt="Lint" /></a>
+  <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/codeql.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/codeql.yml/badge.svg" alt="CodeQL" /></a>
+  <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/docker.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/docker.yml/badge.svg" alt="Docker" /></a>
+  <a href="https://github.com/rbkhan007/ollamomui/actions/workflows/release-please.yml"><img src="https://github.com/rbkhan007/ollamomui/actions/workflows/release-please.yml/badge.svg" alt="Release Please" /></a>
   <img src="https://img.shields.io/badge/Vercel-Live-brightgreen?style=flat-square&logo=vercel" alt="Vercel Live" />
   <img src="https://img.shields.io/github/license/rbkhan007/ollamomui?style=flat-square" alt="License" />
 </p>
