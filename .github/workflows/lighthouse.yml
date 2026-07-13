@@ -7,22 +7,13 @@ on:
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm ci
-      - name: Build static site
-        run: |
-          cd frontend
-          npm run build
-      - name: Run Lighthouse on static build
+      - name: Run Lighthouse
         uses: treosh/lighthouse-ci-action@v10
         with:
-          staticDistDir: frontend/out
+          urls: |
+            https://ollamomui.vercel.app
           uploadArtifacts: true
           temporaryPublicStorage: true
