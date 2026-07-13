@@ -1,7 +1,5 @@
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-const apiBase = process.env.NEXT_PUBLIC_API_BASE || "";
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: process.env.VERCEL ? undefined : "export",
@@ -9,15 +7,20 @@ const nextConfig = {
   basePath: basePath,
   assetPrefix: basePath,
   images: { unoptimized: process.env.VERCEL ? false : true },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+        ],
+      },
+    ];
+  },
 };
-
-if (apiBase) {
-  nextConfig.rewrites = async () => [
-    {
-      source: "/api/:path*",
-      destination: `${apiBase}/api/:path*`,
-    },
-  ];
-}
 
 module.exports = nextConfig;

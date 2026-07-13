@@ -214,7 +214,7 @@ Open **http://localhost:3000** — no API key required for free models.
 
 Built by [Rhasan@dev](https://github.com/rbkhan007). I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and developer tools.
 
-**Contact:** rhasan@dev.com · [GitHub Sponsors](https://github.com/sponsors/rbkhan007) · [Live Portfolio](https://ollamomui.vercel.app)
+**Contact:** rbkhan00009@gmail.com · [GitHub Sponsors](https://github.com/sponsors/rbkhan007) · [Live Portfolio](https://ollamomui.vercel.app)
 
 ### Security Case Study
 

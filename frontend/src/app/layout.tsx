@@ -104,8 +104,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <link rel="dns-prefetch" href="https://github.com" />
           <link rel="preconnect" href="https://github.com" />
-          <link rel="dns-prefetch" href="https://api.ollamomui.com" />
-          <link rel="preconnect" href="https://api.ollamomui.com" />
+          <link rel="dns-prefetch" href="https://ollamomui-backend.onrender.com" />
+          <link rel="preconnect" href="https://ollamomui-backend.onrender.com" />
           <link rel="dns-prefetch" href={SITE_URL} />
           <link rel="preconnect" href={SITE_URL} />
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />

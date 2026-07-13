@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api.ollamomui.com/api/:path*"
+      "destination": "https://ollamomui-backend.onrender.com/api/:path*"
     }
   ]
 }

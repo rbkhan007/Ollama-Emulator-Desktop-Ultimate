@@ -193,7 +193,7 @@ export default function About() {
             developer tools. If you have a project, an idea, or a problem to solve — let's talk.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="mailto:rhasan@dev.com" style={{
+            <a href="mailto:rbkhan00009@gmail.com" style={{
               display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
               borderRadius: 12, background: "var(--gradient-1)", color: "#fff",
               textDecoration: "none", fontWeight: 700, fontSize: 14,
