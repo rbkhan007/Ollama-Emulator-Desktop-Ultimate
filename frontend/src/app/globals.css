@@ -386,6 +386,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 @keyframes orbFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-40px,30px) scale(0.9); } 66% { transform: translate(25px,-15px) scale(1.05); } }
 @keyframes orbFloat3 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(20px,-30px); } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Staggered card entrance */
 .stagger-1 { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
@@ -562,6 +563,26 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   transform: translate(-3px, -3px) rotate(-0.4deg);
   box-shadow: 12px 12px 0 var(--ink-soft);
   border-color: rgba(108,92,231,0.45);
+}
+
+/* Downloard card hover */
+.card-hover {
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.card-hover:hover {
+  border-color: rgba(108,92,231,0.3) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Tech tag hover */
+.tech-tag {
+  cursor: default;
+  transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.tech-tag:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent);
+  box-shadow: 0 2px 12px rgba(108,92,231,0.12);
 }
 
 /* Starburst badge (POW! style) */

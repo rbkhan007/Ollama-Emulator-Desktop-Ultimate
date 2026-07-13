@@ -144,7 +144,7 @@ export default function About() {
         </h2>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
            {["Python 3.14", "FastAPI", "PySide6", "QML", "Next.js", "React Native", "Expo", "PostgreSQL", "pgvector", "Docker", "Nginx", "Vercel", "Render", "NeonDB", "Lemon Squeezy", "Cloudflare"].map((tech) => (
-            <span key={tech} style={{
+            <span key={tech} className="tech-tag" style={{
               padding: "6px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600,
               background: "var(--surface)", border: "1px solid var(--glass-border)",
               color: "var(--text-muted)",

@@ -110,7 +110,7 @@ export default function Home() {
           fontSize: 13, color: "var(--text-muted)", marginBottom: 28, fontWeight: 500,
         }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#00b894", boxShadow: "0 0 10px #00b894" }} />
-          v1.0.2 &middot; Free &amp; Open Source &middot; 100% Local
+          v1.0.4 &middot; Free &amp; Open Source &middot; 100% Local
         </div>
 
         <h1 className="spidey-title" style={{
@@ -189,16 +189,16 @@ export default function Home() {
         <p style={{ fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 18 }}>
           Works with your favorite tools
         </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           {clients.map((c) => (
-            <span key={c} style={{
+            <li key={c} style={{
               padding: "8px 16px", borderRadius: 10, fontSize: 14, fontWeight: 600,
               background: "var(--surface)", border: "1px solid var(--glass-border)", color: "var(--text-muted)",
             }}>
               {c}
-            </span>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {/* Features */}
@@ -213,7 +213,7 @@ export default function Home() {
           display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 18,
         }}>
            {features.map((f) => (
-              <div key={f.title} className="spidey-panel" style={{
+               <div key={f.title} className="spidey-panel" style={{
                 padding: 24, borderRadius: 16, background: "var(--surface)",
                 border: "1px solid var(--glass-border)",
               }}>

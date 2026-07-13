@@ -21,7 +21,7 @@
 
 ---
 
-## 🚀 Demo
+## Demo
 
 | Platform | URL | Status |
 |----------|-----|--------|
@@ -31,27 +31,38 @@
 | **Mobile APK** | [Download latest](https://github.com/rbkhan007/ollamomui/releases/latest) | ✅ Buildable |
 
 ```bash
-# Talk to a free model in one line (Ollama-compatible):
 curl http://localhost:11434/api/chat -d '{"model":"free","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
 ---
 
-## 📝 Work Log
+## Work Log
 
-- **2026-07-13 — Responsive overhaul & Settings page**
-  - Added a website **Settings** page (`/settings`) to connect to any backend and add an API key for **any model/provider** — auto-detect via `/api/auth/auto-detect`, per-provider key + default-model management, and custom-provider registration.
-  - Fixed the **backend CORS / ACL** middleware: `configure_cors(app)` now runs at module-import time (so it is installed when the app is launched as an imported module on Render/uvicorn), and the Vercel frontend origins are always allowed — resolves the `blocked by CORS policy` error when the web app calls the onRender backend.
-  - Made **every page fit mobile → desktop**: the navbar no longer overflows on phones (the inline GitHub button moves into the hamburger and nav padding tightens), fixed-width `<select>`s are now fluid, dual-button rows stack, and long URLs/text wrap.
+- **2026-07-13 — Final polish & database URL configuration**
+  - Added **Database Connection** section to the Settings page — paste your own PostgreSQL `DATABASE_URL`, save it to the backend, and test the connection inline.
+  - Polished every public-facing page: **Download** (SVG icons + card layout), **Pricing** (CSS hover cards), **About** (tech-tag hover), **Playground** (message entrance animation), **404** (float animation), **Homepage** (version bump, semantic HTML).
+  - Converted all hover effects from inline event handlers (not supported in server components) to pure CSS classes (`card-hover`, `tech-tag`, `fadeSlideUp`).
+  - Build produces 17/17 static pages, 0 errors.
 
-- **2026-07-12 — Search Console & deploy fixes**
-  - Added the Google Search Console verification `<meta>` tag to `layout.tsx`.
-  - Fixed `vercel.json`: removed the invalid `rootDirectory` property that rejected the config and failed every build.
-  - Fixed `config.ts` `SITE_URL` to use the canonical Vercel production URL (not the per-deployment `NEXT_PUBLIC_VERCEL_URL`), so `sitemap.xml` / `robots.txt` resolve correctly.
+- **2026-07-12 — SEO overhaul & Vercel deployment**
+  - Full SEO: `metadata`, Open Graph, Twitter Card on every route; `Organization` + `WebSite` + `SoftwareApplication` + `FAQPage` + `BreadcrumbList` structured data; target keywords ("Ollama Alternative", "free AI coding assistant", "ollamomui").
+  - Sitemap generated at build time (`app/sitemap.ts`) with 8 routes, `lastmod`, `priority`. Stale `public/sitemap.xml` (dead `/login`, `/usage` routes) removed.
+  - Mobile: `clamp()` headings, `100dvh` playground, fluid padding, `min-height:44px` touch targets, `font-size:16px` on inputs (prevents iOS zoom).
+  - Vercel deploy working via GitHub auto-deploy.
+
+- **2026-07-11 — Responsive overhaul & Settings page**
+  - Added **Settings page** (`/settings`) to connect to any backend and add an API key for any model/provider — auto-detect via `/api/auth/auto-detect`, per-provider key + default-model management, and custom-provider registration.
+  - Fixed backend CORS / ACL middleware for Render-hosted origins.
+  - Made every page fit mobile → desktop: navbar no longer overflows, fixed-width `<select>`s are fluid, dual-button rows stack, long URLs wrap.
+
+- **2026-07-10 — Security & NeonDB**
+  - SQLi whitelist, secrets-based password, safe `JsonLd` server component, token in `Authorization` header, deque+flush memory fix.
+  - NeonDB pooled connection in `.env.production`, example files.
+  - Google Search Console verification meta tag.
 
 ---
 
-## ✨ What Is OllamoMUI?
+## What Is OllamoMUI?
 
 **OllamoMUI** is a free, self-hosted **AI gateway** that emulates the Ollama API (plus OpenAI / Anthropic formats) and routes your prompts to **26 completely free LLMs** via OpenRouter. It ships with:
 
@@ -59,55 +70,69 @@ curl http://localhost:11434/api/chat -d '{"model":"free","messages":[{"role":"us
 - **Persistent memory** (every conversation auto-saves facts & summaries)
 - A **desktop GUI** (PySide6 + QML, dark/light theme, auto-updater)
 - A **mobile app** (React Native / Expo with full CRUD)
-- **License management** — manual key issuance (WhatsApp sales) with optional **Lemon Squeezy** payments + email delivery
+- **License management** — manual key issuance (WhatsApp sales) with **Lemon Squeezy** payments + email delivery
 - A **freemium proxy** that works with Claude Code, Cursor, OpenCode, and any Ollama-compatible tool
 
-> 💡 Drop-in replacement for Ollama: point any tool at `http://localhost:11434` and it just works.
+> Drop-in replacement for Ollama: point any tool at `http://localhost:11434` and it just works.
 
 ---
 
-## 🧩 Features
+## Features
 
 <table>
   <tr>
     <td width="33%">
-      <h3>🧠 26 Free LLMs</h3>
+      <h3>26 Free LLMs</h3>
       <p>Qwen3 Coder 480B, NVIDIA Nemotron 550B, Llama 3.3 70B, Gemma, and more — all free via OpenRouter.</p>
     </td>
     <td width="33%">
-      <h3>📚 RAG Engine</h3>
+      <h3>RAG Engine</h3>
       <p>Upload PDFs, TXT, or CSV. Hybrid vector (pgvector) + keyword (pg_trgm) search with cross-encoder reranking.</p>
     </td>
     <td width="33%">
-      <h3>💾 Persistent Memory</h3>
+      <h3>Persistent Memory</h3>
       <p>Every conversation auto-saves. Facts, summaries, and sessions survive restarts. PostgreSQL-backed.</p>
     </td>
   </tr>
   <tr>
     <td width="33%">
-      <h3>🖥️ Desktop App</h3>
+      <h3>Desktop App</h3>
       <p>PySide6 + QML GUI with animated backgrounds, dual theme, embedded terminal, and auto-updater.</p>
     </td>
     <td width="33%">
-      <h3>📱 Mobile App</h3>
+      <h3>Mobile App</h3>
       <p>React Native / Expo with full CRUD, chat, RAG, memory browsing, and license activation.</p>
     </td>
     <td width="33%">
-      <h3>🔗 Multi-Provider</h3>
+      <h3>Multi-Provider</h3>
       <p>OpenAI, Anthropic, Google Gemini, Groq, DeepSeek, Mistral, Together — one unified API.</p>
     </td>
   </tr>
   <tr>
     <td width="33%">
-      <h3>💳 Payments & Licensing</h3>
+      <h3>Settings & Provider Management</h3>
+      <p>Web settings page to configure backend URL, provider API keys, default models, auto-detect keys, and custom providers. Keys stored server-side, not in browser.</p>
+    </td>
+    <td width="33%">
+      <h3>Database URL Configuration</h3>
+      <p>Set your own PostgreSQL <code>DATABASE_URL</code> from the Settings page. Test the connection inline. The URL is sent to the backend and stored in memory.</p>
+    </td>
+    <td width="33%">
+      <h3>Payments & Licensing</h3>
       <p>Manual license-key issuance (WhatsApp sales) plus optional Lemon Squeezy integration (global + test mode). Auto license generation + email delivery on purchase.</p>
     </td>
+  </tr>
+  <tr>
     <td width="33%">
-      <h3>🔒 Enterprise Security</h3>
-      <p>HTTPS redirect (opt-in), secure cookies, rate limiting, IP allow/block lists, audit logging, password hashing.</p>
+      <h3>Enterprise Security</h3>
+      <p>HTTPS redirect (opt-in), secure cookies, rate limiting, IP allow/block lists, audit logging, password hashing, SQLi protection.</p>
     </td>
     <td width="33%">
-      <h3>🐳 Self-Hostable</h3>
+      <h3>SEO Optimized</h3>
+      <p>Metadata, OG/Twitter tags on all 17 pages. Structured data (Organization, WebSite, SoftwareApplication, FAQPage, BreadcrumbList). Dynamic sitemap + robots.txt at build time.</p>
+    </td>
+    <td width="33%">
+      <h3>Self-Hostable</h3>
       <p>Docker Compose with Cloudflare Tunnel sidecar. Deploy anywhere — VPS, NAS, or cloud (Render/Vercel).</p>
     </td>
   </tr>
@@ -115,7 +140,7 @@ curl http://localhost:11434/api/chat -d '{"model":"free","messages":[{"role":"us
 
 ---
 
-## 🗺️ Architecture
+## Architecture
 
 ```mermaid
 graph TD
@@ -126,11 +151,13 @@ graph TD
   end
   Clients -->|HTTPS · Ollama / OpenAI format| API[Backend · FastAPI / Render]
   API -->|routes prompts| PROV[Model Providers<br/>OpenRouter · OpenAI · Anthropic · Gemini · Groq · DeepSeek]
-   API -->|RAG + memory + licensing| DB[(PostgreSQL + pgvector)]
-   API -->|webhook · HMAC-SHA256| LS[Lemon Squeezy<br/>Payments + Licenses]
+  API -->|RAG + memory + licensing| DB[(PostgreSQL + pgvector)]
+  API -->|webhook · HMAC-SHA256| LS[Lemon Squeezy<br/>Payments + Licenses]
+  WEB -->|Settings API| API
+  WEB -->|Database URL config| API
 ```
 
-> **Database topology.** The **desktop EXE** bundles its own FastAPI backend plus a **local PostgreSQL** cluster (inspectable/manageable from **pgAdmin 4**) — its chats, keys, and RAG docs never leave your machine. The **marketing website** and **Android apps** call the cloud Render backend backed by **NeonDB**. You can paste **any provider API key** in Settings for free testing/local use; no license required.
+**Database topology.** The desktop EXE bundles its own FastAPI backend plus a local PostgreSQL cluster — its chats, keys, and RAG docs never leave your machine. The marketing website and Android apps call the cloud Render backend backed by NeonDB. You can paste any provider API key or a custom `DATABASE_URL` in Settings for free testing/local use; no license required.
 
 ### Request Flow
 
@@ -163,11 +190,11 @@ sequenceDiagram
 
 ---
 
-## 📊 Comparison
+## Comparison
 
 | Product | Free Cloud LLMs | RAG | Memory | Desktop GUI | Mobile App | API Proxy | Pricing |
 |---------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **OllamoMUI** | ✅ 26 models | ✅ | ✅ | ✅ | ✅ | ✅ | Free + Paid tiers |
+| **OllamoMUI** | 26 models | ✅ | ✅ | ✅ | ✅ | ✅ | Free + Paid tiers |
 | Ollama | ❌ (local only) | ❌ | ❌ | ❌ | ❌ | ✅ | Free |
 | LM Studio | ❌ (local only) | ❌ | ❌ | ✅ | ❌ | ❌ | Free |
 | Jan | ❌ (local only) | ❌ | ❌ | ✅ | ❌ | ❌ | Free |
@@ -177,7 +204,7 @@ sequenceDiagram
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### One-Line Docker
 
@@ -200,15 +227,15 @@ cd frontend
 npm install && npm run dev
 ```
 
-Open **http://localhost:3000** — no API key required for free models.
+Open **http://localhost:3000** — no API key required for free models. Visit **Settings** to configure your backend URL, add provider API keys, or set a custom database URL.
 
 ### Desktop EXE
 
-Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — a single-click installer (~374 MB) that runs the backend + QML GUI and a **self-contained local PostgreSQL** (viewable in **pgAdmin 4**). The GUI includes 10 pages with dark/light theme, animated backgrounds, toast notifications, and auto-updater. Bring **your own API key** (OpenAI, Anthropic, Gemini, a local LM Studio server, etc.) in Settings and use it free — no payment needed. See [`desktop/README.md`](desktop/README.md) for the local-DB details.
+Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — a single-click installer (~374 MB) that runs the backend + QML GUI and a self-contained local PostgreSQL. The GUI includes 10 pages with dark/light theme, animated backgrounds, toast notifications, and auto-updater. Bring your own API key in Settings and use it free. See [`desktop/README.md`](desktop/README.md) for the local-DB details.
 
 ---
 
-## 💸 Pricing
+## Pricing
 
 | Tier | Price | What You Get |
 |------|-------|-------------|
@@ -217,20 +244,20 @@ Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest)
 | **Mobile Ultimate** | $2.99/mo | Play Store app, full CRUD, notifications |
 | **Web Pro** | $9.99/mo | Unlimited RAG, cloud sync, priority support |
 
-> Licenses can also be purchased directly via WhatsApp (manual key delivery). When automated checkout is enabled, payments are powered by [Lemon Squeezy](https://www.lemonsqueezy.com/) — supports test mode, global cards, and taxes handled for you.
-> **[View pricing →](https://ollamomui.vercel.app/pricing)**
+Licenses can also be purchased directly via WhatsApp (manual key delivery). When automated checkout is enabled, payments are powered by [Lemon Squeezy](https://www.lemonsqueezy.com/) — supports test mode, global cards, and taxes handled for you.
+**[View pricing →](https://ollamomui.vercel.app/pricing)**
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ollamomui/
 ├── backend/          # Python FastAPI backend
 │   ├── src/ollama_emu/   # Core application
 │   └── tests/test_api.py # Integration tests (standalone, run with --online)
-├── frontend/         # Next.js marketing site
-│   └── src/app/          # Pages & components
+├── frontend/         # Next.js marketing site (17 pages)
+│   └── src/app/          # Pages, components, lib
 ├── desktop/          # PySide6 + QML desktop GUI
 │   └── src/qml/          # QML components & pages
 ├── mobile/           # React Native / Expo app
@@ -243,9 +270,28 @@ ollamomui/
 └── resources/        # Logos, icons, architecture diagrams
 ```
 
+**Frontend pages** (`frontend/src/app/`):
+
+| Route | Type | Description |
+|-------|------|-------------|
+| `/` | Server | Homepage with hero, features, FAQ, comparison |
+| `/about` | Server | Project story, timeline, tech stack |
+| `/download` | Server | Windows EXE, mobile app, source downloads |
+| `/pricing` | Server | Plan cards with Lemon Squeezy checkout |
+| `/playground` | Client | Streaming chat UI with model selector |
+| `/settings` | Client | Backend URL, provider keys, database URL |
+| `/admin` | Client | Manual license key generator |
+| `/payment-result` | Client | Post-checkout license key display |
+| `/success` | Server | Payment success confirmation |
+| `/cancel` | Server | Payment cancellation notice |
+| `/memory` | Client | Persistent conversation memory browser |
+| `/rag` | Client | RAG knowledge base upload & query |
+| `/sitemap.xml` | Server | Dynamic sitemap (8 routes) |
+| `/robots.txt` | Server | Robots directive |
+
 ---
 
-## 📚 Documentation
+## Documentation
 
 | Resource | Description |
 |----------|-------------|
@@ -258,7 +304,7 @@ ollamomui/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repo
 2. Create a feature branch: `git checkout -b feat/my-feature`
@@ -270,7 +316,7 @@ All contributions are welcome — bug fixes, new providers, UI improvements, and
 
 ---
 
-## 📜 License
+## License
 
 MIT — Copyright (c) 2024-2026 [Rhasan@dev](https://github.com/rbkhan007)
 

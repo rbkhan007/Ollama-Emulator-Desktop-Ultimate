@@ -194,13 +194,18 @@ export default function PlaygroundPage() {
           </div>
         )}
         {messages.map((msg, i) => (
-          <div key={i} style={{ maxWidth: "80%", alignSelf: msg.role === "user" ? "flex-end" : "flex-start" }}>
+          <div key={i} style={{
+            maxWidth: "80%", alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+            animation: "fadeSlideUp 0.3s ease-out both",
+            animationDelay: `${(i * 0.05).toFixed(2)}s`,
+          }}>
             <div style={{
               padding: "12px 16px", borderRadius: 12, fontSize: 14, lineHeight: 1.6,
               background: msg.role === "user" ? "var(--accent)" : msg.role === "error" ? "var(--red)" : "var(--surface-2)",
               color: msg.role === "user" ? "white" : msg.role === "error" ? "white" : "var(--text)",
               border: msg.role === "assistant" ? "1px solid var(--border)" : "none",
               whiteSpace: "pre-wrap", wordBreak: "break-word",
+              transition: "opacity 0.2s",
             }}>
               {msg.role === "assistant" ? renderMarkdown(msg.content) : msg.content}
               {msg.role === "assistant" && loading && i === messages.length - 1 && !msg.content && (
@@ -222,7 +227,11 @@ export default function PlaygroundPage() {
           placeholder="Type a message..."
           rows={2}
           disabled={loading}
-          style={{ flex: 1, minWidth: 0 }}
+          style={{
+            flex: 1, minWidth: 0, width: "100%", padding: "10px 12px", borderRadius: 10,
+            border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text)",
+            fontSize: 14, fontFamily: "inherit", resize: "none",
+          }}
         />
         <button className="btn btn-primary" onClick={send} disabled={loading || !input.trim()} style={{ alignSelf: "flex-end", minWidth: 80 }}>
           {loading ? "Thinking..." : "Send"}

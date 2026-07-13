@@ -19,6 +19,33 @@ export const metadata: Metadata = {
   },
 };
 
+const downloadItems = [
+  {
+    title: "Windows EXE",
+    desc: "Single file, no install required. Includes the GUI and server.",
+    href: RELEASES_URL,
+    label: "Download latest",
+    btnStyle: "primary",
+    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 16l4.5-4.5L12 14l3.5-2.5L20 16" /><path d="M20 4l-4.5 4.5L12 6l-3.5 2.5L4 4" /><path d="M4 20l4.5-4.5L12 18l3.5-2.5L20 20" /></svg>,
+  },
+  {
+    title: "Mobile App",
+    desc: "Android app with full sync and mobile-optimized UI.",
+    href: "https://play.google.com/store/apps/details?id=com.ollamomui.app",
+    label: "Get it on Play Store",
+    btnStyle: "primary",
+    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>,
+  },
+  {
+    title: "Source Code",
+    desc: "Self-host with Docker, or build from source.",
+    href: REPO_URL,
+    label: "View on GitHub",
+    btnStyle: "ghost",
+    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>,
+  },
+];
+
 export default function Download() {
   return (
     <main style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px" }}>
@@ -27,24 +54,37 @@ export default function Download() {
         Get the pre-built EXE, the mobile app, or build from source.
       </p>
 
-      <div style={{ display: "grid", gap: 24 }}>
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
-          <h2>Windows EXE</h2>
-          <p style={{ color: "var(--text-muted)" }}>Single file, no install required. Includes the GUI and server.</p>
-          <a href={RELEASES_URL} style={{ display: "inline-block", background: "var(--gradient-1)", color: "#fff", padding: "10px 20px", borderRadius: 8, textDecoration: "none", marginTop: 8, fontWeight: 600 }}>Download latest</a>
-        </div>
-
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
-          <h2>Mobile App</h2>
-          <p style={{ color: "var(--text-muted)" }}>Android app with full sync and mobile-optimized UI.</p>
-          <a href="https://play.google.com/store/apps/details?id=com.ollamomui.app" style={{ display: "inline-block", background: "var(--gradient-1)", color: "#fff", padding: "10px 20px", borderRadius: 8, textDecoration: "none", marginTop: 8, fontWeight: 600 }}>Get it on Play Store</a>
-        </div>
-
-        <div style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
-          <h2>Source Code</h2>
-          <p style={{ color: "var(--text-muted)" }}>Self-host with Docker, or build from source.</p>
-          <a href={REPO_URL} style={{ display: "inline-block", background: "var(--surface)", color: "var(--text)", padding: "10px 20px", borderRadius: 8, textDecoration: "none", marginTop: 8, border: "1px solid var(--glass-border)", fontWeight: 600 }}>View on GitHub</a>
-        </div>
+      <div style={{ display: "grid", gap: 20 }}>
+        {downloadItems.map((item) => (
+          <div key={item.title} className="card-hover" style={{
+            display: "flex", alignItems: "center", gap: 18,
+            padding: "20px 24px", borderRadius: 16,
+            background: "var(--surface)", border: "1px solid var(--glass-border)",
+          }}>
+            <div style={{
+              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: item.btnStyle === "primary" ? "rgba(108,92,231,0.1)" : "rgba(128,128,128,0.06)",
+              color: item.btnStyle === "primary" ? "var(--accent)" : "var(--text-muted)",
+            }}>
+              {item.svg}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 4 }}>{item.title}</h2>
+              <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>{item.desc}</p>
+            </div>
+            <a href={item.href} style={{
+              flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "10px 20px", borderRadius: 10, fontSize: 14, fontWeight: 600,
+              textDecoration: "none", whiteSpace: "nowrap",
+              background: item.btnStyle === "primary" ? "var(--gradient-1)" : "var(--surface)",
+              color: item.btnStyle === "primary" ? "#fff" : "var(--text)",
+              border: item.btnStyle === "ghost" ? "1px solid var(--glass-border)" : "none",
+            }}>
+              {item.label} &rarr;
+            </a>
+          </div>
+        ))}
       </div>
     </main>
   );

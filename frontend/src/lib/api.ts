@@ -75,3 +75,22 @@ export function getApiBase(): string {
 export function isApiConfigured(): boolean {
   return getBase().length > 0;
 }
+
+export async function saveDatabaseUrl(databaseUrl: string) {
+  return api("/api/settings/database", {
+    method: "PUT",
+    body: JSON.stringify({ database_url: databaseUrl }),
+  });
+}
+
+export async function testDatabaseConnection() {
+  return apiJson<{ connected: boolean; message: string }>("/api/settings/database/test", {
+    method: "GET",
+  });
+}
+
+export async function getDatabaseStatus() {
+  return apiJson<{ database_url_set: boolean; connected: boolean; message: string }>(
+    "/api/settings/database/status", { method: "GET" },
+  );
+}

@@ -38,7 +38,9 @@ export default function Pricing() {
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
-        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{
+          background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
+        }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Free</h2>
           <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$0</p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
@@ -50,7 +52,9 @@ export default function Pricing() {
           <a href="/playground" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Try now</a>
         </div>
 
-        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "2px solid var(--accent-2)", position: "relative" }}>
+        <div className="spidey-panel" style={{
+          background: "var(--surface)", padding: 24, borderRadius: 16, border: "2px solid var(--accent-2)", position: "relative",
+        }}>
           <div style={{
             position: "absolute", top: -10, right: 16,
             background: "var(--accent-2)", color: "#fff",
@@ -68,7 +72,9 @@ export default function Pricing() {
           <BuyButton plan="web_pro" label="Subscribe" />
         </div>
 
-        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{
+          background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
+        }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Desktop Pro</h2>
           <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$4.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
@@ -80,7 +86,9 @@ export default function Pricing() {
           <BuyButton plan="desktop_pro" label="Buy now" />
         </div>
 
-        <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)" }}>
+        <div className="spidey-panel" style={{
+          background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
+        }}>
           <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Mobile Ultimate</h2>
           <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$2.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>

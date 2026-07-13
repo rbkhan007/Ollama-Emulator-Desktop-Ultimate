@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { api, apiJson, getApiBase, setApiBase, toast } from "@/lib/api";
+import { api, apiJson, getApiBase, setApiBase, toast, saveDatabaseUrl, testDatabaseConnection, getDatabaseStatus } from "@/lib/api";
 import { ProviderIcon } from "@/components/BrandIcon";
 
 type Provider = {
@@ -44,6 +44,9 @@ export default function SettingsPage() {
   const [detectKey, setDetectKey] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [np, setNp] = useState<NewProvider>(EMPTY_NEW);
+  const [dbUrl, setDbUrl] = useState("");
+  const [dbStatus, setDbStatus] = useState<{ database_url_set: boolean; connected: boolean; message: string } | null>(null);
+  const [dbBusy, setDbBusy] = useState("");
 
   const refresh = useCallback(async () => {
     try {
@@ -67,6 +70,7 @@ export default function SettingsPage() {
   useEffect(() => {
     setApiBaseInput(getApiBase());
     refresh();
+    getDatabaseStatus().then(setDbStatus).catch(() => {});
   }, [refresh]);
 
   function saveBase() {
@@ -160,6 +164,41 @@ export default function SettingsPage() {
     }
   }
 
+  async function saveDb() {
+    if (!dbUrl.trim()) {
+      toast("Enter a database URL first.", true);
+      return;
+    }
+    setDbBusy("save");
+    try {
+      await saveDatabaseUrl(dbUrl.trim());
+      toast("Database URL saved to backend.");
+      const status = await getDatabaseStatus();
+      setDbStatus(status);
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Failed to save database URL", true);
+    } finally {
+      setDbBusy("");
+    }
+  }
+
+  async function testDb() {
+    setDbBusy("test");
+    try {
+      const res = await testDatabaseConnection();
+      setDbStatus({ database_url_set: true, connected: res.connected, message: res.message });
+      if (res.connected) {
+        toast("Database connection successful.");
+      } else {
+        toast(`Connection failed: ${res.message}`, true);
+      }
+    } catch (e) {
+      toast(e instanceof Error ? e.message : "Test failed", true);
+    } finally {
+      setDbBusy("");
+    }
+  }
+
   async function addCustom() {
     if (!np.name.trim() || !np.url.trim() || !np.type.trim()) {
       toast("Name, URL and type are required.", true);
@@ -225,6 +264,44 @@ export default function SettingsPage() {
           {connected === false && (
             <span style={{ color: "var(--red, #e17055)" }}>
               ● Not reachable — check the backend URL and that the server is running.
+            </span>
+          )}
+        </div>
+      </section>
+
+      {/* ── Database connection ── */}
+      <section style={panel}>
+        <h2 style={h2}>Database connection</h2>
+        <p style={hint}>
+          Provide a PostgreSQL <code style={code}>DATABASE_URL</code> if you have your own database.
+          Leave blank to use the backend&apos;s default. The URL is sent to the backend and stored in memory — not in this browser.
+        </p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <input
+            style={{ ...input, flex: 1, minWidth: 0 }}
+            type="password"
+            placeholder="postgresql://user:pass@host:5432/db"
+            value={dbUrl}
+            onChange={(e) => setDbUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && saveDb()}
+          />
+          <button style={btn} onClick={saveDb} disabled={dbBusy === "save"}>
+            {dbBusy === "save" ? "Saving…" : "Save"}
+          </button>
+          <button style={ghostBtn} onClick={testDb} disabled={dbBusy === "test"}>
+            {dbBusy === "test" ? "Testing…" : "Test"}
+          </button>
+        </div>
+        <div style={{ marginTop: 12, fontSize: 13 }}>
+          {dbStatus === null && <span style={{ color: "var(--text-muted)" }}>No status yet — save a URL or click Test.</span>}
+          {dbStatus?.connected && (
+            <span style={{ color: "var(--green, #00b894)" }}>
+              ● Connected{dbStatus.database_url_set ? " (custom database URL)" : " (default database URL)"}
+            </span>
+          )}
+          {dbStatus && !dbStatus.connected && (
+            <span style={{ color: "var(--red, #e17055)" }}>
+              ● {dbStatus.message || "Disconnected — check the URL and that the database is reachable."}
             </span>
           )}
         </div>

@@ -22,6 +22,7 @@ export default function NotFound() {
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 32,
+        animation: "floatSlow 4s ease-in-out infinite",
       }}>
         <LogoSvg size={48} />
       </div>
