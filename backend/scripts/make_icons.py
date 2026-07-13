@@ -1,4 +1,5 @@
 import math
+
 from PIL import Image, ImageDraw
 
 CYAN = (0, 240, 255, 255)
@@ -84,8 +85,8 @@ def draw_favicon(size):
     return img.resize((size, size), Image.LANCZOS)
 
 
-import struct
 import io
+import struct
 
 
 def build_ico(images):

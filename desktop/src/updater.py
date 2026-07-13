@@ -1,12 +1,11 @@
-import sys
 import os
-import json
-import tempfile
 import subprocess
+import sys
+import tempfile
 import threading
+
 import requests
-from pathlib import Path
-from PySide6.QtCore import QObject, Signal, Property
+from PySide6.QtCore import Property, QObject, Signal
 
 REPO_OWNER = "rbkhan007"
 REPO_NAME = "ollamomui"

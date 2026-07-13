@@ -7,28 +7,30 @@ Licensed under the MIT License. See the LICENSE file
 for the full text. This software is provided "as is",
 without warranty of any kind.
 """
-import os
-import sys
-import json
-import threading
+import argparse
 import datetime
-import uuid
-import httpx
-import uvicorn
+import ipaddress
+import json
 import logging
-from fastapi import FastAPI, Request, HTTPException, UploadFile, File, Form
-from fastapi.responses import StreamingResponse, JSONResponse, FileResponse
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
-from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, Field, field_validator
-from typing import Dict, Optional, List, Any
+import os
 import re
 import secrets
-import ipaddress
+import sys
+import threading
 import urllib.parse
-import argparse
+import uuid
+from typing import Any, Dict, List, Optional
+
+import httpx
+import uvicorn
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from pydantic import BaseModel, field_validator
+
 from ollama_emu import acl as _acl
 from ollama_emu.payment import router as payment_router
 
@@ -99,9 +101,9 @@ def _require_auth(request: Request, admin: bool = False):
         raise HTTPException(status_code=403, detail="Admin access required")
     return auth
 
-from ollama_emu.rag import RAGEngine
+from ollama_emu.device_identity import device_summary, ensure_device, get_device, local_now_iso, now_local
 from ollama_emu.memory import MemorySystem
-from ollama_emu.device_identity import ensure_device, get_device, now_local, local_now_iso, device_summary
+from ollama_emu.rag import RAGEngine
 
 VERSION = "1.0.4"
 
@@ -1060,18 +1062,18 @@ def get_model_family(model_name: str) -> str:
 def get_parameter_size(model_name: str) -> str:
     """Extract or estimate parameter size from model name"""
     model_lower = model_name.lower()
-    
+
     # Look for explicit size patterns
     size_patterns = [
         (r'(\d+\.?\d*)b', lambda m: f"{m.group(1)}B"),  # 7b, 13b, 70b, etc.
         (r'(\d+\.?\d*)m', lambda m: f"{m.group(1)}m"),  # For small models
     ]
-    
+
     for pattern, formatter in size_patterns:
         match = re.search(pattern, model_lower)
         if match:
             return formatter(match)
-    
+
     # Default sizes based on common model naming conventions
     if any(x in model_lower for x in ["giant", "large"]):
         if "tiny" not in model_lower:  # Avoid "tiny" confusion
@@ -1080,7 +1082,7 @@ def get_parameter_size(model_name: str) -> str:
         return "1B"
     if any(x in model_lower for x in ["small", "tiny"]):
         return "100M"
-    
+
     # Check for specific known model sizes
     if "7b" in model_lower or "seven" in model_lower:
         return "7B"
@@ -1092,14 +1094,14 @@ def get_parameter_size(model_name: str) -> str:
         return "30B"
     elif "8x" in model_lower or "8*7" in model_lower:  # Mixtral 8x7B
         return "47B"  # Effective parameters
-    
+
     return "unknown"
 
 
 def get_quantization_level(model_name: str) -> str:
     """Get quantization level for a model"""
     model_lower = model_name.lower()
-    
+
     if any(x in model_lower for x in ["q4_0", "q4_k", "q4"]):
         return "Q4_0"
     elif any(x in model_lower for x in ["q5_0", "q5_k", "q5"]):
@@ -1112,7 +1114,7 @@ def get_quantization_level(model_name: str) -> str:
         return "F16"
     elif any(x in model_lower for x in ["f32", "float32", "fp32"]):
         return "F32"
-    
+
     # Default based on model type - most served models are not quantized
     return ""
 
@@ -1751,8 +1753,7 @@ async def auto_detect_api_key(body: dict):
     if detected_provider:
         with state_lock:
             API_KEYS[detected_provider] = api_key
-            ACTIVE_PROVIDER = detected_provider
-        save_provider_db(detected_provider, PROVIDER_CONFIGS[detected_provider], api_key)
+            save_provider_db(detected_provider, PROVIDER_CONFIGS[detected_provider], api_key)
         return {
             "detected": True,
             "provider": detected_provider,
@@ -2012,11 +2013,11 @@ async def ollama_tags():
 async def ollama_show(request: Request):
     # Get model name from query parameter, default to None
     model_name = request.query_params.get("name")
-    
+
     with state_lock:
         provider = ACTIVE_PROVIDER
         api_key = API_KEYS.get(provider, "")
-    
+
     if not api_key:
         # Return minimal info if no API key
         model_to_show = model_name or "unknown"
@@ -2035,15 +2036,13 @@ async def ollama_show(request: Request):
                 "quantization_level": ""
             }
         }
-    
-    # Determine which model to show information for
-    cfg = PROVIDER_CONFIGS[provider]
+
     if not model_name or model_name in ("", None):
         # Use the resolved model (similar to other endpoints)
         model_to_show = _resolve_model(provider, "")
     else:
         model_to_show = model_name
-    
+
     # Return model information
     # Note: Since we don't have access to actual model files, we return
     # plausible defaults based on the model/provider
@@ -2317,7 +2316,7 @@ async def rag_vector_stats():
 @app.post("/api/rag/rebuild-index")
 async def rag_rebuild_index(request: Request):
     _require_auth(request)
-    from ollama_emu.rag import drop_embedding_index, create_embedding_index
+    from ollama_emu.rag import create_embedding_index, drop_embedding_index
     drop_embedding_index()
     create_embedding_index()
     return {"success": True, "message": "Vector index rebuilt"}

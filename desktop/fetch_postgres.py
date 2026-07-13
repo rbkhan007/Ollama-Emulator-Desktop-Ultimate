@@ -3,7 +3,6 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-
 VERSION = "16.4"
 CANDIDATES = [
     f"https://get.enterprisedb.com/postgresql/postgresql-{VERSION}-1-windows-x64-binaries.zip",

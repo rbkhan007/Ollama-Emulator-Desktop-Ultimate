@@ -64,3 +64,10 @@ target-version = "py311"
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"backend/scripts/make_icons.py" = ["E402"]
+"backend/src/ollama_emu/db.py" = ["E402"]
+"backend/src/ollama_emu/main.py" = ["E402"]
+"backend/tests/test_api.py" = ["I001", "F401", "E701", "E702", "E722", "F841"]
+"setup_env.py" = ["E722"]

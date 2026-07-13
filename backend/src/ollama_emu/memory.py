@@ -5,12 +5,12 @@ Copyright (c) 2024-2026 Rhasan@dev. All rights reserved.
 Auto-saves conversation history, facts, and summaries.
 Provides searchable memory for RAG context enrichment.
 """
+import logging
+import threading
 import time
 import uuid
-import threading
-import logging
-from typing import List
 from collections import deque
+from typing import List
 
 from ollama_emu.db import get_cursor, is_connected
 

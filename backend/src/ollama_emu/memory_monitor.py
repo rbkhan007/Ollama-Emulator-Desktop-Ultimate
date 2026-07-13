@@ -1,9 +1,9 @@
 import gc
 import logging
+import os
 import threading
 import time
-import os
-from typing import Optional, List, Callable
+from typing import Callable, List, Optional
 
 log = logging.getLogger("ollama-emu.memory")
 

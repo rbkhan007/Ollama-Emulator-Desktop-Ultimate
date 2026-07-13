@@ -6,13 +6,13 @@ On first run a random device ID and key are generated and persisted to
 later launch. A different user/PC gets a fresh, unique identity. All timestamps
 use the local system clock and timezone (no GPS / network lookups).
 """
-import os
-import sys
-import json
-import uuid
-import getpass
-import secrets
 import datetime
+import getpass
+import json
+import os
+import secrets
+import sys
+import uuid
 
 
 def _base_dir() -> str:

@@ -9,7 +9,15 @@ Usage:
     python test.py --online     # Test against running server (no restart)
 """
 
-import os, sys, json, time, re, subprocess, signal, argparse, urllib.request, urllib.error, socket, threading
+import argparse
+import json
+import os
+import signal
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
 
 BASE = os.environ.get("OLLAMA_EMU_TEST_BASE", "http://localhost:11435")
 PASS = 0
@@ -125,7 +133,7 @@ def test_frontend_build():
         log(f"  Found {len(pages)} pages: {', '.join(sorted(pages)[:12])}")
         return True
     else:
-        fail(f"Frontend not built — run: cd frontend && npm run build")
+        fail("Frontend not built — run: cd frontend && npm run build")
         return False
 
 def test_server_online():
@@ -155,7 +163,7 @@ def test_auth():
 
     # Duplicate register
     r = request("POST", "/api/auth/register", {"email": email, "password": pw}, expect=409)
-    ok(f"Duplicate register blocked (409)")
+    ok("Duplicate register blocked (409)")
 
     # Login
     r = request("POST", "/api/auth/login", {"email": email, "password": pw}, expect=200)
@@ -168,7 +176,7 @@ def test_auth():
 
     # Bad login
     r = request("POST", "/api/auth/login", {"email": email, "password": "wrongpass"}, expect=401)
-    ok(f"Bad login rejected (401)")
+    ok("Bad login rejected (401)")
 
     # Verify with token
     if token:
@@ -180,16 +188,16 @@ def test_auth():
 
     # Verify without token
     r = request("GET", "/api/auth/verify", expect=401)
-    ok(f"No-token verify rejected (401)")
+    ok("No-token verify rejected (401)")
 
     # Logout
     if token:
         r = request("POST", "/api/auth/logout", {"token": token}, expect=200)
-        ok(f"Logout successful")
+        ok("Logout successful")
 
         # Verify after logout
         r = request("GET", f"/api/auth/verify?token={token}", expect=401)
-        ok(f"Post-logout token rejected (401)")
+        ok("Post-logout token rejected (401)")
 
     # Seeded user login
     demo_email = os.environ.get("OLLAMA_EMU_ADMIN_EMAIL", "admin@localhost")
@@ -211,7 +219,7 @@ def test_providers_crud():
         "default_model": "gpt-3.5-turbo",
     }, expect=200)
     if r.get("status") == "added":
-        ok(f"POST /api/providers/add — added test_provider_crud")
+        ok("POST /api/providers/add — added test_provider_crud")
     else:
         fail(f"POST /api/providers/add failed: {r}")
 
@@ -227,27 +235,27 @@ def test_providers_crud():
         "default_model": "gpt-4o",
     }, expect=200)
     if r.get("status") == "updated":
-        ok(f"PUT /api/providers/test_provider_crud — updated")
+        ok("PUT /api/providers/test_provider_crud — updated")
     else:
         fail(f"PUT /api/providers/test_provider_crud failed: {r}")
 
     # Verify update persisted
     r = request("GET", "/api/providers/test_provider_crud", expect=200)
     if r.get("default_model") == "gpt-4o":
-        ok(f"  Verified default_model = gpt-4o")
+        ok("  Verified default_model = gpt-4o")
     else:
         fail(f"  Update not persisted: {r}")
 
     # Delete provider
     r = request("DELETE", "/api/providers/test_provider_crud", expect=200)
     if r.get("status") == "deleted":
-        ok(f"DELETE /api/providers/test_provider_crud — deleted")
+        ok("DELETE /api/providers/test_provider_crud — deleted")
     else:
         fail(f"DELETE /api/providers/test_provider_crud failed: {r}")
 
     # Verify deletion
     r = request("GET", "/api/providers/test_provider_crud", expect=404)
-    ok(f"  Verified provider gone (404)")
+    ok("  Verified provider gone (404)")
 
 
 def test_users_crud():
@@ -274,7 +282,7 @@ def test_users_crud():
             if len(users) >= 1:
                 ok(f"GET /api/users — {len(users)} users")
             else:
-                fail(f"GET /api/users returned empty list")
+                fail("GET /api/users returned empty list")
     except urllib.error.HTTPError as e:
         fail(f"GET /api/users failed: {e.code}")
 
@@ -360,7 +368,7 @@ def test_memory_crud():
     # Get stats
     r = request("GET", "/api/memory/stats", expect=200)
     if "messages" in r or "facts" in r:
-        ok(f"GET /api/memory/stats — ok")
+        ok("GET /api/memory/stats — ok")
     else:
         fail(f"GET /api/memory/stats failed: {r}")
 
@@ -488,7 +496,7 @@ def test_api_endpoints():
 
     # OpenAI-compatible
     r = request("GET", "/v1/models")
-    ok(f"/v1/models — responded")
+    ok("/v1/models — responded")
 
     # Usage stats
     r = request("GET", "/api/usage/stats")
@@ -527,20 +535,20 @@ def test_non_existent():
 
     # Short password
     r = request("POST", "/api/auth/register", {"email": "a@b.com", "password": "12"}, expect=400)
-    ok(f"Short password rejected (400)")
+    ok("Short password rejected (400)")
 
     # JSON parse errors are caught by server
     try:
         req = urllib.request.Request(BASE + "/api/auth/login", data=b"not json", method="POST", headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=5) as resp:
-            r = json.loads(resp.read().decode())
-    except urllib.error.HTTPError as e:
-        r = {}
-    ok(f"Bad JSON handled gracefully")
+            json.loads(resp.read().decode())
+    except urllib.error.HTTPError:
+        pass
+    ok("Bad JSON handled gracefully")
 
     # 404
-    r = request("GET", "/api/nonexistent", expect=404)
-    ok(f"Unknown API path returns 404")
+    request("GET", "/api/nonexistent", expect=404)
+    ok("Unknown API path returns 404")
 
 def start_server():
     global SERVER_PROC

@@ -12,20 +12,22 @@ Provides:
 - IP allowlist/blocklist
 - Security headers
 """
+import hashlib
+import json
+import logging
 import os
 import re
-import time
-import json
-import uuid
 import secrets
-import hashlib
-import logging
 import threading
+import time
 import urllib.parse
+import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
-from typing import Optional, Dict, List, Set, Callable
 from functools import wraps
+from typing import Callable, Dict, List, Optional, Set
+
+from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
 log = logging.getLogger("ollama-emu.acl")
@@ -518,7 +520,7 @@ def _truncate_details(details: dict | None) -> dict:
 def _flush_audit_to_db():
     """Persist in-memory audit entries to the database audit_log table."""
     try:
-        from ollama_emu.db import is_connected, get_cursor
+        from ollama_emu.db import get_cursor, is_connected
         if not is_connected():
             return
         with _audit_lock:
@@ -633,7 +635,6 @@ def create_acl_middleware(app):
 
         if not is_ip_allowed(ip):
             audit_log("ip_blocked", ip=ip)
-            from fastapi.responses import JSONResponse
             return JSONResponse(status_code=403, content={"error": "Access denied"})
 
         auth = extract_auth(request)

@@ -13,21 +13,22 @@ Configure via environment variables:
 
 Or set OLLAMA_EMU_DATABASE_URL for a single connection string.
 """
-import os
-import sys
 import hashlib
 import hmac
-import secrets
 import logging
+import os
+import secrets
+import sys
 from contextlib import contextmanager
 from typing import Dict, List, Optional, Tuple
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import psycopg
-import psycopg.rows
 import psycopg.errors
+import psycopg.rows
 import psycopg_pool
 
 log = logging.getLogger("ollama-emu.db")

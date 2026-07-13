@@ -4,12 +4,12 @@ Automated environment configuration for OllamoMUI
 Sets up Vercel and Render environment variables via CLI
 """
 
+import os
 import subprocess
 import sys
-import os
-import json
-import yaml
 from pathlib import Path
+
+import yaml
 
 # ============================================================
 # CONFIGURATION - EDIT THESE VALUES

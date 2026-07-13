@@ -1,9 +1,10 @@
 import sys
 from pathlib import Path
-from PySide6.QtCore import QUrl, QObject, Signal, Property
+
+from api_client import ApiClient
+from PySide6.QtCore import Property, QObject, QUrl, Signal
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
-from api_client import ApiClient
 from updater import UpdaterManager
 
 if getattr(sys, "frozen", False):

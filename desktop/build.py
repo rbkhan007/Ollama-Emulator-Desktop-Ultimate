@@ -9,11 +9,11 @@ Usage:
     python desktop/build.py --clean            # Clean before build
 """
 
+import argparse
 import os
-import sys
 import shutil
 import subprocess
-import argparse
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -180,7 +180,7 @@ def main():
     print()
     print("=" * 55)
     exe_name = "ollamomui.exe" if sys.platform == "win32" else "ollamomui"
-    print(f"  Build complete!")
+    print("  Build complete!")
     print(f"  Executable: dist/{exe_name}")
     print(f"  Run: dist/{exe_name}")
     print("=" * 55)

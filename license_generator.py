@@ -31,14 +31,14 @@ Note:
 """
 
 import os
+
+# Same key format as payment.generate_license_key
+import secrets
 import sys
 from datetime import datetime, timedelta, timezone
 
 import psycopg
 from psycopg.rows import dict_row
-
-# Same key format as payment.generate_license_key
-import secrets
 
 
 def generate_license_key(user_id: str, plan: str) -> str:

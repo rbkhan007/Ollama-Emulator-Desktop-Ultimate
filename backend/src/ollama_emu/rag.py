@@ -10,19 +10,19 @@ Features:
 - Batch insert for performance
 - Configurable dimensions and similarity thresholds
 """
+import hashlib
+import json
+import logging
+import math
 import os
 import re
-import json
 import uuid
-import math
-import hashlib
-import logging
 from collections import Counter
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 
-from ollama_emu.db import get_cursor, get_conn, is_connected
+from ollama_emu.db import get_conn, get_cursor, is_connected
 
 log = logging.getLogger("ollama-emu.rag")
 

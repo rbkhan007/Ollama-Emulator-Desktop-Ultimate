@@ -1,7 +1,8 @@
 import json
+from typing import Any, Dict, Generator, List, Optional
+
 import requests
-from typing import Optional, Dict, Any, List, Generator, Callable
-from PySide6.QtCore import QObject, Signal, Slot, Property, QRunnable, QThreadPool
+from PySide6.QtCore import Property, QObject, QRunnable, QThreadPool, Signal, Slot
 
 
 class _WorkerSignals(QObject):

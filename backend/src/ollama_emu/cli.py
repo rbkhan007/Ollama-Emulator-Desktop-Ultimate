@@ -13,10 +13,11 @@ Usable by CLI coding agents exactly like `ollama`, e.g.:
 
 Set OLLAMA_EMU_URL to point at a different server.
 """
+import argparse
+import json
 import os
 import sys
-import json
-import argparse
+
 import httpx
 
 BASE = os.environ.get("OLLAMA_EMU_URL", "http://localhost:11434").rstrip("/")
@@ -33,6 +34,7 @@ def _post(path: str, json_body: dict | None = None):
 
 def cmd_serve(args):
     import uvicorn
+
     from ollama_emu import main as ollama_emu_desktop
 
     host = args.host

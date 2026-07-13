@@ -1,8 +1,9 @@
 import atexit
 import sys
 import threading
-import uvicorn
 from pathlib import Path
+
+import uvicorn
 
 if getattr(sys, "frozen", False):
     BUNDLE = Path(sys.executable).resolve().parent
@@ -22,7 +23,7 @@ _PG_STATE = {}
 
 def start_local_postgres():
     try:
-        from postgres_bootstrap import ensure_local_postgres, find_postgres_bin, data_dir
+        from postgres_bootstrap import data_dir, ensure_local_postgres, find_postgres_bin
     except Exception as exc:
         print(f"[postgres] bootstrap import failed: {exc}")
         return

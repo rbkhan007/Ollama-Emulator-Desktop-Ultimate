@@ -1,22 +1,21 @@
-import os
-import re
-import json
-import uuid
 import hashlib
+import hmac
+import json
+import logging
+import os
 import secrets
 import smtplib
-import hmac
-import logging
-import httpx
+from datetime import datetime, timedelta, timezone
 from email.mime.text import MIMEText
-from datetime import datetime, timezone, timedelta
 from typing import Optional
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import RedirectResponse, JSONResponse
+
+import httpx
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr, field_validator
 
-from ollama_emu import db
 from ollama_emu import acl as _acl
+from ollama_emu import db
 
 log = logging.getLogger("ollama-emu")
 
