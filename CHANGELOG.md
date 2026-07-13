@@ -14,13 +14,22 @@ All notable changes to the OllamoMUI project are documented here.
 - Fixed frontend `next build` type error: `Navbar.tsx` now uses a named import for `BrandIcon` (it was a default import that broke the static export).
 - Fixed `desktop/requirements.txt` broken `file:///${PROJECT_ROOT}` editable reference; the `ollamomui` package is now installed from the repo root (`pip install -e .`).
 - Fixed documentation references to the non-existent `ollama_emu_desktop.py` (now `desktop/src/launcher.py` / `python -m ollama_emu.main`) and `build_exe.bat` (now `python desktop/build.py --onefile`).
+- **Desktop GUI** — 3 root-cause bugs resolved:
+  - `qml_engine.py` now adds `pages/` to the QML import path, so all page types resolve at load time.
+  - `api_client.py` gained a `base_url` Q_PROPERTY with `NOTIFY`, a `token_changed` signal, and **28 `@Slot` camelCase wrappers** (`getUsage`, `getModelList`, `getMemoryMessages`, etc.) so every QML page can call its data-fetching methods directly.
+  - `Theme.qml` `dark` property now binds to `themeManager.darkTheme` instead of hardcoding `true`, making the dark/light toggle functional.
+  - `import OllamoMUI 1.0` added to all QML pages and components (fixes unresolved `Theme.*` references).
+  - `SettingsPage.qml` import order fixed (`QtQuick.Dialogs 1.3` before `QtQuick.Controls 2.15`) to avoid `Dialog` type shadowing.
+  - `HomePage.qml` "Launch Playground" nav target corrected from index 1 (Register) to index 3 (Playground).
+  - `RAGPage.qml` added `Qt.labs.platform 1.0` import for `FileDialog`.
+- Desktop EXE verified building on Python 3.14 / PySide6 6.11 via `python desktop/build.py --onefile` (374 MB output).
 
 ### Changed
 - Payments & licensing migrated from SSLCommerz/Stripe to **Lemon Squeezy** as the primary provider.
 - Documentation, README, and brand references updated to Lemon Squeezy.
 - Manual WhatsApp sales pipeline is the active licensing path; Lemon Squeezy remains an optional, not-yet-live payment provider.
-- Desktop EXE verified building on Python 3.14 / PySide6 6.11 via `python desktop/build.py --onefile`.
 - Test instructions corrected: the suite is a standalone script (`python backend/tests/test_api.py --online`), not `pytest`.
+- Desktop EXE auto-updater config points to GitHub Releases for update checks.
 
 ## [1.0.4] — 2026-07-12
 

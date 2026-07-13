@@ -82,6 +82,10 @@ python fetch_postgres.py         # download Windows PostgreSQL binaries
 python build.py --onefile        # -> dist/ollamomui.exe (single file)
 ```
 
-The resulting `dist/ollamomui.exe` is a self-contained Windows EXE (PySide6 + QML +
+The resulting `dist/ollamomui.exe` (~374 MB) is a self-contained Windows EXE (PySide6 + QML +
 bundled FastAPI backend + local PostgreSQL). Runs on Windows 10/11 (x64). See
 [EXECUTION_GUIDE.md](../EXECUTION_GUIDE.md) for the full step-by-step.
+
+Confirmed builds on **Python 3.14 / PySide6 6.11**. The GUI includes 10 QML pages
+(Login, Register, Home, Playground, Usage, Memory, RAG, Settings, License, Terminal)
+with dark/light theme, animated backgrounds, toast notifications, and auto-update dialog.

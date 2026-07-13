@@ -190,7 +190,7 @@ Open **http://localhost:3000** — no API key required for free models.
 
 ### Desktop EXE
 
-Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — a single-click installer that runs the backend + QML GUI and a **self-contained local PostgreSQL** (viewable in **pgAdmin 4**). Bring **your own API key** (OpenAI, Anthropic, Gemini, a local LM Studio server, etc.) in Settings and use it free — no payment needed. See [`desktop/README.md`](desktop/README.md) for the local-DB details.
+Download from [Releases](https://github.com/rbkhan007/ollamomui/releases/latest) — a single-click installer (~374 MB) that runs the backend + QML GUI and a **self-contained local PostgreSQL** (viewable in **pgAdmin 4**). The GUI includes 10 pages with dark/light theme, animated backgrounds, toast notifications, and auto-updater. Bring **your own API key** (OpenAI, Anthropic, Gemini, a local LM Studio server, etc.) in Settings and use it free — no payment needed. See [`desktop/README.md`](desktop/README.md) for the local-DB details.
 
 ---
 
