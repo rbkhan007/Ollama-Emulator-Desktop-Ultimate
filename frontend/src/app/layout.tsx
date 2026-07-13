@@ -102,6 +102,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
+          <meta name="google-site-verification" content="B9BhgbOr0QhuTmOzNOmBvFMm5d8wuyjyMqKgGFRPbTc" />
           <script dangerouslySetInnerHTML={{ __html: themeScript }} />
           <script
             type="application/ld+json"
