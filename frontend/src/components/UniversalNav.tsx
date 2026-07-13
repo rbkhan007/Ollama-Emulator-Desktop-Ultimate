@@ -61,7 +61,44 @@ export default function UniversalNav() {
     <nav className={styles.nav}>
       <div className={styles.container}>
         <Link href="/" className={styles.brand} onClick={() => { setIsOpen(false); setDdOpen(false); }}>
-          <div className={styles.brandLogo} />
+          <div className={styles.brandLogo}>
+            <svg width="28" height="28" viewBox="0 0 64 64" fill="none" role="img" aria-label="OllamoMUI logo" style={{ display: 'block' }}>
+              <defs>
+                <linearGradient id="brandCyan" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#00f0ff" />
+                  <stop offset="100%" stopColor="#00bcd4" />
+                </linearGradient>
+                <linearGradient id="brandPurple" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#6366f1" />
+                </linearGradient>
+                <linearGradient id="boltGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#00f0ff" />
+                  <stop offset="55%" stopColor="#8b5cf6" />
+                  <stop offset="100%" stopColor="#6366f1" />
+                </linearGradient>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <g transform="translate(32, 32)">
+                <polygon points="0,-24 21,-12 21,12 0,24 -21,12 -21,-12" fill="none" stroke="url(#brandCyan)" strokeWidth="2" filter="url(#glow)" />
+                <polygon points="0,-18 16,-9 16,9 0,18 -16,9 -16,-9" fill="none" stroke="url(#brandPurple)" strokeWidth="1" opacity="0.6" />
+                <path d="M -6,-10 L 6,-10 L 3,-2 L 8,-2 L -6,12 L -3,3 L -9,3 Z" fill="url(#boltGrad)" filter="url(#glow)" />
+                <circle cx="0" cy="-24" r="2" fill="url(#brandCyan)" filter="url(#glow)" />
+                <circle cx="21" cy="-12" r="2" fill="url(#brandPurple)" filter="url(#glow)" />
+                <circle cx="21" cy="12" r="2" fill="url(#brandCyan)" filter="url(#glow)" />
+                <circle cx="0" cy="24" r="2" fill="url(#brandPurple)" filter="url(#glow)" />
+                <circle cx="-21" cy="12" r="2" fill="url(#brandCyan)" filter="url(#glow)" />
+                <circle cx="-21" cy="-12" r="2" fill="url(#brandPurple)" filter="url(#glow)" />
+                <circle cx="0" cy="0" r="3" fill="url(#brandCyan)" opacity="0.8" filter="url(#glow)" />
+              </g>
+            </svg>
+          </div>
           <span className={styles.brandText}>OllamoMUI</span>
           <span className={styles.badge}>v1.0.4</span>
         </Link>
