@@ -2,8 +2,10 @@ const ENV_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
 
 function getBase(): string {
   if (typeof window !== "undefined") {
-    const stored = window.localStorage.getItem("ollamomui-api-base");
-    if (stored) return stored.replace(/\/+$/, "");
+    try {
+      const stored = window.localStorage.getItem("ollamomui-api-base");
+      if (stored) return stored.replace(/\/+$/, "");
+    } catch { /* localStorage unavailable */ }
   }
   return ENV_BASE;
 }
@@ -64,7 +66,9 @@ export function toast(msg: string, isError = false) {
 
 export function setApiBase(url: string) {
   if (typeof window !== "undefined") {
-    window.localStorage.setItem("ollamomui-api-base", url.replace(/\/+$/, ""));
+    try {
+      window.localStorage.setItem("ollamomui-api-base", url.replace(/\/+$/, ""));
+    } catch { /* localStorage unavailable */ }
   }
 }
 

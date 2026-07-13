@@ -2,6 +2,8 @@
 // Edit FREETIER_DOMAIN (or set NEXT_PUBLIC_FREETIER_DOMAIN) to point the
 // landing pages at your hosted free-tier gateway.
 
+export const BACKEND_URL = "https://ollamomui-backend.onrender.com";
+
 export const REPO_URL = "https://github.com/rbkhan007/ollamomui";
 export const REPO_RAW = "https://raw.githubusercontent.com/rbkhan007/ollamomui/main";
 export const RELEASES_URL = `${REPO_URL}/releases/latest`;

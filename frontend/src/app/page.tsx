@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description: "Stop paying $20/mo for ChatGPT. OllamoMUI is the best free Ollama alternative — a local LLM proxy that routes your prompts to 26 free models. RAG knowledge base, persistent AI memory, usage analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, Continue.dev.",
   alternates: { canonical: SITE_URL },
   openGraph: {
-  title: "The #1 Ollama Alternative with 26 Free LLMs",
+    title: "The #1 Ollama Alternative with 26 Free LLMs",
     description: "Best free Ollama alternative. 26 free LLMs, RAG knowledge base, persistent memory, and analytics. Works with Claude Code, Cursor, OpenCode.",
     url: SITE_URL,
   },

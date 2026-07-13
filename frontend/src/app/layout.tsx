@@ -10,7 +10,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import { DbProvider } from "@/lib/DbContext";
-import { SITE_URL, ASSET_BASE } from "@/lib/config";
+import { SITE_URL, ASSET_BASE, BACKEND_URL } from "@/lib/config";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -105,13 +105,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <link rel="dns-prefetch" href="https://github.com" />
           <link rel="preconnect" href="https://github.com" />
-          <link rel="dns-prefetch" href="https://ollamomui-backend.onrender.com" />
-          <link rel="preconnect" href="https://ollamomui-backend.onrender.com" />
+          <link rel="dns-prefetch" href={BACKEND_URL} />
+          <link rel="preconnect" href={BACKEND_URL} />
           <link rel="dns-prefetch" href={SITE_URL} />
           <link rel="preconnect" href={SITE_URL} />
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
-          <link rel="apple-touch-icon" href={`${ASSET_BASE}/brand-mark.ico`} />
+          <link rel="apple-touch-icon" href={`${ASSET_BASE}/apple-touch-icon.png`} />
           <meta name="google-site-verification" content="B9BhgbOr0QhuTmOzNOmBvFMm5d8wuyjyMqKgGFRPbTc" />
           <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
           <JsonLd data={{
