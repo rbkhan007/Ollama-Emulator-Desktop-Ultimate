@@ -14,6 +14,7 @@ Configure via environment variables:
 Or set OLLAMA_EMU_DATABASE_URL for a single connection string.
 """
 import os
+import sys
 import hashlib
 import hmac
 import secrets

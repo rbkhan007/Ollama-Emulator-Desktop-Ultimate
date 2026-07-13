@@ -1635,6 +1635,57 @@ async def api_status():
     }
 
 
+# In-memory override for database URL (set via Settings page at runtime)
+_RUNTIME_DATABASE_URL: str = ""
+
+
+@app.put("/api/settings/database")
+async def settings_database_save(request: Request):
+    _require_auth(request, admin=True)
+    body = await request.json()
+    url = (body.get("database_url") or "").strip()
+    if not url:
+        raise HTTPException(status_code=400, detail="database_url is required")
+    if not url.startswith("postgresql://"):
+        raise HTTPException(status_code=400, detail="Invalid database URL: must start with postgresql://")
+    if len(url) > 1024:
+        raise HTTPException(status_code=400, detail="database_url too long (max 1024 chars)")
+    global _RUNTIME_DATABASE_URL
+    _RUNTIME_DATABASE_URL = url
+    log.info("Database URL updated via Settings (user=%s)", request.client.host if request.client else "unknown")
+    return {"status": "saved", "database_url_set": True}
+
+
+@app.get("/api/settings/database/test")
+async def settings_database_test(request: Request):
+    _require_auth(request, admin=True)
+    url = _RUNTIME_DATABASE_URL or os.environ.get("OLLAMA_EMU_DATABASE_URL") or ""
+    if not url:
+        return {"connected": False, "message": "No database URL configured"}
+    try:
+        import psycopg
+        conn = psycopg.connect(url, connect_timeout=5)
+        conn.close()
+        return {"connected": True, "message": "Connection successful"}
+    except Exception as e:
+        return {"connected": False, "message": str(e)[:200]}
+
+
+@app.get("/api/settings/database/status")
+async def settings_database_status(request: Request):
+    _require_auth(request, admin=True)
+    url_set = bool(_RUNTIME_DATABASE_URL or os.environ.get("OLLAMA_EMU_DATABASE_URL"))
+    try:
+        connected = _db.is_connected()
+    except Exception:
+        connected = False
+    return {
+        "database_url_set": url_set,
+        "connected": connected,
+        "message": "Connected" if connected else "Not connected",
+    }
+
+
 @app.get("/api/device")
 async def api_device():
     d = get_device()
