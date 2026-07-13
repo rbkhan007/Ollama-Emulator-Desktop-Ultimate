@@ -30,7 +30,7 @@ jobs:
 
   build-apk:
     runs-on: ubuntu-latest
-    if: secrets.EXPO_TOKEN != ''
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
