@@ -127,6 +127,7 @@
 /* Mobile: fullscreen overlay (hidden on desktop) */
 .menu {
   display: none;
+  pointer-events: none;
 }
 
 .link {
@@ -226,6 +227,8 @@
   .nav {
     height: 56px;
     background: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .desktopNav {
@@ -253,17 +256,22 @@
     justify-content: flex-start;
     padding: 12px 16px 24px;
     gap: 2px;
+    transform: translateY(-8px);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.25s ease;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    z-index: 999;
+    z-index: 1001;
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .menuOpen {
+    transform: translateY(0);
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
   }
 
   .link {
@@ -303,6 +311,25 @@
     border-color: rgba(108, 92, 231, 0.3);
   }
 }
+
+@keyframes menuSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.menuOpen .link:nth-child(1) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both; }
+.menuOpen .link:nth-child(2) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both; }
+.menuOpen .link:nth-child(3) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both; }
+.menuOpen .link:nth-child(4) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
+.menuOpen .link:nth-child(5) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.20s both; }
+.menuOpen .link:nth-child(6) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
+.menuOpen .link:nth-child(7) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both; }
+.menuOpen .link:nth-child(8) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.32s both; }
+.menuOpen .link:nth-child(9) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both; }
+.menuOpen .link:nth-child(10) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.40s both; }
+.menuOpen .link:nth-child(11) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.44s both; }
+.menuOpen .link:nth-child(12) { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.48s both; }
+.menuOpen .menuActions { animation: menuSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.52s both; }
 
 @media (max-width: 480px) {
   .container {

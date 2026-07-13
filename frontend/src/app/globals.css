@@ -639,6 +639,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   .compare-row > div:nth-child(2) { justify-self: start; }
 }
 @media (max-width: 768px) {
+  main { padding: 0 4px; }
   .hero-title { font-size: 2rem !important; } /* 32px mobile */
   .feature-grid { grid-template-columns: 1fr !important; }
   .code-grid { grid-template-columns: 1fr !important; }
@@ -649,6 +650,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 }
 /* Phones: stack dual-button rows and allow wrapping so they never overflow */
 @media (max-width: 600px) {
+  main { padding: 0 2px; }
   .cta-row { flex-direction: column !important; align-items: stretch !important; }
   .cta-row > a, .cta-row > button, .cta-row > Link { justify-content: center !important; }
   main > section:first-child { padding-top: 32px !important; }
@@ -659,6 +661,7 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   .hero-cta > a { justify-content: center; }
 }
 @media (max-width: 480px) {
+  main { padding: 0; }
   .page-container { padding: 16px 12px; }
   .spidey-burst { display: none; }
 }
