@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
-import { ArchitectureDiagram } from "./diagram";
+import { ArchitectureDiagram, RagPipelineDiagram } from "./diagram";
 
 export const metadata: Metadata = {
   title: "Architecture — Request Lifecycle & RAG Pipeline",
@@ -52,51 +52,3 @@ export default function ArchitecturePage() {
   );
 }
 
-function RagPipelineDiagram() {
-  return (
-    <div style={{
-      background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)",
-      padding: "clamp(16px, 3vw, 24px)", overflow: "auto",
-    }}>
-      <svg viewBox="0 0 800 320" style={{ width: "100%", height: "auto", maxWidth: 800 }} xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6c5ce7"/><stop offset="100%" stopColor="#00cec9"/></linearGradient>
-          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#fd79a8"/><stop offset="100%" stopColor="#6c5ce7"/></linearGradient>
-          <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#00cec9"/><stop offset="100%" stopColor="#fdcb6e"/></linearGradient>
-        </defs>
-        <rect x="20" y="10" width="760" height="300" rx="12" fill="none" stroke="var(--glass-border)" strokeWidth="1" />
-        <text x="40" y="38" fontSize="13" fontWeight="bold" fill="var(--text-muted)">RAG Pipeline</text>
-        <rect x="50" y="60" width="140" height="50" rx="10" fill="rgba(108,92,231,0.12)" stroke="#6c5ce7" strokeWidth="1.5" />
-        <text x="120" y="90" fontSize="13" fontWeight="600" fill="#6c5ce7" textAnchor="middle">User Query</text>
-        <line x1="190" y1="85" x2="250" y2="85" stroke="var(--text-muted)" strokeWidth="1.5" markerEnd="url(#arrow)" />
-        <rect x="250" y="60" width="140" height="50" rx="10" fill="rgba(0,206,201,0.12)" stroke="#00cec9" strokeWidth="1.5" />
-        <text x="320" y="85" fontSize="13" fontWeight="600" fill="#00cec9" textAnchor="middle">Semantic Search</text>
-        <text x="320" y="100" fontSize="11" fill="#00cec9" textAnchor="middle" opacity="0.7">pgvector</text>
-        <line x1="250" y1="115" x2="320" y2="135" stroke="var(--text-muted)" strokeWidth="1.5" />
-        <rect x="250" y="120" width="140" height="50" rx="10" fill="rgba(253,121,168,0.12)" stroke="#fd79a8" strokeWidth="1.5" />
-        <text x="320" y="145" fontSize="13" fontWeight="600" fill="#fd79a8" textAnchor="middle">Keyword Search</text>
-        <text x="320" y="160" fontSize="11" fill="#fd79a8" textAnchor="middle" opacity="0.7">pg_trgm</text>
-        <line x1="390" y1="85" x2="460" y2="85" stroke="var(--text-muted)" strokeWidth="1.5" />
-        <line x1="390" y1="145" x2="460" y2="145" stroke="var(--text-muted)" strokeWidth="1.5" />
-        <rect x="460" y="70" width="120" height="50" rx="10" fill="rgba(108,92,231,0.12)" stroke="#6c5ce7" strokeWidth="1.5" />
-        <text x="520" y="95" fontSize="13" fontWeight="600" fill="#6c5ce7" textAnchor="middle">Merge &amp; Rerank</text>
-        <text x="520" y="110" fontSize="11" fill="#6c5ce7" textAnchor="middle" opacity="0.7">Cross-encoder</text>
-        <line x1="580" y1="95" x2="640" y2="95" stroke="var(--text-muted)" strokeWidth="1.5" />
-        <rect x="640" y="70" width="120" height="50" rx="10" fill="rgba(0,206,201,0.12)" stroke="#00cec9" strokeWidth="1.5" />
-        <text x="700" y="95" fontSize="13" fontWeight="600" fill="#00cec9" textAnchor="middle">LLM Context</text>
-        <text x="700" y="110" fontSize="11" fill="#00cec9" textAnchor="middle" opacity="0.7">Injection</text>
-        <line x1="580" y1="145" x2="640" y2="220" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="4" />
-        <rect x="640" y="200" width="120" height="40" rx="8" fill="rgba(253,203,110,0.12)" stroke="#fdcb6e" strokeWidth="1.5" />
-        <text x="700" y="225" fontSize="12" fontWeight="600" fill="#fdcb6e" textAnchor="middle">Response</text>
-        <line x1="520" y1="120" x2="520" y2="260" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="4" />
-        <rect x="440" y="240" width="160" height="40" rx="8" fill="rgba(108,92,231,0.08)" stroke="var(--glass-border)" strokeWidth="1" />
-        <text x="520" y="265" fontSize="12" fontWeight="500" fill="var(--text-muted)" textAnchor="middle">PDF / TXT / CSV Upload</text>
-        <line x1="520" y1="280" x2="520" y2="290" stroke="var(--text-muted)" strokeWidth="1" />
-        <rect x="50" y="230" width="140" height="40" rx="8" fill="rgba(108,92,231,0.08)" stroke="var(--glass-border)" strokeWidth="1" />
-        <text x="120" y="255" fontSize="12" fontWeight="500" fill="var(--text-muted)" textAnchor="middle">Document Chunking</text>
-        <line x1="120" y1="270" x2="120" y2="290" stroke="var(--text-muted)" strokeWidth="1" />
-        <line x1="120" y1="290" x2="520" y2="290" stroke="var(--text-muted)" strokeWidth="1" strokeDasharray="4" />
-      </svg>
-    </div>
-  );
-}
