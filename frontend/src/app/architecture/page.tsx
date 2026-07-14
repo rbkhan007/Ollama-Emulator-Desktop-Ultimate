@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
-import { RequestLifecycleFlow, RagPipelineFlow } from "./reactflow-diagram";
+import { ArchitectureFlow } from "./reactflow-diagram";
 
 export const metadata: Metadata = {
   title: "Architecture — Request Lifecycle & RAG Pipeline",
@@ -29,24 +29,7 @@ export default function ArchitecturePage() {
         provider router, and streaming response — plus how RAG retrieves and reranks context.
       </p>
 
-      <section style={{ marginBottom: 64 }}>
-        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>Request Lifecycle</h2>
-        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", marginBottom: 24, maxWidth: "var(--text-max)", lineHeight: "var(--leading-small)" }}>
-          Every request flows through ACL middleware for authentication, then the provider router selects
-          the optimal cloud endpoint. Responses are streamed back via SSE through the stream handler.
-        </p>
-        <RequestLifecycleFlow />
-      </section>
-
-      <section>
-        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>RAG Pipeline</h2>
-        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", marginBottom: 24, maxWidth: "var(--text-max)", lineHeight: "var(--leading-small)" }}>
-          Documents are chunked, embedded via pgvector, and indexed with pg_trgm for keyword search.
-          On query, results are merged and reranked by a cross-encoder model before injection into the
-          LLM context.
-        </p>
-        <RagPipelineFlow />
-      </section>
+      <ArchitectureFlow />
     </main>
   );
 }

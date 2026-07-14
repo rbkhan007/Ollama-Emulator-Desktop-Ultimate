@@ -1111,3 +1111,11 @@ html[data-theme] * {
   letter-spacing: 0.08em;
   padding: 0 4px 4px;
 }
+
+/* ===========================
+   REACT FLOW EDGE ANIMATIONS
+   =========================== */
+@keyframes react-flow-edge-dash {
+  from { stroke-dashoffset: 24; }
+  to   { stroke-dashoffset: 0; }
+}

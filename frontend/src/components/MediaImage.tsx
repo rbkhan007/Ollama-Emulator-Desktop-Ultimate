@@ -1,6 +1,6 @@
 "use client";
 
-import { getBase } from "@/lib/api";
+import { getApiBase } from "@/lib/api";
 
 export default function MediaImage({ mediaKey, alt, width, height, style }: {
   mediaKey: string;
@@ -9,7 +9,7 @@ export default function MediaImage({ mediaKey, alt, width, height, style }: {
   height?: number;
   style?: React.CSSProperties;
 }) {
-  const base = getBase();
+  const base = getApiBase();
   const src = `${base}/api/media/${mediaKey}`;
   return (
     <img
