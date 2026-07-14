@@ -40,7 +40,10 @@ function ConnectionLine({
   const path = `M${fromX},${fromY} C ${fromX} ${(fromY + toY) / 2} ${toX} ${(fromY + toY) / 2} ${toX},${toY}`;
   return (
     <g>
-      <path fill="none" stroke="var(--accent)" strokeWidth={2} className="animated" d={path} />
+      <path fill="none" stroke="var(--accent)" strokeWidth={2} strokeDasharray="8 4" d={path} style={{ animation: "dash-flow 1s linear infinite" }} />
+      <circle r={4} fill="var(--accent)" stroke="#fff" strokeWidth={1.5}>
+        <animateMotion dur="2s" repeatCount="indefinite" path={path} />
+      </circle>
       <circle cx={toX} cy={toY} fill="var(--accent)" r={4} stroke="#fff" strokeWidth={1.5} />
     </g>
   );
@@ -69,38 +72,50 @@ const CustomEdge = memo(function CustomEdge({
     targetPosition,
   });
 
+  const strokeColor = (style as CSSProperties)?.stroke || "var(--accent)";
+
   return (
     <g>
+      {/* Background passive path */}
       <BaseEdge
         id={id}
         path={edgePath}
-        style={{ ...style, strokeWidth: 2, ...(animated ? { strokeDasharray: "6 3" } : {}) }}
+        style={{ stroke: "#1e293b", strokeWidth: 2, ...(animated ? { strokeDasharray: "8 4" } : {}) }}
         markerEnd={markerEnd}
       />
+      {/* Active animated flow path */}
       {animated && (
-        <path
-          fill="none"
-          stroke={(style as CSSProperties)?.stroke || "var(--accent)"}
-          strokeWidth={2}
-          strokeDasharray="6 3"
-          className="animated"
-          d={edgePath}
-          style={{ animation: "react-flow-edge-dash 1s linear infinite" }}
-        />
+        <>
+          <path
+            fill="none"
+            stroke={strokeColor}
+            strokeWidth={2}
+            strokeDasharray="8 4"
+            d={edgePath}
+            style={{ animation: "dash-flow 1s linear infinite", opacity: 0.8 }}
+          />
+          {/* Flowing particle */}
+          <circle r={4} fill={strokeColor} stroke="#fff" strokeWidth={1.5}>
+            <animateMotion dur="2.5s" repeatCount="indefinite" path={edgePath} />
+          </circle>
+        </>
       )}
       {label && (
-        <text
-          x={labelX}
-          y={labelY}
-          fill="var(--text-muted)"
-          fontSize={11}
-          fontWeight={500}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          style={{ pointerEvents: "none" }}
-        >
-          {label}
-        </text>
+        <g>
+          <rect x={labelX - 4} y={labelY - 10} width={0} height={0} />
+          <text
+            x={labelX}
+            y={labelY}
+            fill="var(--text-muted)"
+            fontSize={11}
+            fontWeight={500}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            style={{ pointerEvents: "none" }}
+          >
+            {label}
+          </text>
+        </g>
       )}
     </g>
   );

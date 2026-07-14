@@ -1115,7 +1115,7 @@ html[data-theme] * {
 /* ===========================
    REACT FLOW EDGE ANIMATIONS
    =========================== */
-@keyframes react-flow-edge-dash {
+@keyframes dash-flow {
   from { stroke-dashoffset: 24; }
   to   { stroke-dashoffset: 0; }
 }
