@@ -5,6 +5,34 @@ import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
 import { ProviderIcon } from "@/components/BrandIcon";
 import { Settings, Download, RefreshCw, MessageSquare } from "lucide-react";
+import * as RF from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+
+/* ─── Mini React Flow Renderer (for LLM-generated flow JSON) ─── */
+const MiniFlow = RF.ReactFlow as unknown as React.FC<{
+  nodes: any[]; edges: any[]; children?: React.ReactNode;
+  fitView?: boolean; style?: React.CSSProperties;
+}>;
+
+function FlowRenderer({ code }: { code: string }) {
+  let parsed: { nodes?: any[]; edges?: any[] } = {};
+  try { parsed = JSON.parse(code); } catch {
+    return <p style={{ color: "var(--red)", fontSize: "var(--text-sm)", padding: 8 }}>Invalid flow JSON</p>;
+  }
+  const { nodes = [], edges = [] } = parsed;
+  if (!nodes.length) {
+    return <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", padding: 8 }}>No nodes in flow</p>;
+  }
+  return (
+    <RF.ReactFlowProvider>
+      <div style={{ width: "100%", height: 300, borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)" }}>
+        <MiniFlow nodes={nodes} edges={edges} fitView style={{ background: "var(--bg)" }}>
+          <RF.Background />
+        </MiniFlow>
+      </div>
+    </RF.ReactFlowProvider>
+  );
+}
 
 type Msg = { role: "user" | "assistant" | "error"; content: string };
 type Model = { name: string; free: boolean };
@@ -284,6 +312,9 @@ export default function PlaygroundPage() {
               <span style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)" }}>Rendering diagram...</span>
             </div>
           );
+        }
+        if (lang === "reactflow" || lang === "flow") {
+          return <FlowRenderer key={i} code={code} />;
         }
         if (lang === "image" || lang === "img") {
           const src = code.trim();
