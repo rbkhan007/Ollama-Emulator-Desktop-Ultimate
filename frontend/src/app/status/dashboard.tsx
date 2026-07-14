@@ -14,7 +14,7 @@ const INITIAL: CheckResult[] = [
   { label: "Backend API", status: "loading", detail: "Checking...", endpoint: "/api/providers" },
   { label: "Database", status: "loading", detail: "Checking...", endpoint: "/api/settings/database/status" },
   { label: "RAG Engine", status: "loading", detail: "Checking...", endpoint: "/api/rag/collections" },
-  { label: "Memory System", status: "loading", detail: "Checking...", endpoint: "/api/memory?session_id=_health" },
+  { label: "Memory System", status: "loading", detail: "Checking...", endpoint: "/api/memory" },
   { label: "Provider Configuration", status: "loading", detail: "Checking...", endpoint: "/api/providers" },
 ];
 

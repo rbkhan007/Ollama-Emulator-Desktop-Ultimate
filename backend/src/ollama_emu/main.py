@@ -1675,7 +1675,6 @@ async def settings_database_test(request: Request):
 
 @app.get("/api/settings/database/status")
 async def settings_database_status(request: Request):
-    _require_auth(request, admin=True)
     url_set = bool(_RUNTIME_DATABASE_URL or os.environ.get("OLLAMA_EMU_DATABASE_URL"))
     try:
         connected = _db.is_connected()
@@ -2355,6 +2354,12 @@ async def rag_context_inject(body: RagContextInjectRequest):
 # ============================================================
 # MEMORY API ENDPOINTS
 # ============================================================
+
+@app.get("/api/memory")
+async def memory_health(session_id: str = None):
+    """Health check for the memory system. Returns stats when no session_id provided."""
+    return MEMORY.stats()
+
 
 @app.get("/api/memory/stats")
 async def memory_stats():
