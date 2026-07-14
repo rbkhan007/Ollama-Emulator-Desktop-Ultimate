@@ -65,7 +65,7 @@ export default function About() {
             <Text style={styles.linkText}>Open free web app ↗</Text>
           </Pressable>
 
-          <Text style={styles.footer}>OllamoMUI · v1.0.0 · by Rhasan@dev</Text>
+          <Text style={styles.footer}>OllamoMUI · v1.0.4 · by Rhasan@dev</Text>
         </View>
       </ScrollView>
       <BottomNav />
