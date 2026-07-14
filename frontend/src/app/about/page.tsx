@@ -63,8 +63,8 @@ export default function About() {
           <MediaImage
             mediaKey="indie-dev"
             alt="Rhasan@dev — indie developer"
-            width={48}
-            height={48}
+            width={117}
+            height={127}
             style={{ borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }}
           />
           <div style={{ textAlign: "left", fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
