@@ -4,38 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
 import { ProviderIcon } from "@/components/BrandIcon";
-import { Settings, Download, RefreshCw, MessageSquare } from "lucide-react";
-import * as RF from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
-
-/* ─── Mini React Flow Renderer (for LLM-generated flow JSON) ─── */
-const MiniFlow = RF.ReactFlow as unknown as React.FC<{
-  nodes: any[]; edges: any[]; children?: React.ReactNode;
-  fitView?: boolean; style?: React.CSSProperties;
-}>;
-
-function FlowRenderer({ code }: { code: string }) {
-  let parsed: { nodes?: any[]; edges?: any[] } = {};
-  try { parsed = JSON.parse(code); } catch {
-    return <p style={{ color: "var(--red)", fontSize: "var(--text-sm)", padding: 8 }}>Invalid flow JSON</p>;
-  }
-  const { nodes = [], edges = [] } = parsed;
-  if (!nodes.length) {
-    return <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", padding: 8 }}>No nodes in flow</p>;
-  }
-  return (
-    <RF.ReactFlowProvider>
-      <div style={{ width: "100%", height: 300, borderRadius: 12, overflow: "hidden", border: "1px solid var(--border)", background: "var(--bg)" }}>
-        <MiniFlow nodes={nodes} edges={edges} fitView style={{ background: "var(--bg)" }}>
-          <RF.Background />
-        </MiniFlow>
-      </div>
-    </RF.ReactFlowProvider>
-  );
-}
+import { Settings, Download, RefreshCw, Code, ImageIcon } from "lucide-react";
+import FlowRenderer from "@/components/FlowRenderer";
 
 type Msg = { role: "user" | "assistant" | "error"; content: string };
 type Model = { name: string; free: boolean };
+type Artifact = { type: "reactflow" | "mermaid"; content: string };
 
 const SUGGESTS = [
   "Draw a flowchart of how DNS works using Mermaid",
@@ -79,6 +53,7 @@ export default function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [provider, setProvider] = useState("");
   const [showSettings, setShowSettings] = useState(false);
+  const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant. When asked to draw diagrams, use Mermaid markdown syntax. When asked to generate images, respond with a markdown image link.");
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2048);
@@ -177,6 +152,7 @@ export default function PlaygroundPage() {
 
   function newChat() {
     setMessages([]);
+    setArtifacts([]);
     setInput("");
     localStorage.removeItem(STORAGE_KEY);
   }
@@ -275,6 +251,12 @@ export default function PlaygroundPage() {
       if (assistantContent) finalMsgs.push({ role: "assistant", content: assistantContent });
       saveToStorage(finalMsgs);
 
+      // Extract artifacts from response
+      const newArtifacts: Artifact[] = [];
+      assistantContent.replace(/```reactflow\s*([\s\S]*?)```/g, (_, json) => { newArtifacts.push({ type: "reactflow", content: json }); return ""; });
+      assistantContent.replace(/```mermaid\s*([\s\S]*?)```/g, (_, code) => { newArtifacts.push({ type: "mermaid", content: code }); return ""; });
+      if (newArtifacts.length) setArtifacts(prev => [...prev, ...newArtifacts]);
+
       if (!assistantContent && messages[messages.length - 1]?.role !== "error") {
         setMessages(prev => {
           const copy = [...prev];
@@ -361,14 +343,16 @@ export default function PlaygroundPage() {
 
   return (
     <div className="page-container" style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 140px)", minHeight: 0 }}>
-      {/* Messages container — header + settings live inside, scroll together */}
-      <div id="playground-messages" className="stagger-2" ref={messagesRef}
-        onScroll={checkScroll}
-        style={{
-          flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12,
-          padding: 16, background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)",
-          marginBottom: 12, position: "relative",
-        }}>
+      {/* Chat + Artifacts side-by-side */}
+      <div style={{ display: "flex", flex: 1, gap: 12, overflow: "hidden", marginBottom: 12 }}>
+        {/* Messages container */}
+        <div id="playground-messages" className="stagger-2" ref={messagesRef}
+          onScroll={checkScroll}
+          style={{
+            flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12,
+            padding: 16, background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)",
+            position: "relative",
+          }}>
 
         {/* Header controls — inside messages container */}
         <div style={{
@@ -614,8 +598,60 @@ export default function PlaygroundPage() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <div className="stagger-3" style={{ display: "flex", gap: 8, flexWrap: "wrap", position: "sticky", bottom: 0, zIndex: 100, background: "var(--bg)", paddingTop: 8 }}>
+      {/* Artifacts panel */}
+      {artifacts.length > 0 && (
+        <div style={{
+          width: 380, flexShrink: 0, display: "flex", flexDirection: "column",
+          background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+            padding: "12px 16px", borderBottom: "1px solid var(--border)",
+            fontSize: 13, fontWeight: 600, color: "var(--text-muted)",
+          }}>
+            <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <Code size={16} /> Artifacts
+            </span>
+            <button onClick={() => setArtifacts([])} style={{
+              fontSize: 11, padding: "2px 10px", background: "var(--bg)",
+              color: "var(--text-muted)", borderRadius: 6, border: "1px solid var(--border)",
+              cursor: "pointer",
+            }}>Clear</button>
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+            {artifacts.map((item, idx) => (
+              <div key={idx} style={{
+                background: "var(--bg)", borderRadius: 10, border: "1px solid var(--border)",
+                overflow: "hidden",
+              }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  padding: "8px 12px", fontSize: 12, fontWeight: 600,
+                  color: "var(--text-muted)", borderBottom: "1px solid var(--border)",
+                  background: "var(--surface-2)",
+                }}>
+                  {item.type === "reactflow" ? <Code size={14} color="var(--accent)" /> : <ImageIcon size={14} color="var(--accent-2)" />}
+                  {item.type === "reactflow" ? "React Flow Diagram" : "Mermaid Diagram"}
+                </div>
+                <div style={{ padding: item.type === "mermaid" ? 12 : 0 }}>
+                  {item.type === "reactflow" ? <FlowRenderer code={item.content} /> : (
+                    <div className="mermaid-svg" data-code={item.content} style={{
+                      background: "var(--surface)", padding: 12, borderRadius: 8,
+                      minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "var(--text-sm)", color: "var(--text-muted)",
+                    }}>Rendering Mermaid...</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Input */}
+    <div className="stagger-3" style={{ display: "flex", gap: 8, flexWrap: "wrap", position: "sticky", bottom: 0, zIndex: 100, background: "var(--bg)", paddingTop: 8 }}>
         <textarea
           aria-label="Message"
           value={input}
