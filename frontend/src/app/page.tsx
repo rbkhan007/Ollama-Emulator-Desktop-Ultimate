@@ -12,6 +12,7 @@ import {
   SITE_URL,
 } from "@/lib/config";
 
+import InteractiveWireframe from "@/components/InteractiveWireframe";
 import { MessageSquare, Grid, Brain, Shield, Infinity, Zap, Terminal, Download, Star, Globe, Cloud, FolderOpen, Mail, Sparkles, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -238,6 +239,10 @@ export default function Home() {
             );
            })}
         </div>
+      </section>
+
+      <section className="lazy-section" style={{ padding: "var(--space-3xl) 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <InteractiveWireframe />
       </section>
 
       <ClientOnly />
