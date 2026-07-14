@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDb } from "@/lib/DbContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
+import { Trash2 } from "lucide-react";
 
 type Stats = { messages: number; facts: number; sessions: number; buffered: number };
 type Message = { id: string; role: string; content: string; model: string; provider: string; session_id: string; tokens: number; created_at: string };
@@ -234,10 +235,7 @@ export default function MemoryPage() {
                     </div>
                   </div>
                   <button className="btn btn-ghost btn-sm" onClick={() => deleteFact(f.id)} style={{ flexShrink: 0 }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      </svg>
+                      <Trash2 size={14} />
                       Delete
                     </button>
                   </div>
@@ -268,10 +266,7 @@ export default function MemoryPage() {
                     </div>
                   </div>
                   <button className="btn btn-ghost btn-sm" onClick={() => clearMemory(s.id)} style={{ flexShrink: 0 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6" />
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                    </svg>
+                    <Trash2 size={14} />
                     Clear
                   </button>
                 </div>

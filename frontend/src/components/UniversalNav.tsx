@@ -1,45 +1,47 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
 import { useDb } from "@/lib/DbContext";
 import { REPO_URL } from "@/lib/config";
 import styles from "./UniversalNav.module.css";
+import { House, Code2, Library, BrainCircuit, Activity, FileText, GitBranch, BookOpen, Shield, DollarSign, Download, UserCheck, Info, Settings, ShieldCheck, Sun, Moon, Star, ChevronDown } from "lucide-react";
 
 interface NavLink {
   label: string;
   href: string;
+  icon: React.ComponentType<{ size?: number }>;
 }
 
 const PRIMARY_LINKS: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Playground", href: "/playground" },
-  { label: "Knowledge", href: "/rag" },
-  { label: "Memory", href: "/memory" },
-  { label: "Status", href: "/status" },
-  { label: "Case Study", href: "/case-study" },
+  { label: "Home", href: "/", icon: House },
+  { label: "Playground", href: "/playground", icon: Code2 },
+  { label: "Knowledge", href: "/rag", icon: Library },
+  { label: "Memory", href: "/memory", icon: BrainCircuit },
+  { label: "Status", href: "/status", icon: Activity },
+  { label: "Case Study", href: "/case-study", icon: FileText },
 ];
 
 const MORE_LINKS: NavLink[] = [
-  { label: "Architecture", href: "/architecture" },
-  { label: "API Docs", href: "/api-docs" },
-  { label: "Security", href: "/security" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Download", href: "/download" },
-  { label: "Resume", href: "/resume" },
-  { label: "About", href: "/about" },
-  { label: "Settings", href: "/settings" },
-  { label: "Admin", href: "/admin" },
+  { label: "Architecture", href: "/architecture", icon: GitBranch },
+  { label: "API Docs", href: "/api-docs", icon: BookOpen },
+  { label: "Security", href: "/security", icon: Shield },
+  { label: "Pricing", href: "/pricing", icon: DollarSign },
+  { label: "Download", href: "/download", icon: Download },
+  { label: "Resume", href: "/resume", icon: UserCheck },
+  { label: "About", href: "/about", icon: Info },
+  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Admin", href: "/admin", icon: ShieldCheck },
 ];
 
 const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
 
-export default function UniversalNav() {
+export default memo(function UniversalNav() {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
-  const { databaseConnected, loading } = useDb();
+  const { databaseConnected } = useDb();
   const [isOpen, setIsOpen] = useState(false);
   const [ddOpen, setDdOpen] = useState(false);
   const ddRef = useRef<HTMLDivElement>(null);
@@ -47,8 +49,9 @@ export default function UniversalNav() {
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
     document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => { document.body.style.overflow = isOpen ? prev : ""; };
   }, [isOpen]);
 
   const handleClickOutside = useCallback((e: MouseEvent) => {
@@ -123,15 +126,19 @@ export default function UniversalNav() {
 
         {/* Desktop: inline primary links */}
         <div className={styles.desktopNav}>
-          {PRIMARY_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`${styles.navLink} ${isActive(link.href) ? styles.navLinkActive : ""}`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {PRIMARY_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`${styles.navLink} ${isActive(link.href) ? styles.navLinkActive : ""}`}
+              >
+                <Icon size={16} />
+                {link.label}
+              </Link>
+            );
+          })}
 
           {/* More dropdown */}
           <div className={styles.dropdownWrap} ref={ddRef}>
@@ -142,22 +149,24 @@ export default function UniversalNav() {
               aria-haspopup="true"
             >
               More
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.2s", transform: ddOpen ? "rotate(180deg)" : "" }}>
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <ChevronDown size={14} style={{ transition: "transform 0.2s", transform: ddOpen ? "rotate(180deg)" : "" }} />
             </button>
             {ddOpen && (
               <div className={styles.dropdownPanel}>
-                {MORE_LINKS.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`${styles.ddLink} ${isActive(link.href) ? styles.ddLinkActive : ""}`}
-                    onClick={() => setDdOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {MORE_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`${styles.ddLink} ${isActive(link.href) ? styles.ddLinkActive : ""}`}
+                      onClick={() => setDdOpen(false)}
+                    >
+                      <Icon size={16} />
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -165,23 +174,27 @@ export default function UniversalNav() {
 
         {/* Mobile: burger menu */}
         <div className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
-          {ALL_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`${styles.link} ${isActive(link.href) ? styles.linkActive : ""}`}
-              onClick={() => setIsOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {ALL_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`${styles.link} ${isActive(link.href) ? styles.linkActive : ""}`}
+                onClick={() => setIsOpen(false)}
+              >
+                <Icon size={18} />
+                {link.label}
+              </Link>
+            );
+          })}
           <div className={styles.menuActions}>
             <button
               onClick={toggle}
               className={styles.menuActionBtn}
               aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
-              {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
               <span>{theme === "dark" ? "Light" : "Dark"}</span>
             </button>
             <a
@@ -190,7 +203,7 @@ export default function UniversalNav() {
               rel="noopener noreferrer"
               className={styles.menuActionBtn}
             >
-              <StarIcon /> Star
+              <Star size={16} /> Star
             </a>
             <span className={`${styles.dbStatus} ${databaseConnected ? styles.dbConnected : styles.dbDisconnected}`}>
               <span className={styles.dbDot} />
@@ -205,7 +218,7 @@ export default function UniversalNav() {
             className={styles.desktopBtn}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <a
             href={REPO_URL}
@@ -213,7 +226,7 @@ export default function UniversalNav() {
             rel="noopener noreferrer"
             className={styles.desktopBtn}
           >
-            <StarIcon /> Star
+            <Star size={16} /> Star
           </a>
           <span
             className={`${styles.dbStatus} ${databaseConnected ? styles.dbConnected : styles.dbDisconnected}`}
@@ -235,36 +248,4 @@ export default function UniversalNav() {
       </div>
     </nav>
   );
-}
-
-function SunIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="5" />
-      <line x1="12" y1="1" x2="12" y2="3" />
-      <line x1="12" y1="21" x2="12" y2="23" />
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-      <line x1="1" y1="12" x2="3" y2="12" />
-      <line x1="21" y1="12" x2="23" y2="12" />
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
-function StarIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z" />
-    </svg>
-  );
-}
+});

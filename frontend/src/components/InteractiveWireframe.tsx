@@ -102,7 +102,7 @@ function formatTime(ts: number): string {
 }
 
 /* ─── Main Component ─── */
-export default function InteractiveWireframe() {
+export default React.memo(function InteractiveWireframe() {
   const [selectedAgent, setSelectedAgent] = useState("ollamomui");
   const [selectedProvider, setSelectedProvider] = useState("openrouter");
   const [pipelineStatus, setPipelineStatus] = useState<PipelineStatus>("idle");
@@ -454,4 +454,4 @@ export default function InteractiveWireframe() {
       </div>
     </section>
   );
-}
+});

@@ -73,6 +73,7 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  gap: 6px;
   white-space: nowrap;
   transition: all 0.15s;
 }
@@ -123,6 +124,8 @@
   left: 50%;
   transform: translateX(-50%);
   min-width: 200px;
+  max-height: 60vh;
+  overflow-y: auto;
   background: var(--nav-bg);
   backdrop-filter: blur(32px) saturate(200%);
   -webkit-backdrop-filter: blur(32px) saturate(200%);
@@ -145,6 +148,9 @@
   border-radius: 8px;
   transition: all 0.15s;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .ddLink:hover {
@@ -172,6 +178,9 @@
   border-radius: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .link:hover {

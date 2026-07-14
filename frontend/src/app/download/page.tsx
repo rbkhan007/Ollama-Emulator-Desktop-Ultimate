@@ -1,5 +1,6 @@
 import { SITE_URL, REPO_URL, RELEASES_URL } from "@/lib/config";
 import type { Metadata } from "next";
+import { Monitor, Smartphone, Code2, ExternalLink, Monitor as MonitorIcon, Menu } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Download",
@@ -25,24 +26,24 @@ const downloadItems = [
     desc: "Single file, no install required. Includes the GUI and server.",
     href: RELEASES_URL,
     label: "Download latest",
-    btnStyle: "primary",
-    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 16l4.5-4.5L12 14l3.5-2.5L20 16" /><path d="M20 4l-4.5 4.5L12 6l-3.5 2.5L4 4" /><path d="M4 20l4.5-4.5L12 18l3.5-2.5L20 20" /></svg>,
+    btnStyle: "primary" as const,
+    svg: <Monitor size={28} strokeWidth={1.8} />,
   },
   {
     title: "Mobile App",
     desc: "Android app with full sync and mobile-optimized UI.",
     href: "https://play.google.com/store/apps/details?id=com.ollamomui.app",
     label: "Get it on Play Store",
-    btnStyle: "primary",
-    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2" /><line x1="12" y1="18" x2="12.01" y2="18" /></svg>,
+    btnStyle: "primary" as const,
+    svg: <Smartphone size={28} strokeWidth={1.8} />,
   },
   {
     title: "Source Code",
     desc: "Self-host with Docker, or build from source.",
     href: REPO_URL,
     label: "View on GitHub",
-    btnStyle: "ghost",
-    svg: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>,
+    btnStyle: "ghost" as const,
+    svg: <Code2 size={28} strokeWidth={1.8} />,
   },
 ];
 
@@ -99,7 +100,7 @@ export default function Download() {
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
             color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
+            <ExternalLink size={20} strokeWidth={2} />
             Deploy to Vercel
           </a>
           <a href="https://render.com/deploy?repo=https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" style={{
@@ -107,7 +108,7 @@ export default function Download() {
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
             color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
+            <MonitorIcon size={20} strokeWidth={2} />
             Deploy to Render
           </a>
           <a href="https://railway.app/template/ollamomui?referralCode=ollamomui" target="_blank" rel="noopener noreferrer" style={{
@@ -115,7 +116,7 @@ export default function Download() {
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
             color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+            <Menu size={20} strokeWidth={2} />
             Deploy to Railway
           </a>
         </div>

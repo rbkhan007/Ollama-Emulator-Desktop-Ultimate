@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDb } from "@/lib/DbContext";
 import { apiJson, toast } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
+import { Trash2, Upload, FileText } from "lucide-react";
 
 type Doc = { id: string; filename: string; chunks: number; collection: string };
 type Stats = { documents: number; chunks: number; collections: number };
@@ -162,10 +163,7 @@ export default function RagPage() {
           </div>
         </div>
         <button className="btn btn-danger btn-sm" onClick={clearAll}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="3 6 5 6 21 6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
+          <Trash2 size={16} />
           Clear All
         </button>
       </div>
@@ -179,11 +177,7 @@ export default function RagPage() {
           </div>
           <input type="file" aria-label="Upload file" ref={fileRef} style={{ marginBottom: 12 }} />
           <button className="btn btn-primary" onClick={uploadFile} disabled={uploading} style={{ fontSize: 14 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
+            <Upload size={16} />
             {uploading ? "Indexing..." : "Upload & Index"}
           </button>
         </div>
@@ -235,10 +229,7 @@ export default function RagPage() {
         </div>
         {docs.length === 0 ? (
           <div className="empty-state">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ marginBottom: 12, opacity: 0.4 }}>
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
+            <FileText size={40} strokeWidth={1.5} style={{ marginBottom: 12, opacity: 0.4 }} />
             <div>No documents indexed yet</div>
             <div style={{ fontSize: "var(--text-sm)", marginTop: 4 }}>Upload a file or paste text above to get started.</div>
           </div>
@@ -250,10 +241,7 @@ export default function RagPage() {
                 padding: "10px 14px", background: "var(--surface-2)", borderRadius: 8,
               }}>
                 <div className="min-w-0" style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: "1 1 auto" }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                  </svg>
+                  <FileText size={18} strokeWidth={2} />
                   <div className="min-w-0" style={{ minWidth: 0 }}>
                     <span className="break-all" style={{ fontWeight: 600, fontSize: 14, wordBreak: "break-word" }}>{d.filename}</span>
                     <span style={{ fontSize: 12, color: "var(--text-muted)", marginLeft: 8 }}>
@@ -262,10 +250,7 @@ export default function RagPage() {
                   </div>
                 </div>
                 <button className="btn btn-ghost btn-sm" onClick={() => deleteDoc(d.id)} style={{ flexShrink: 0 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg>
+                  <Trash2 size={14} />
                   Delete
                 </button>
               </div>

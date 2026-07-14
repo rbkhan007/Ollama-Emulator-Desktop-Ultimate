@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, memo } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { API_BASE } from "@/lib/config";
 
@@ -9,7 +9,7 @@ interface BuyButtonProps {
   label: string;
 }
 
-export default function BuyButton({ plan, label }: BuyButtonProps) {
+export default memo(function BuyButton({ plan, label }: BuyButtonProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -60,4 +60,4 @@ export default function BuyButton({ plan, label }: BuyButtonProps) {
       {error && <p role="alert" style={{ color: "var(--accent-2)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-small)", marginTop: 8 }}>{error}</p>}
     </>
   );
-}
+});

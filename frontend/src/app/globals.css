@@ -219,7 +219,9 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
+  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
@@ -242,7 +244,7 @@ a { color: inherit; text-decoration: none; }
   min-height: var(--click-target);
   min-width: var(--click-target);
   touch-action: manipulation;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -304,7 +306,8 @@ a { color: inherit; text-decoration: none; }
   padding: var(--space-lg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  contain: content;
 }
 .card:hover {
   border-color: rgba(13,148,136,0.2);
@@ -331,6 +334,9 @@ a { color: inherit; text-decoration: none; }
   box-shadow: var(--shadow-glow);
   transform: translateY(-2px);
 }
+
+/* Lazy content below fold — speeds up initial paint */
+.lazy-section { content-visibility: auto; contain-intrinsic-size: 500px; }
 
 /* ===========================
    FORMS

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useCallback } from "react";
+import React, { memo } from "react";
 import ReactFlow, {
   Node,
   Edge,
@@ -11,12 +11,86 @@ import ReactFlow, {
   useEdgesState,
   MarkerType,
   NodeProps,
+  ConnectionLineComponent,
+  EdgeProps,
+  BaseEdge,
+  getBezierPath,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
+/* ─── Custom Connection Line (while dragging) ─── */
+const ConnectionLine: ConnectionLineComponent = ({ fromX, fromY, toX, toY }) => {
+  const path = `M${fromX},${fromY} C ${fromX} ${(fromY + toY) / 2} ${toX} ${(fromY + toY) / 2} ${toX},${toY}`;
+  return (
+    <g>
+      <path fill="none" stroke="var(--accent)" strokeWidth={2} className="animated" d={path} />
+      <circle cx={toX} cy={toY} fill="var(--accent)" r={4} stroke="#fff" strokeWidth={1.5} />
+    </g>
+  );
+};
+
+/* ─── Custom Edge Component ─── */
+const CustomEdge = memo(function CustomEdge({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style,
+  markerEnd,
+  label,
+  animated,
+}: EdgeProps) {
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <g>
+      <BaseEdge id={id} path={edgePath} style={style} markerEnd={markerEnd} />
+      {animated && (
+        <path
+          fill="none"
+          stroke={(style as React.CSSProperties)?.stroke || "var(--accent)"}
+          strokeWidth={2}
+          strokeDasharray="4 4"
+          className="animated"
+          d={edgePath}
+          style={{ animation: "react-flow-edge-dash 1s linear infinite" }}
+        />
+      )}
+      {label && (
+        <text
+          x={labelX}
+          y={labelY}
+          fill="var(--text-muted)"
+          fontSize={11}
+          fontWeight={500}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          style={{ pointerEvents: "none" }}
+        >
+          {label}
+        </text>
+      )}
+    </g>
+  );
+});
+
+const edgeTypes = {
+  custom: CustomEdge,
+};
+
 /* ─── Custom Node Components ─── */
 
-function GatewayNode({ data }: NodeProps) {
+const GatewayNode = memo(function GatewayNode({ data }: NodeProps) {
   return (
     <div style={{
       padding: "12px 20px",
@@ -30,9 +104,9 @@ function GatewayNode({ data }: NodeProps) {
       {data.sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{data.sub}</div>}
     </div>
   );
-}
+});
 
-function MiddlewareNode({ data }: NodeProps) {
+const MiddlewareNode = memo(function MiddlewareNode({ data }: NodeProps) {
   return (
     <div style={{
       padding: "12px 20px",
@@ -46,9 +120,9 @@ function MiddlewareNode({ data }: NodeProps) {
       {data.sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{data.sub}</div>}
     </div>
   );
-}
+});
 
-function ProviderNode({ data }: NodeProps) {
+const ProviderNode = memo(function ProviderNode({ data }: NodeProps) {
   const color = data.color || "var(--accent-2)";
   return (
     <div style={{
@@ -63,9 +137,9 @@ function ProviderNode({ data }: NodeProps) {
       {data.sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{data.sub}</div>}
     </div>
   );
-}
+});
 
-function StorageNode({ data }: NodeProps) {
+const StorageNode = memo(function StorageNode({ data }: NodeProps) {
   return (
     <div style={{
       padding: "12px 20px",
@@ -79,9 +153,9 @@ function StorageNode({ data }: NodeProps) {
       {data.sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{data.sub}</div>}
     </div>
   );
-}
+});
 
-function ClientNode({ data }: NodeProps) {
+const ClientNode = memo(function ClientNode({ data }: NodeProps) {
   return (
     <div style={{
       padding: "12px 20px",
@@ -95,7 +169,7 @@ function ClientNode({ data }: NodeProps) {
       {data.sub && <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>{data.sub}</div>}
     </div>
   );
-}
+});
 
 const nodeTypes = {
   gateway: GatewayNode,
@@ -122,52 +196,52 @@ const requestLifecycleNodes: Node[] = [
 ];
 
 const requestLifecycleEdges: Edge[] = [
-  { id: "e1", source: "client", target: "proxy", animated: true, style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e2", source: "proxy", target: "acl", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e3", source: "proxy", target: "router", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e4", source: "router", target: "openai", style: { stroke: "#10a37f" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e5", source: "router", target: "anthropic", style: { stroke: "#fd79a8" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e6", source: "router", target: "groq", style: { stroke: "#fdcb6e" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e7", source: "router", target: "deepseek", style: { stroke: "#4D6BFE" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e8", source: "router", target: "gemini", style: { stroke: "#3186FF" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e9", source: "openai", target: "stream", style: { stroke: "#10a37f" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e10", source: "anthropic", target: "stream", style: { stroke: "#fd79a8" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e11", source: "groq", target: "stream", style: { stroke: "#fdcb6e" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e12", source: "deepseek", target: "stream", style: { stroke: "#4D6BFE" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e13", source: "gemini", target: "stream", style: { stroke: "#3186FF" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "e14", source: "stream", target: "client", animated: true, style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "SSE Stream" },
-  { id: "e15", source: "proxy", target: "memory", style: { stroke: "var(--accent-4)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Auto-save" },
+  { id: "e1", type: "custom", source: "client", target: "proxy", animated: true, style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e2", type: "custom", source: "proxy", target: "acl", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Auth check" },
+  { id: "e3", type: "custom", source: "acl", target: "router", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Allow" },
+  { id: "e4", type: "custom", source: "router", target: "openai", style: { stroke: "#10a37f" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e5", type: "custom", source: "router", target: "anthropic", style: { stroke: "#fd79a8" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e6", type: "custom", source: "router", target: "groq", style: { stroke: "#fdcb6e" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e7", type: "custom", source: "router", target: "deepseek", style: { stroke: "#4D6BFE" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e8", type: "custom", source: "router", target: "gemini", style: { stroke: "#3186FF" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e9", type: "custom", source: "openai", target: "stream", style: { stroke: "#10a37f" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e10", type: "custom", source: "anthropic", target: "stream", style: { stroke: "#fd79a8" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e11", type: "custom", source: "groq", target: "stream", style: { stroke: "#fdcb6e" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e12", type: "custom", source: "deepseek", target: "stream", style: { stroke: "#4D6BFE" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e13", type: "custom", source: "gemini", target: "stream", style: { stroke: "#3186FF" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "e14", type: "custom", source: "stream", target: "client", animated: true, style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "SSE Stream" },
+  { id: "e15", type: "custom", source: "proxy", target: "memory", style: { stroke: "var(--accent-4)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Auto-save" },
 ];
 
 /* ─── RAG Pipeline Flow ─── */
 
 const ragPipelineNodes: Node[] = [
-  { id: "upload", type: "client", position: { x: 0, y: 200 }, data: { label: "Document Upload", sub: "PDF / TXT / CSV" } },
-  { id: "chunk", type: "gateway", position: { x: 220, y: 200 }, data: { label: "Chunking", sub: "Split into passages" } },
-  { id: "embed", type: "gateway", position: { x: 440, y: 200 }, data: { label: "Embedding", sub: "Vector representation" } },
-  { id: "pgvector", type: "storage", position: { x: 660, y: 140 }, data: { label: "pgvector Index", sub: "Cosine similarity" } },
-  { id: "pgtrgm", type: "storage", position: { x: 660, y: 260 }, data: { label: "pg_trgm Index", sub: "Fuzzy keyword match" } },
-  { id: "query", type: "client", position: { x: 0, y: 40 }, data: { label: "User Query", sub: "Natural language" } },
-  { id: "semantic", type: "provider", position: { x: 220, y: 40 }, data: { label: "Semantic Search", sub: "Vector cosine sim", color: "var(--accent-2)" } },
-  { id: "keyword", type: "provider", position: { x: 220, y: 120 }, data: { label: "Keyword Search", sub: "pg_trgm fuzzy", color: "var(--accent-3)" } },
-  { id: "merge", type: "gateway", position: { x: 440, y: 80 }, data: { label: "Merge & Rerank", sub: "Cross-encoder" } },
-  { id: "context", type: "provider", position: { x: 660, y: 40 }, data: { label: "LLM Context", sub: "Injection", color: "var(--accent)" } },
+  { id: "upload", type: "client", position: { x: 0, y: 250 }, data: { label: "Document Upload", sub: "PDF / TXT / CSV" } },
+  { id: "chunk", type: "gateway", position: { x: 220, y: 250 }, data: { label: "Chunking", sub: "Split into passages" } },
+  { id: "embed", type: "gateway", position: { x: 440, y: 250 }, data: { label: "Embedding", sub: "Vector representation" } },
+  { id: "pgvector", type: "storage", position: { x: 660, y: 170 }, data: { label: "pgvector Index", sub: "Cosine similarity" } },
+  { id: "pgtrgm", type: "storage", position: { x: 660, y: 310 }, data: { label: "pg_trgm Index", sub: "Fuzzy keyword match" } },
+  { id: "query", type: "client", position: { x: 0, y: 30 }, data: { label: "User Query", sub: "Natural language" } },
+  { id: "semantic", type: "provider", position: { x: 220, y: 30 }, data: { label: "Semantic Search", sub: "Vector cosine sim", color: "var(--accent-2)" } },
+  { id: "keyword", type: "provider", position: { x: 220, y: 110 }, data: { label: "Keyword Search", sub: "pg_trgm fuzzy", color: "var(--accent-3)" } },
+  { id: "merge", type: "gateway", position: { x: 440, y: 70 }, data: { label: "Merge & Rerank", sub: "Cross-encoder" } },
+  { id: "context", type: "provider", position: { x: 660, y: 30 }, data: { label: "LLM Context", sub: "Injection", color: "var(--accent)" } },
   { id: "llm", type: "gateway", position: { x: 660, y: 0 }, data: { label: "LLM Provider", sub: "Generate response" } },
 ];
 
 const ragPipelineEdges: Edge[] = [
-  { id: "r1", source: "upload", target: "chunk", style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r2", source: "chunk", target: "embed", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r3", source: "embed", target: "pgvector", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r4", source: "embed", target: "pgtrgm", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r5", source: "query", target: "semantic", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r6", source: "query", target: "keyword", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r7", source: "semantic", target: "pgvector", style: { stroke: "var(--accent-2)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r8", source: "keyword", target: "pgtrgm", style: { stroke: "var(--accent-3)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r9", source: "semantic", target: "merge", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r10", source: "keyword", target: "merge", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r11", source: "merge", target: "context", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
-  { id: "r12", source: "context", target: "llm", animated: true, style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r1", type: "custom", source: "upload", target: "chunk", style: { stroke: "var(--green)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r2", type: "custom", source: "chunk", target: "embed", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r3", type: "custom", source: "embed", target: "pgvector", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Vector index" },
+  { id: "r4", type: "custom", source: "chunk", target: "pgtrgm", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Keyword index" },
+  { id: "r5", type: "custom", source: "query", target: "semantic", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r6", type: "custom", source: "query", target: "keyword", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r7", type: "custom", source: "semantic", target: "pgvector", style: { stroke: "var(--accent-2)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r8", type: "custom", source: "keyword", target: "pgtrgm", style: { stroke: "var(--accent-3)", strokeDasharray: "5 5" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r9", type: "custom", source: "pgvector", target: "merge", style: { stroke: "var(--accent-2)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Results" },
+  { id: "r10", type: "custom", source: "pgtrgm", target: "merge", style: { stroke: "var(--accent-3)" }, markerEnd: { type: MarkerType.ArrowClosed }, label: "Results" },
+  { id: "r11", type: "custom", source: "merge", target: "context", style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
+  { id: "r12", type: "custom", source: "context", target: "llm", animated: true, style: { stroke: "var(--accent)" }, markerEnd: { type: MarkerType.ArrowClosed } },
 ];
 
 /* ─── Exported Components ─── */
@@ -197,6 +271,8 @@ export function RequestLifecycleFlow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionLineComponent={ConnectionLine}
         defaultViewport={defaultViewport}
         fitView
         attributionPosition="bottom-left"
@@ -217,7 +293,7 @@ export function RagPipelineFlow() {
   return (
     <div style={{
       background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)",
-      overflow: "hidden", height: 380,
+      overflow: "hidden", height: 420,
     }}>
       <ReactFlow
         nodes={nodes}
@@ -225,6 +301,8 @@ export function RagPipelineFlow() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionLineComponent={ConnectionLine}
         defaultViewport={defaultViewport}
         fitView
         attributionPosition="bottom-left"

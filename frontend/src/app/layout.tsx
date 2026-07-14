@@ -110,6 +110,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <link rel="preconnect" href={BACKEND_URL} />
           <link rel="dns-prefetch" href={SITE_URL} />
           <link rel="preconnect" href={SITE_URL} />
+          <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+          <link rel="preconnect" href="https://va.vercel-scripts.com" />
+          <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+          <link rel="preconnect" href="https://www.googletagmanager.com" />
           <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
           <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
           <link rel="apple-touch-icon" href={`${ASSET_BASE}/apple-touch-icon.png`} />

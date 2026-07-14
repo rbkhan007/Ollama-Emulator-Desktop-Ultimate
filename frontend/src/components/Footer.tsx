@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { REPO_URL } from "@/lib/config";
 
 const SOCIAL_LINKS = [
@@ -11,7 +12,7 @@ const SOCIAL_LINKS = [
   { label: "Portfolio", href: "https://rhasan-dev-bd-com.vercel.app" },
 ];
 
-export default function Footer() {
+export default memo(function Footer() {
   return (
     <footer style={{
       borderTop: "1px solid var(--glass-border)",
@@ -90,4 +91,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+});
