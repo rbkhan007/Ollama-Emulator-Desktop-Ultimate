@@ -8,6 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { GradientOrbs, MeshGrid } from "@/components/Background";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import ScrollToTop from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import { DbProvider } from "@/lib/DbContext";
@@ -174,6 +175,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           />
         </head>
       <body>
+        <ScrollToTop />
         <ThemeProvider>
           <AuthProvider>
             <DbProvider>
