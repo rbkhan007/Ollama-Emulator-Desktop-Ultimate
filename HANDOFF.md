@@ -1,13 +1,37 @@
 # 🚀 OllamoMUI – Final Project Handoff & Status Report
 
-**As of:** 2026-07-13
-**Commit:** `HEAD` (includes QML visual pass, async refactor, local PostgreSQL bootstrap, import/export, and all major features)
+**As of:** 2026-07-14
+**Commit:** `309b802` (upgrade to @xyflow/react v12, animated all edges, xy theme)
 **Branch:** `main` (public)
 
-> **Accuracy note:** This handoff was audited against the actual repository on 2026-07-13.
+> **Accuracy note:** This handoff was audited against the actual repository on 2026-07-14.
 > Claims are split into **✅ Code verified**, **⚠️ Exists but not executed by us**, and
 > **❌ Removed / corrected** (previously asserted but false). Build/run verification of the
 > desktop EXE and live payment flow still requires a Windows machine and Render key setup.
+
+---
+
+## 🔄 Session 2 — 2026-07-14: ReactFlow v12 Upgrade & Animated Diagrams
+
+### Changes Made
+- **Upgraded `reactflow` v11 → `@xyflow/react` v12** — migrated all imports, types, and API calls.
+- **Applied xy theme** — all 4 diagrams now use the default `@xyflow/react` styling (CSS variables, built-in dark/light mode via `colorMode`).
+- **All edges animated** — `createEdge()` factory defaults `animated: true` on every edge across all diagrams; dashed edges keep their dash pattern but only non-dashed edges get the running dash animation.
+- **Type-safe imports** — resolved TypeScript JSX resolution issue with `import * as RF` + type-only imports for `Node`, `Edge`, `NodeProps`, `EdgeProps`, `ReactFlowProps`.
+- **Consistent panel styling** — extracted shared `flowContainerStyle`, `panelStyle`, `panelLabelStyle` from all 4 diagram components.
+- **Production build confirmed** — `npm run build` compiles clean, all 23 pages generated.
+
+### Files Modified
+| File | Change |
+|------|--------|
+| `frontend/src/app/architecture/reactflow-diagram.tsx` | Full rewrite: `@xyflow/react` imports, xy theme, animated edges, typed cast |
+| `frontend/package.json` | `reactflow` → `@xyflow/react` |
+| `frontend/package-lock.json` | Lockfile update |
+
+### Status
+- ✅ Type-check: 0 errors
+- ✅ Build: 0 errors, 23 pages generated
+- ✅ Deployed: `ollamomui.vercel.app` (production)
 
 ---
 
@@ -84,7 +108,7 @@ OllamoMUI is a **free‑to‑use, open‑core AI gateway** that:
 | **Memory monitor** | ✅ Code present & started | `backend/.../memory_monitor.py` instantiated at `main.py:2634` with default threshold **35%** (env‑overridable), interval 30s. Triggers `gc.collect()` + registered callbacks. **Not** a GGUF unloader (no GGUF exists). Prior draft's "45%" and "GGUF unload" were inaccurate. |
 | **Test suite** | ⚠️ CI runs it; we did not | `.github/workflows/test.yml` runs `python test_api.py --online` against a Postgres service container (not just `py_compile`). It requires a live DB **and** network access to free providers. **Pass counts are unverified** — do not cite "68 tests pass" without checking a CI run or running it locally. |
 | **Mobile APK** | ⚠️ Code present; build not run this session | `eas build` not executed here. |
-| **Web frontend** | ⚠️ Deployed on Vercel; not re‑audited this session | Marketing, demos, payment‑result pages exist; verify on site. |
+| **Web frontend** | ✅ Re‑deployed this session (2026-07-14) | Architecture diagrams upgraded to @xyflow/react v12, all edges animated. |
 | **Docker / Cloudflare / GitHub Actions CI** | ⚠️ Config present | Workflows exist (`test.yml`, `release.yml`); not re‑run this session. |
 
 ---
