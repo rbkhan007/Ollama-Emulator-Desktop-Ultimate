@@ -2738,6 +2738,15 @@ async def serve_spa(full_path: str):
     if full_path.startswith("api/") or full_path.startswith("v1/"):
         return JSONResponse({"error": "not found"}, status_code=404)
 
+    if full_path == "":
+        return {
+            "service": "OllamoMUI API",
+            "version": VERSION,
+            "status": "running",
+            "frontend": "https://ollamomui.vercel.app",
+            "docs": f"{os.environ.get('RENDER_EXTERNAL_URL', '')}/docs",
+        }
+
     base = os.path.join(FRONTEND_DIR, full_path)
     base_real = os.path.realpath(base)
     frontend_real = os.path.realpath(FRONTEND_DIR)
