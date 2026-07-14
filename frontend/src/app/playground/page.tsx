@@ -65,6 +65,7 @@ export default function PlaygroundPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initialLoadDone = useRef(false);
 
   const scrollBottom = useCallback(() => {
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
@@ -90,9 +91,12 @@ export default function PlaygroundPage() {
         if (parsed.presencePenalty) setPresencePenalty(parsed.presencePenalty);
       } catch {}
     }
+    initialLoadDone.current = true;
   }, []);
 
-  useEffect(() => { scrollBottom(); }, [messages]);
+  useEffect(() => {
+    if (initialLoadDone.current) scrollBottom();
+  }, [messages]);
 
   const checkScroll = useCallback(() => {
     const el = messagesRef.current;
@@ -326,175 +330,7 @@ export default function PlaygroundPage() {
 
   return (
     <div className="page-container" style={{ display: "flex", flexDirection: "column", height: "calc(100dvh - 140px)", minHeight: 0 }}>
-      {/* Header bar */}
-      <div className="stagger-1" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 8, position: "sticky", top: 0, zIndex: 10, background: "var(--bg)", paddingBottom: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div className="page-header-icon" style={{ background: "rgba(13,148,136,0.1)" }}>
-            <PageIcon type="chat" color="var(--accent-2)" />
-          </div>
-          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700 }}>AI Playground</h1>
-          <span style={{
-            fontSize: "var(--text-sm)", padding: "3px 10px", borderRadius: 8,
-            background: "var(--surface-2)", color: "var(--text-muted)",
-            display: "inline-flex", alignItems: "center", gap: 6
-          }}>
-            {provider ? <ProviderIcon name={provider} size={14} /> : null}
-            {provider || "Loading..."}
-          </span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <label style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
-            <input type="checkbox" checked={freeOnly} onChange={e => setFreeOnly(e.target.checked)} style={{ width: "auto" }} />
-            Free only
-          </label>
-          <select value={model} onChange={e => setModel(e.target.value)} style={{ flex: "1 1 180px", minWidth: 0, maxWidth: 240 }}>
-            {models.length === 0 && <option value="">No models loaded</option>}
-            {models.map(m => (
-              <option key={m.name} value={m.name}>{m.name} {m.free ? "Free" : ""}</option>
-            ))}
-          </select>
-          <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(s => !s)} title="Chat settings">
-            <Settings size={16} />
-            Settings
-          </button>
-          <button className="btn btn-ghost btn-sm" onClick={exportChat} title="Export conversation" disabled={!messages.length}>
-            <Download size={16} />
-            Export
-          </button>
-          <button className="btn btn-ghost btn-sm" onClick={newChat}>
-            <RefreshCw size={16} />
-            New Chat
-          </button>
-        </div>
-      </div>
-
-      {/* Settings panel */}
-      {showSettings && (
-        <div className="stagger-1" style={{
-          padding: 16, marginBottom: 12, borderRadius: 12,
-          background: "var(--surface)", border: "1px solid var(--border)",
-          display: "flex", flexDirection: "column", gap: 12,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Chat Settings</h2>
-            <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(false)}>Close</button>
-          </div>
-
-          <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-              System Prompt
-            </label>
-            <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-              {SYSTEM_PROMPT_PRESETS.map(preset => (
-                <button
-                  key={preset.name}
-                  onClick={() => { setSystemPrompt(preset.prompt); setSelectedPreset(preset.name); }}
-                  style={{
-                    padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
-                    background: selectedPreset === preset.name ? "var(--accent)" : "var(--surface-2)",
-                    color: selectedPreset === preset.name ? "white" : "var(--text-muted)",
-                    border: "1px solid var(--border)", cursor: "pointer", transition: "all 0.2s",
-                    minHeight: "var(--click-target)",
-                  }}
-                >
-                  {preset.name}
-                </button>
-              ))}
-            </div>
-            <textarea
-              value={systemPrompt}
-              onChange={e => { setSystemPrompt(e.target.value); setSelectedPreset(""); }}
-              rows={3}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)", fontFamily: "inherit", resize: "vertical" }}
-            />
-          </div>
-
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 180 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Temperature: {temperature.toFixed(1)}
-              </label>
-              <input
-                type="range" min={0} max={2} step={0.1} value={temperature}
-                onChange={e => setTemperature(parseFloat(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--accent)" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
-                <span>Precise (0)</span>
-                <span>Creative (2)</span>
-              </div>
-            </div>
-            <div style={{ flex: 1, minWidth: 180 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Top P: {topP.toFixed(2)}
-              </label>
-              <input
-                type="range" min={0} max={1} step={0.05} value={topP}
-                onChange={e => setTopP(parseFloat(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--accent)" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
-                <span>Focused (0)</span>
-                <span>Diverse (1)</span>
-              </div>
-            </div>
-            <div style={{ flex: 1, minWidth: 120 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Max Tokens
-              </label>
-              <input
-                type="number" min={64} max={8192} step={64} value={maxTokens}
-                onChange={e => setMaxTokens(Number(e.target.value) || 2048)}
-                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-            <div style={{ flex: 1, minWidth: 180 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Frequency Penalty: {frequencyPenalty.toFixed(1)}
-              </label>
-              <input
-                type="range" min={0} max={2} step={0.1} value={frequencyPenalty}
-                onChange={e => setFrequencyPenalty(parseFloat(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--accent)" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
-                <span>None (0)</span>
-                <span>High (2)</span>
-              </div>
-            </div>
-            <div style={{ flex: 1, minWidth: 180 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Presence Penalty: {presencePenalty.toFixed(1)}
-              </label>
-              <input
-                type="range" min={0} max={2} step={0.1} value={presencePenalty}
-                onChange={e => setPresencePenalty(parseFloat(e.target.value))}
-                style={{ width: "100%", accentColor: "var(--accent)" }}
-              />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
-                <span>None (0)</span>
-                <span>High (2)</span>
-              </div>
-            </div>
-            <div style={{ flex: 1, minWidth: 200 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
-                Stop Sequences (comma-separated)
-              </label>
-              <input
-                type="text" value={stopSequences}
-                onChange={e => setStopSequences(e.target.value)}
-                placeholder="e.g. END, STOP"
-                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Messages */}
+      {/* Messages container — header + settings live inside, scroll together */}
       <div id="playground-messages" className="stagger-2" ref={messagesRef}
         onScroll={checkScroll}
         style={{
@@ -502,6 +338,147 @@ export default function PlaygroundPage() {
           padding: 16, background: "var(--surface)", borderRadius: 12, border: "1px solid var(--border)",
           marginBottom: 12, position: "relative",
         }}>
+
+        {/* Header controls — inside messages container */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          flexWrap: "wrap", gap: 8, paddingBottom: 12, marginBottom: 4,
+          borderBottom: "1px solid var(--border)",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="page-header-icon" style={{ background: "rgba(13,148,136,0.1)" }}>
+              <PageIcon type="chat" color="var(--accent-2)" />
+            </div>
+            <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700 }}>AI Playground</h1>
+            <span style={{
+              fontSize: "var(--text-sm)", padding: "3px 10px", borderRadius: 8,
+              background: "var(--surface-2)", color: "var(--text-muted)",
+              display: "inline-flex", alignItems: "center", gap: 6
+            }}>
+              {provider ? <ProviderIcon name={provider} size={14} /> : null}
+              {provider || "Loading..."}
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <label style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+              <input type="checkbox" checked={freeOnly} onChange={e => setFreeOnly(e.target.checked)} style={{ width: "auto" }} />
+              Free only
+            </label>
+            <select value={model} onChange={e => setModel(e.target.value)} style={{ flex: "1 1 180px", minWidth: 0, maxWidth: 240 }}>
+              {models.length === 0 && <option value="">No models loaded</option>}
+              {models.map(m => (
+                <option key={m.name} value={m.name}>{m.name} {m.free ? "Free" : ""}</option>
+              ))}
+            </select>
+            <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(s => !s)} title="Chat settings">
+              <Settings size={16} />
+              Settings
+            </button>
+            <button className="btn btn-ghost btn-sm" onClick={exportChat} title="Export conversation" disabled={!messages.length}>
+              <Download size={16} />
+              Export
+            </button>
+            <button className="btn btn-ghost btn-sm" onClick={newChat}>
+              <RefreshCw size={16} />
+              New Chat
+            </button>
+          </div>
+        </div>
+
+        {/* Settings panel */}
+        {showSettings && (
+          <div style={{
+            padding: 16, marginBottom: 8, borderRadius: 12,
+            background: "var(--surface)", border: "1px solid var(--border)",
+            display: "flex", flexDirection: "column", gap: 12,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Chat Settings</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(false)}>Close</button>
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
+                System Prompt
+              </label>
+              <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+                {SYSTEM_PROMPT_PRESETS.map(preset => (
+                  <button key={preset.name}
+                    onClick={() => { setSystemPrompt(preset.prompt); setSelectedPreset(preset.name); }}
+                    style={{
+                      padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                      background: selectedPreset === preset.name ? "var(--accent)" : "var(--surface-2)",
+                      color: selectedPreset === preset.name ? "white" : "var(--text-muted)",
+                      border: "1px solid var(--border)", cursor: "pointer", transition: "all 0.2s",
+                      minHeight: "var(--click-target)",
+                    }}
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={systemPrompt}
+                onChange={e => { setSystemPrompt(e.target.value); setSelectedPreset(""); }}
+                rows={3}
+                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)", fontFamily: "inherit", resize: "vertical" }}
+              />
+            </div>
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Temperature: {temperature.toFixed(1)}</label>
+                <input type="range" min={0} max={2} step={0.1} value={temperature}
+                  onChange={e => setTemperature(parseFloat(e.target.value))}
+                  style={{ width: "100%", accentColor: "var(--accent)" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                  <span>Precise (0)</span><span>Creative (2)</span>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Top P: {topP.toFixed(2)}</label>
+                <input type="range" min={0} max={1} step={0.05} value={topP}
+                  onChange={e => setTopP(parseFloat(e.target.value))}
+                  style={{ width: "100%", accentColor: "var(--accent)" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                  <span>Focused (0)</span><span>Diverse (1)</span>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 120 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Max Tokens</label>
+                <input type="number" min={64} max={8192} step={64} value={maxTokens}
+                  onChange={e => setMaxTokens(Number(e.target.value) || 2048)}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }} />
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Frequency Penalty: {frequencyPenalty.toFixed(1)}</label>
+                <input type="range" min={0} max={2} step={0.1} value={frequencyPenalty}
+                  onChange={e => setFrequencyPenalty(parseFloat(e.target.value))}
+                  style={{ width: "100%", accentColor: "var(--accent)" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                  <span>None (0)</span><span>High (2)</span>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 180 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Presence Penalty: {presencePenalty.toFixed(1)}</label>
+                <input type="range" min={0} max={2} step={0.1} value={presencePenalty}
+                  onChange={e => setPresencePenalty(parseFloat(e.target.value))}
+                  style={{ width: "100%", accentColor: "var(--accent)" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                  <span>None (0)</span><span>High (2)</span>
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>Stop Sequences (comma-separated)</label>
+                <input type="text" value={stopSequences}
+                  onChange={e => setStopSequences(e.target.value)}
+                  placeholder="e.g. END, STOP"
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }} />
+              </div>
+            </div>
+          </div>
+        )}
+
         {showScrollTop && (
           <button onClick={scrollToTop} title="Scroll to top"
             style={{
@@ -607,7 +584,7 @@ export default function PlaygroundPage() {
       </div>
 
       {/* Input */}
-      <div className="stagger-3" style={{ display: "flex", gap: 8, flexWrap: "wrap", position: "sticky", bottom: 0, zIndex: 10, background: "var(--bg)", paddingTop: 8 }}>
+      <div className="stagger-3" style={{ display: "flex", gap: 8, flexWrap: "wrap", position: "sticky", bottom: 0, zIndex: 100, background: "var(--bg)", paddingTop: 8 }}>
         <textarea
           aria-label="Message"
           value={input}
