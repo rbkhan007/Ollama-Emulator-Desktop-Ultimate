@@ -256,6 +256,48 @@
   display: none;
 }
 
+/* DB connection status indicator */
+.dbStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  transition: all 0.2s;
+  min-height: 28px;
+}
+
+.dbConnected {
+  color: var(--green);
+  background: rgba(5, 150, 105, 0.1);
+}
+
+.dbDisconnected {
+  color: var(--red);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.dbDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dbConnected .dbDot {
+  background: var(--green);
+  box-shadow: 0 0 6px rgba(5, 150, 105, 0.5);
+}
+
+.dbDisconnected .dbDot {
+  background: var(--red);
+  box-shadow: 0 0 6px rgba(220, 38, 38, 0.5);
+}
+
 /* Medium screens: collapse inline links into More dropdown only */
 @media (max-width: 1280px) {
   .navLink {

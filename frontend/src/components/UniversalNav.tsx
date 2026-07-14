@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "@/lib/ThemeContext";
+import { useDb } from "@/lib/DbContext";
 import { REPO_URL } from "@/lib/config";
 import styles from "./UniversalNav.module.css";
 
@@ -38,6 +39,7 @@ const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
 export default function UniversalNav() {
   const pathname = usePathname();
   const { theme, toggle } = useTheme();
+  const { databaseConnected, loading } = useDb();
   const [isOpen, setIsOpen] = useState(false);
   const [ddOpen, setDdOpen] = useState(false);
   const ddRef = useRef<HTMLDivElement>(null);
@@ -190,6 +192,10 @@ export default function UniversalNav() {
             >
               <StarIcon /> Star
             </a>
+            <span className={`${styles.dbStatus} ${databaseConnected ? styles.dbConnected : styles.dbDisconnected}`}>
+              <span className={styles.dbDot} />
+              <span>{databaseConnected ? "DB" : "DB Offline"}</span>
+            </span>
           </div>
         </div>
 
@@ -209,6 +215,12 @@ export default function UniversalNav() {
           >
             <StarIcon /> Star
           </a>
+          <span
+            className={`${styles.dbStatus} ${databaseConnected ? styles.dbConnected : styles.dbDisconnected}`}
+            title={databaseConnected ? "Database connected" : "Database disconnected"}
+          >
+            <span className={styles.dbDot} />
+          </span>
           <button
             className={`${styles.burger} ${isOpen ? styles.burgerOpen : ""}`}
             onClick={() => setIsOpen((o) => !o)}
