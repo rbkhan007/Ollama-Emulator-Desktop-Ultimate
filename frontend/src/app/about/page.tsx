@@ -46,11 +46,11 @@ export default function About() {
   return (
     <div style={{ position: "relative", overflow: "hidden" }}>
       <JsonLd data={breadLd} />
-      <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 40px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
-        <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", fontWeight: 800, marginBottom: 16 }}>
+      <section style={{ padding: "clamp(64px, 6vw, 96px) 24px 64px", textAlign: "center", maxWidth: 900, margin: "0 auto" }}>
+        <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, marginBottom: 16, lineHeight: "var(--leading-heading)" }}>
           The story behind OllamoMUI
         </h1>
-        <p style={{ color: "var(--text-muted)", fontSize: "1.1rem", lineHeight: 1.6, maxWidth: 640, margin: "0 auto" }}>
+        <p style={{ color: "var(--text-sm-color)", fontSize: "var(--text-body)", lineHeight: "var(--leading-body)", maxWidth: 640, margin: "0 auto" }}>
           OllamoMUI started as a simple idea: <b>why pay $20/mo for ChatGPT when free models are just as good?</b>
           <br /><br />
           We built a lightweight API gateway that emulates Ollama, OpenAI, and Anthropic formats — routing every prompt
@@ -68,23 +68,23 @@ export default function About() {
       </section>
 
       {/* Stats */}
-      <section style={{ padding: "24px", maxWidth: 800, margin: "0 auto" }}>
+      <section style={{ padding: "64px 24px", maxWidth: 800, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16 }}>
           {stats.map((s) => (
             <div key={s.label} className="spidey-panel" style={{
-              textAlign: "center", padding: "20px 12px", borderRadius: 14,
+              textAlign: "center", padding: "20px 12px", borderRadius: 12,
               background: "var(--surface)", border: "1px solid var(--glass-border)",
             }}>
-              <div style={{ fontSize: "2rem", fontWeight: 800, color: "var(--accent)" }}>{s.value}</div>
-              <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{s.label}</div>
+              <div style={{ fontSize: "2rem", fontWeight: 700, color: "var(--accent)" }}>{s.value}</div>
+              <div style={{ fontSize: "var(--text-sm)", color: "var(--text-sm-color)" }}>{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* Timeline */}
-      <section style={{ padding: "40px 24px", maxWidth: 700, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "1.6rem", fontWeight: 800, marginBottom: 28 }}>
+      <section style={{ padding: "64px 24px", maxWidth: 700, margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 28 }}>
           Timeline
         </h2>
         <div style={{ position: "relative", paddingLeft: "clamp(20px, 4vw, 28px)" }}>
@@ -98,10 +98,10 @@ export default function About() {
                 position: "absolute", left: -24, top: 4, width: 12, height: 12,
                 borderRadius: "50%", background: "var(--accent)",
               }} />
-              <div style={{ fontWeight: 800, fontSize: 14, color: "var(--accent)", marginBottom: 4 }}>
+              <div style={{ fontWeight: 700, fontSize: "var(--text-sm)", color: "var(--accent)", marginBottom: 4 }}>
                 {t.year}
               </div>
-              <div style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6 }}>
+              <div style={{ color: "var(--text-sm-color)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-small)" }}>
                 {t.event}
               </div>
             </div>
@@ -110,9 +110,9 @@ export default function About() {
       </section>
 
       {/* What's Included */}
-      <section style={{ padding: "24px 24px 48px", maxWidth: 1000, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "1.6rem", fontWeight: 800, marginBottom: 24 }}>
-          What's included
+      <section style={{ padding: "64px 24px", maxWidth: 1000, margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 24 }}>
+          What&apos;s included
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 16 }}>
           {[
@@ -122,12 +122,15 @@ export default function About() {
             { title: "Frontend (Next.js)", items: ["Marketing site with pricing", "Public playground demo", "RAG & memory demo pages", "Payment result pages", "SEO-optimized pages"] },
           ].map((section) => (
             <div key={section.title} className="spidey-panel" style={{
-              padding: 20, borderRadius: 14, background: "var(--surface)", border: "1px solid var(--glass-border)",
+              padding: 20, borderRadius: 16, background: "var(--surface)", border: "1px solid var(--glass-border)",
             }}>
-              <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 10 }}>{section.title}</h3>
+              <h3 style={{
+                fontSize: "var(--text-h3)", fontWeight: 700, marginBottom: 10,
+                background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>{section.title}</h3>
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                 {section.items.map((item) => (
-                  <li key={item} style={{ padding: "3px 0", fontSize: 13, color: "var(--text-muted)" }}>
+                  <li key={item} style={{ padding: "3px 0", fontSize: "var(--text-sm)", color: "var(--text-sm-color)" }}>
                     ✓ {item}
                   </li>
                 ))}
@@ -138,15 +141,15 @@ export default function About() {
       </section>
 
       {/* Security Case Study */}
-      <section style={{ padding: "40px 24px", maxWidth: 800, margin: "0 auto" }}>
+      <section style={{ padding: "64px 24px", maxWidth: 800, margin: "0 auto" }}>
         <div style={{
-          background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
+          background: "var(--surface)", borderRadius: 24, border: "1px solid var(--glass-border)",
           padding: "32px 28px",
         }}>
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 12 }}>🔒 Security Philosophy</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7 }}>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>🔒 Security Philosophy</h2>
+          <p style={{ color: "var(--text-sm-color)", fontSize: "var(--text-sm)", lineHeight: 1.6 }}>
             When I built OllamoMUI, I started with a simple API wrapper. As the project grew, I realised that
-            security couldn't be an afterthought. I implemented <strong style={{ color: "var(--text)" }}>PBKDF2-HMAC-SHA256</strong> password
+            security couldn&apos;t be an afterthought. I implemented <strong style={{ color: "var(--text)" }}>PBKDF2-HMAC-SHA256</strong> password
             hashing with per-user salts, <strong style={{ color: "var(--text)" }}>Role-Based Access Control</strong> with fine-grained permissions,
             and <strong style={{ color: "var(--text)" }}>SSRF protection</strong> to block malicious requests. The desktop version bundles its own
             database, ensuring user data never leaves their machine. These security measures are not just
@@ -155,7 +158,7 @@ export default function About() {
           </p>
           <div style={{ marginTop: 16 }}>
             <Link href="/security" style={{
-              fontSize: 13, fontWeight: 600, color: "var(--accent)", textDecoration: "none",
+              fontSize: "var(--text-sm)", fontWeight: 600, color: "var(--accent)", textDecoration: "none",
             }}>
               View full security architecture →
             </Link>
@@ -164,16 +167,16 @@ export default function About() {
       </section>
 
       {/* Tech Stack */}
-      <section style={{ padding: "24px 24px 48px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-        <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 20 }}>
+      <section style={{ padding: "64px 24px", maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 20 }}>
           Built with
         </h2>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center" }}>
            {["Python 3.14", "FastAPI", "PySide6", "QML", "Next.js", "React Native", "Expo", "PostgreSQL", "pgvector", "Docker", "Nginx", "Vercel", "Render", "NeonDB", "Lemon Squeezy", "Cloudflare"].map((tech) => (
             <span key={tech} className="tech-tag" style={{
-              padding: "6px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600,
+              padding: "6px 14px", borderRadius: 24, fontSize: "var(--text-sm)", fontWeight: 600,
               background: "var(--surface)", border: "1px solid var(--glass-border)",
-              color: "var(--text-muted)",
+              color: "var(--text-sm-color)",
             }}>
               {tech}
             </span>
@@ -182,51 +185,51 @@ export default function About() {
       </section>
 
       {/* Hire Me */}
-      <section style={{ padding: "40px 24px", maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+      <section style={{ padding: "64px 24px", maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
         <div style={{
-          background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
+          background: "var(--surface)", borderRadius: 24, border: "1px solid var(--glass-border)",
           padding: "40px 32px",
         }}>
-          <h2 style={{ fontSize: "1.6rem", fontWeight: 800, marginBottom: 12 }}>Hire Me</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, marginBottom: 20, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Hire Me</h2>
+          <p style={{ color: "var(--text-sm-color)", fontSize: "var(--text-sm)", lineHeight: 1.6, marginBottom: 20, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
             I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
-            developer tools. If you have a project, an idea, or a problem to solve — let's talk.
+            developer tools. If you have a project, an idea, or a problem to solve — let&apos;s talk.
           </p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:rbkhan00009@gmail.com" style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
-              borderRadius: 10, background: "var(--gradient-1)", color: "#fff",
-              textDecoration: "none", fontWeight: 700, fontSize: 13,
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "12px 24px",
+              borderRadius: 12, background: "var(--gradient-1)", color: "#fff",
+              textDecoration: "none", fontWeight: 700, fontSize: "var(--text-sm)",
             }}>
               Email me
             </a>
             <a href="https://www.freelancer.com/u/Rakibul0007" target="_blank" rel="noopener noreferrer" style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
-              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "12px 24px",
+              borderRadius: 12, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
             }}>
               Freelancer
             </a>
             <a href="https://wa.me/8801774471120" target="_blank" rel="noopener noreferrer" style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
-              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "12px 24px",
+              borderRadius: 12, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
             }}>
               WhatsApp
             </a>
             <Link href="/resume" style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "10px 20px",
-              borderRadius: 10, background: "var(--surface)", color: "var(--text)",
-              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: 13,
+              display: "inline-flex", alignItems: "center", gap: 6, padding: "12px 24px",
+              borderRadius: 12, background: "var(--surface)", color: "var(--text)",
+              border: "1px solid var(--glass-border)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
             }}>
               Resume
             </Link>
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
               display: "inline-flex", alignItems: "center", gap: 6,
-              padding: "10px 20px", borderRadius: 10,
+              padding: "12px 24px", borderRadius: 12,
               background: "var(--surface)", color: "var(--text)",
               border: "1px solid var(--glass-border)",
-              textDecoration: "none", fontWeight: 600, fontSize: 13,
+              textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
             }}>
               GitHub
             </a>

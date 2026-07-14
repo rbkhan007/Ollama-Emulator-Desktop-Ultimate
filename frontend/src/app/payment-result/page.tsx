@@ -12,11 +12,11 @@ function PaymentResultInner() {
   const message = params.get("message") || "";
 
   return (
-    <main style={{ maxWidth: 600, margin: "0 auto", padding: "clamp(32px, 6vw, 48px) clamp(16px, 4vw, 24px)", textAlign: "center" }}>
+    <main style={{ maxWidth: "var(--text-max)", margin: "0 auto", padding: "96px clamp(16px, 4vw, 24px)", textAlign: "center" }}>
       {status === "success" && (
         <>
           <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 8 }}>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, lineHeight: "var(--leading-heading)", marginBottom: 8 }}>
             Payment Successful!
           </h1>
           <p style={{ color: "var(--text-muted)", marginBottom: 16 }}>
@@ -27,17 +27,17 @@ function PaymentResultInner() {
             background: "var(--surface)", border: "1px solid var(--glass-border)",
             borderRadius: 12, padding: 20, marginBottom: 20, textAlign: "left",
           }}>
-            <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+            <p style={{ fontSize: "var(--text-sm)", color: "var(--text-sm-color)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
               Your License Key
             </p>
             <pre style={{
-              fontFamily: "var(--font-mono, monospace)", fontSize: 14,
+              fontFamily: "var(--font-mono, monospace)", fontSize: "var(--text-sm)",
               color: "var(--accent-2)", wordBreak: "break-all", whiteSpace: "pre-wrap",
-              margin: 0, lineHeight: 1.5,
+              margin: 0, lineHeight: "var(--leading-small)",
             }}>{key}</pre>
           </div>
 
-          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 24, lineHeight: 1.6 }}>
+          <p style={{ fontSize: "var(--text-sm)", color: "var(--text-sm-color)", marginBottom: 24, lineHeight: "var(--leading-small)" }}>
             Copy this key and paste it into the activation screen of the EXE or mobile app.
             We&apos;ve also emailed it to you.
           </p>
@@ -47,7 +47,7 @@ function PaymentResultInner() {
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "12px 24px", borderRadius: 10,
               background: "var(--gradient-1)", color: "white", textDecoration: "none",
-              fontWeight: 700, fontSize: 15,
+              fontWeight: 700, fontSize: "var(--text-body)",
             }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -60,7 +60,7 @@ function PaymentResultInner() {
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "12px 24px", borderRadius: 10,
               background: "var(--surface)", color: "var(--text)", textDecoration: "none",
-              fontWeight: 600, fontSize: 15, border: "1px solid var(--glass-border)",
+              fontWeight: 600, fontSize: "var(--text-body)", border: "1px solid var(--glass-border)",
             }}>
               Try Web Demo
             </Link>
@@ -71,7 +71,7 @@ function PaymentResultInner() {
       {status === "fail" && (
         <>
           <div style={{ fontSize: 64, marginBottom: 16 }}>❌</div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 8 }}>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, lineHeight: "var(--leading-heading)", marginBottom: 8 }}>
             Payment Failed
           </h1>
           <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>
@@ -80,7 +80,7 @@ function PaymentResultInner() {
           <Link href="/pricing" style={{
             display: "inline-block", padding: "12px 24px", borderRadius: 10,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
-            fontWeight: 700, fontSize: 15,
+            fontWeight: 700, fontSize: "var(--text-body)",
           }}>
             Back to Pricing
           </Link>
@@ -90,7 +90,7 @@ function PaymentResultInner() {
       {status === "cancel" && (
         <>
           <div style={{ fontSize: 64, marginBottom: 16 }}>⚠️</div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 8 }}>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, lineHeight: "var(--leading-heading)", marginBottom: 8 }}>
             Payment Cancelled
           </h1>
           <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>
@@ -100,14 +100,14 @@ function PaymentResultInner() {
             <Link href="/pricing" style={{
               display: "inline-block", padding: "12px 24px", borderRadius: 10,
               background: "var(--gradient-1)", color: "white", textDecoration: "none",
-              fontWeight: 700, fontSize: 15,
+              fontWeight: 700, fontSize: "var(--text-body)",
             }}>
               Back to Pricing
             </Link>
             <Link href="/playground" style={{
               display: "inline-block", padding: "12px 24px", borderRadius: 10,
               background: "var(--surface)", color: "var(--text)", textDecoration: "none",
-              fontWeight: 600, fontSize: 15, border: "1px solid var(--glass-border)",
+              fontWeight: 600, fontSize: "var(--text-body)", border: "1px solid var(--glass-border)",
             }}>
               Try Free Demo
             </Link>
@@ -118,7 +118,7 @@ function PaymentResultInner() {
       {(!status || status === "error") && (
         <>
           <div style={{ fontSize: 64, marginBottom: 16 }}>🤷</div>
-          <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 8 }}>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, lineHeight: "var(--leading-heading)", marginBottom: 8 }}>
             Something Went Wrong
           </h1>
           <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>
@@ -127,7 +127,7 @@ function PaymentResultInner() {
           <Link href="/pricing" style={{
             display: "inline-block", padding: "12px 24px", borderRadius: 10,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
-            fontWeight: 700, fontSize: 15,
+            fontWeight: 700, fontSize: "var(--text-body)",
           }}>
             Back to Pricing
           </Link>

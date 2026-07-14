@@ -49,20 +49,20 @@ export default function ResumePage() {
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
         <div>
-          <h1 style={{ fontSize: "2rem", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>Rhasan@dev</h1>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, margin: 0, letterSpacing: "-0.02em" }}>Rhasan@dev</h1>
           <p style={{ color: "var(--text-muted)", fontSize: "1rem", margin: "4px 0 0" }}>
             Full-Stack Developer · AI/LLM · Cross-Platform
           </p>
         </div>
         <div className="no-print" style={{ display: "flex", gap: 10 }}>
           <a href="mailto:rbkhan00009@gmail.com" style={{
-            padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            padding: "12px 24px", borderRadius: 8, fontSize: 13, fontWeight: 600,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
           }}>
             Email Me
           </a>
           <a href={`${REPO_URL}/raw/main/resources/CV_Rakibul_Hasan.md`} target="_blank" rel="noopener noreferrer" style={{
-            padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            padding: "12px 24px", borderRadius: 8, fontSize: 13, fontWeight: 600,
             background: "var(--surface)", color: "var(--text)", textDecoration: "none",
             border: "1px solid var(--glass-border)",
           }}>
@@ -73,7 +73,7 @@ export default function ResumePage() {
       </div>
 
       <section style={{ marginBottom: 36 }}>
-        <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>
+        <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6, margin: 0 }}>
           I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
           developer tools. I care about security, performance, and user experience at every layer of the
           stack — from database schema design to CSS animations. Available for remote roles.
@@ -81,19 +81,19 @@ export default function ResumePage() {
       </section>
 
       <section style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Skills</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Skills</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 14 }}>
           {skills.map((group) => (
             <div key={group.category} style={{
               background: "var(--surface)", borderRadius: 12, border: "1px solid var(--glass-border)", padding: 16,
             }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: "var(--accent)", margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+              <h3 style={{ fontSize: "var(--text-h3)", background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700, margin: "0 0 8px", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                 {group.category}
               </h3>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                 {group.items.map((item) => (
                   <span key={item} style={{
-                    fontSize: 12, padding: "3px 10px", borderRadius: 6,
+                    fontSize: 12, padding: "3px 10px", borderRadius: 8,
                     background: "rgba(108,92,231,0.08)", color: "var(--text-muted)", fontWeight: 500,
                   }}>
                     {item}
@@ -106,12 +106,12 @@ export default function ResumePage() {
       </section>
 
       <section style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Featured Project</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Featured Project</h2>
         <div style={{
           background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)", padding: 24,
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 8 }}>
-            <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>OllamoMUI</h3>
+            <h3 style={{ fontSize: "var(--text-h3)", background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700, margin: 0 }}>OllamoMUI</h3>
             <div className="no-print" style={{ display: "flex", gap: 10 }}>
               <a href="https://ollamomui.vercel.app" target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>Live Site</a>
               <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 600, textDecoration: "none" }}>Source</a>
@@ -122,7 +122,7 @@ export default function ResumePage() {
             persistent memory system, cross-platform desktop (PySide6) and mobile (React Native) clients.
             Enterprise-grade security with 4-pillar architecture (PBKDF2, RBAC, SSRF protection, audit logging).
           </p>
-          <ul style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8, margin: "0 0 12px", paddingLeft: 18 }}>
+          <ul style={{ color: "var(--text-muted)", fontSize: 13, lineHeight: 1.6, margin: "0 0 12px", paddingLeft: 18 }}>
             <li>FastAPI backend with middleware chain (auth, rate limiting, RAG context fetch, memory injection)</li>
             <li>Next.js 15 frontend with SSR/SSG, 23 static pages, SEO structured data, PWA support</li>
             <li>PostgreSQL + pgvector for RAG and pg_trgm for keyword search with cross-encoder reranking</li>
@@ -133,7 +133,7 @@ export default function ResumePage() {
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {["FastAPI", "Next.js", "TypeScript", "React Native", "PySide6", "PostgreSQL", "pgvector", "Docker"].map((tech) => (
               <span key={tech} style={{
-                fontSize: 12, padding: "3px 10px", borderRadius: 6,
+                fontSize: 12, padding: "3px 10px", borderRadius: 8,
                 background: "rgba(0,206,201,0.08)", color: "var(--accent-2)", fontWeight: 500,
               }}>
                 {tech}
@@ -144,7 +144,7 @@ export default function ResumePage() {
       </section>
 
       <section style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Education</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Education</h2>
         <div style={{
           background: "var(--surface)", borderRadius: 12, border: "1px solid var(--glass-border)", padding: 16,
         }}>
@@ -154,7 +154,7 @@ export default function ResumePage() {
       </section>
 
       <section className="no-print" style={{ marginBottom: 36 }}>
-        <h2 style={{ fontSize: "1.2rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Portfolio Deep Dives</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)" }}>Portfolio Deep Dives</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
           {[
             { href: "/architecture", label: "Architecture", desc: "Request lifecycle & RAG pipeline" },
@@ -164,7 +164,7 @@ export default function ResumePage() {
             { href: "/case-study", label: "Case Study", desc: "Cross-platform analysis" },
           ].map((link) => (
             <Link key={link.href} href={link.href} style={{
-              padding: "14px 16px", borderRadius: 10, textDecoration: "none",
+              padding: "14px 16px", borderRadius: 8, textDecoration: "none",
               background: "var(--surface)", border: "1px solid var(--glass-border)",
               transition: "all 0.2s",
             }}>

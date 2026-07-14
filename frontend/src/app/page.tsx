@@ -1,7 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
-import ArchitectureHero from "@/components/ArchitectureHero";
+import InteractiveWireframe from "@/components/InteractiveWireframe";
+
 import {
   REPO_URL,
   RELEASES_URL,
@@ -23,13 +24,13 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "#6c5ce7" },
+  { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "var(--accent)" },
   { icon: "models", title: "Models Browser", desc: "Browse and search all available models across connected providers. Filter by free or paid, search by name.", color: "#6366f1" },
   { icon: "brain", title: "RAG Knowledge Base", desc: "Upload docs or paste text and get answers grounded in your own data via pgvector cosine similarity.", color: "#fd79a8" },
-  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to PostgreSQL. Facts, sessions & context survive restarts.", color: "#00cec9" },
+  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to PostgreSQL. Facts, sessions & context survive restarts.", color: "var(--accent-2)" },
   { icon: "infinity", title: "Multi-Provider", desc: "OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, Mistral, Together — one box.", color: "#fdcb6e" },
   { icon: "lightning", title: "Zero Config", desc: "One Python file. Run it, paste a free API key, and point Claude Code or OpenCode at it.", color: "#e17055" },
-  { icon: "terminal", title: "Full Compatibility", desc: "Ollama, OpenAI, and Anthropic API formats — works with every major AI coding tool.", color: "#00b894" },
+  { icon: "terminal", title: "Full Compatibility", desc: "Ollama, OpenAI, and Anthropic API formats — works with every major AI coding tool.", color: "var(--green)" },
 ];
 
 const clients = ["Claude Code", "OpenCode", "Cursor", "Continue.dev", "Ollama CLI", "OpenAI SDK"];
@@ -101,21 +102,21 @@ export default function Home() {
       <JsonLd data={breadcrumbLd} />
       {/* Hero */}
       <section style={{
-        padding: "clamp(48px, 8vw, 88px) 24px 64px", textAlign: "center",
+        padding: "var(--space-4xl) 24px var(--space-3xl)", textAlign: "center",
       }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
-          padding: "8px 20px", borderRadius: 50,
+          padding: "8px 24px", borderRadius: 50,
           background: "rgba(108,92,231,0.08)", border: "1px solid rgba(108,92,231,0.15)",
-          fontSize: 13, color: "var(--text-muted)", marginBottom: 28, fontWeight: 500,
+          fontSize: "var(--text-sm)", color: "var(--text-muted)", marginBottom: 24, fontWeight: 500,
         }}>
-          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#00b894", boxShadow: "0 0 10px #00b894" }} />
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green)", boxShadow: "0 0 10px var(--green)" }} />
           v1.0.4 &middot; Free &amp; Open Source &middot; 100% Local
         </div>
 
         <h1 className="spidey-title" style={{
-          fontWeight: 800, lineHeight: 1.08, letterSpacing: "-0.03em",
-          fontSize: "clamp(2.4rem, 6vw, 4.2rem)", margin: "0 auto 20px", maxWidth: 900,
+          fontWeight: 700, lineHeight: "var(--leading-heading)", letterSpacing: "-0.03em",
+          fontSize: "var(--text-h1)", margin: "0 auto 24px", maxWidth: "var(--text-max)",
         }}>
           <span style={{
             background: "linear-gradient(135deg, var(--text) 0%, #6c5ce7 45%, #00cec9 75%, var(--text) 100%)",
@@ -129,8 +130,8 @@ export default function Home() {
         </h1>
 
         <p style={{
-          maxWidth: 620, margin: "0 auto 36px", fontSize: "1.15rem",
-          color: "var(--text-muted)", lineHeight: 1.6,
+          maxWidth: 620, margin: "0 auto 48px", fontSize: "var(--text-body)",
+          color: "var(--text-muted)", lineHeight: "var(--leading-body)",
         }}>
           OllamoMUI emulates the Ollama API and silently routes your prompts to real,
           <b style={{ color: "var(--text)" }}> 100% free</b> models — then gives you RAG, memory,
@@ -138,58 +139,53 @@ export default function Home() {
         </p>
 
         <div className="hero-cta" style={{
-          display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 14, minWidth: 0,
+          display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 16, minWidth: 0,
         }}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
-            padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
-            display: "inline-flex", alignItems: "center", gap: 8,
-            boxShadow: "0 6px 22px rgba(108,92,231,0.35)",
+            display: "inline-flex", alignItems: "center", gap: 8, minHeight: "var(--click-target)",
+            boxShadow: "0 6px 24px rgba(108,92,231,0.35)",
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z" /></svg>
             Star on GitHub
           </a>
           <a href={DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" style={{
-            padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--surface)", color: "var(--text)", textDecoration: "none",
-            border: "1px solid var(--glass-border)",
+            border: "1px solid var(--glass-border)", minHeight: "var(--click-target)",
             display: "inline-flex", alignItems: "center", gap: 8,
           }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
             Download for Windows
           </a>
           <a href={FREETIER_URL} target="_blank" rel="noopener noreferrer" style={{
-            padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,
-            background: "rgba(0,206,201,0.12)", color: "#00cec9", textDecoration: "none",
-            border: "1px solid rgba(0,206,201,0.3)",
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            background: "rgba(0,206,201,0.12)", color: "var(--accent-2)", textDecoration: "none",
+            border: "1px solid rgba(0,206,201,0.3)", minHeight: "var(--click-target)",
             display: "inline-flex", alignItems: "center", gap: 8,
           }}>
             🌐 Try Free Tier
           </a>
         </div>
-        <div style={{ fontSize: 13, color: "var(--text-muted)" }}>
+        <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
           or <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>browse all releases</a> &middot; macOS / Linux via <code style={{ fontFamily: "var(--font-mono)" }}>run.sh</code>
         </div>
 
-        <div style={{ position: "relative", maxWidth: 960, margin: "48px auto 0" }}>
-          <div className="spidey-panel" style={{ borderRadius: 22, overflow: "hidden", animation: "floatSlow 7s ease-in-out infinite" }}>
-            <ArchitectureHero />
-          </div>
-          <div className="spidey-burst" style={{ position: "absolute", top: -16, left: -8, width: 92, height: 92, fontSize: 12, transform: "rotate(-10deg)" }}>
-            FREE<br />LOCAL<br />AI
-          </div>
-        </div>
       </section>
+
+      {/* Interactive Wireframe */}
+      <InteractiveWireframe />
 
       {/* Works with */}
       <section style={{ padding: "0 24px 24px", textAlign: "center" }}>
-        <p style={{ fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 18 }}>
+        <p style={{ fontSize: "var(--text-sm)", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>
           Works with your favorite tools
         </p>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
           {clients.map((c) => (
             <li key={c} style={{
-              padding: "8px 16px", borderRadius: 10, fontSize: 14, fontWeight: 600,
+              padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 600,
               background: "var(--surface)", border: "1px solid var(--glass-border)", color: "var(--text-muted)",
             }}>
               {c}
@@ -199,15 +195,15 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: "56px 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
+      <section style={{ padding: "var(--space-3xl) 24px", maxWidth: 1100, margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 8 }}>
           Everything you need, nothing you pay for
         </h2>
-        <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 40, fontSize: "1.05rem" }}>
+        <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 48, fontSize: "var(--text-body)" }}>
           A complete local AI gateway — proxies, brains, and a dashboard in a single 1.4k-line server.
         </p>
         <div style={{
-          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 18,
+          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16,
         }}>
            {features.map((f) => (
                <div key={f.title} className="spidey-panel" style={{
@@ -221,50 +217,50 @@ export default function Home() {
                }}>
                  <FeatureGlyph type={f.icon} color={f.color} />
                </div>
-               <h3 style={{ margin: "0 0 8px", fontSize: "1.1rem", fontWeight: 700 }}>{f.title}</h3>
-               <p style={{ margin: 0, color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6 }}>{f.desc}</p>
+               <h3 style={{ margin: "0 0 8px", fontSize: "var(--text-h3)", fontWeight: 600, background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>{f.title}</h3>
+               <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-small)" }}>{f.desc}</p>
              </div>
            ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section style={{ padding: "24px 24px 56px", maxWidth: 1000, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 40 }}>
+      <section style={{ padding: "24px 24px var(--space-3xl)", maxWidth: 1000, margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 48 }}>
           Live in 60 seconds
         </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 20 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
            {steps.map((s) => (
               <div key={s.n} className="spidey-panel" style={{
                 padding: 24, borderRadius: 16, background: "var(--surface)",
                 border: "1px solid var(--glass-border)", textAlign: "center",
               }}>
                <div style={{
-                 width: 40, height: 40, borderRadius: "50%", margin: "0 auto 14px",
-                 background: "var(--gradient-1)", color: "white", fontWeight: 800, fontSize: 18,
+                 width: 40, height: 40, borderRadius: "50%", margin: "0 auto 16px",
+                 background: "var(--gradient-1)", color: "white", fontWeight: 700, fontSize: 18,
                  display: "flex", alignItems: "center", justifyContent: "center",
                }}>{s.n}</div>
-               <h3 style={{ margin: "0 0 8px", fontSize: "1.1rem", fontWeight: 700 }}>{s.title}</h3>
-               <p style={{ margin: 0, color: "var(--text-muted)", fontSize: 14, lineHeight: 1.6 }}>{s.desc}</p>
+               <h3 style={{ margin: "0 0 8px", fontSize: "var(--text-h3)", fontWeight: 600, background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>{s.title}</h3>
+               <p style={{ margin: 0, color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-small)" }}>{s.desc}</p>
              </div>
            ))}
         </div>
       </section>
 
       {/* Comparison — go viral */}
-      <section style={{ padding: "0 24px 56px", maxWidth: 1000, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 8 }}>
+      <section style={{ padding: "0 24px var(--space-3xl)", maxWidth: 1000, margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 8 }}>
           Why OllamoMUI wins
         </h2>
-        <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 28, fontSize: "1.05rem" }}>
+        <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 24, fontSize: "var(--text-body)" }}>
           The only option that is <b style={{ color: "var(--green)" }}>100% free</b> <i>and</i> gives you a coding-tool-ready API gateway.
         </p>
-        <div style={{ display: "grid", gap: 12 }}>
+        <div style={{ display: "grid", gap: 16 }}>
           {compares.map((c) => {
             const isUs = c.name === "OllamoMUI";
             return (
               <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
-                padding: "16px 22px", borderRadius: 14,
+                padding: "16px 24px", borderRadius: 16,
                 background: isUs ? "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.10))" : "var(--surface)",
                 border: isUs ? "1px solid rgba(108,92,231,0.35)" : "1px solid var(--glass-border)",
               }}>
@@ -272,7 +268,7 @@ export default function Home() {
                 <div>
                   <span className={`badge ${c.free === "Yes" ? "badge-green" : "badge-amber"}`}>{c.free === "Yes" ? "Free" : "Partial"}</span>
                 </div>
-                <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.5 }}>{c.note}</div>
+                <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-small)" }}>{c.note}</div>
               </div>
             );
           })}
@@ -280,25 +276,25 @@ export default function Home() {
       </section>
 
       {/* Free tier CTA */}
-      <section style={{ padding: "0 24px 72px", maxWidth: 900, margin: "0 auto" }}>
+      <section style={{ padding: "0 24px var(--space-3xl)", maxWidth: 900, margin: "0 auto" }}>
         <div style={{
-          padding: "40px 32px", borderRadius: 20, textAlign: "center",
+          padding: "48px 32px", borderRadius: 16, textAlign: "center",
           background: "linear-gradient(135deg, rgba(108,92,231,0.12), rgba(0,206,201,0.12))",
           border: "1px solid var(--glass-border)",
         }}>
           <div style={{ fontSize: 32, marginBottom: 8 }}>🌐</div>
-          <h2 style={{ margin: "0 0 12px", fontSize: "1.7rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+          <h2 style={{ margin: "0 0 16px", fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em" }}>
             Zero-setup Free Tier
           </h2>
-          <p style={{ margin: "0 auto 24px", maxWidth: 560, color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: 1.6 }}>
+          <p style={{ margin: "0 auto 24px", maxWidth: 560, color: "var(--text-muted)", fontSize: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
             Don&apos;t want to run anything? The hosted gateway gives you 10+ free models with one click.
             No install, no API key required to try.
           </p>
           <a href={FREETIER_URL} target="_blank" rel="noopener noreferrer" style={{
-            padding: "13px 26px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
-            display: "inline-flex", alignItems: "center", gap: 8,
-            boxShadow: "0 6px 22px rgba(108,92,231,0.35)",
+            display: "inline-flex", alignItems: "center", gap: 8, minHeight: "var(--click-target)",
+            boxShadow: "0 6px 24px rgba(108,92,231,0.35)",
           }}>
             Open Free Tier &rarr;
           </a>
@@ -306,27 +302,28 @@ export default function Home() {
       </section>
 
       {/* Hire Me CTA */}
-      <section style={{ padding: "0 24px 60px", maxWidth: 600, margin: "0 auto" }}>
+      <section style={{ padding: "0 24px var(--space-3xl)", maxWidth: 600, margin: "0 auto" }}>
         <div style={{
-          padding: "28px 24px", borderRadius: 16, textAlign: "center",
+          padding: "32px 24px", borderRadius: 16, textAlign: "center",
           background: "var(--surface)", border: "1px solid var(--glass-border)",
         }}>
-          <p style={{ margin: "0 0 14px", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6 }}>
+          <p style={{ margin: "0 0 16px", fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: "var(--leading-small)" }}>
             <strong style={{ color: "var(--text)" }}>I built this.</strong> Full-stack developer specializing in
             AI/LLM, cross-platform desktop/mobile, and developer tools. Available for remote roles.
           </p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/about" style={{
-              padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+              padding: "12px 24px", borderRadius: 12, fontSize: "var(--text-sm)", fontWeight: 700,
               background: "var(--gradient-1)", color: "white", textDecoration: "none",
-              display: "inline-flex", alignItems: "center", gap: 6,
+              display: "inline-flex", alignItems: "center", gap: 6, minHeight: "var(--click-target)",
             }}>
               View Portfolio &rarr;
             </Link>
             <a href="mailto:rbkhan00009@gmail.com" style={{
-              padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+              padding: "12px 24px", borderRadius: 12, fontSize: "var(--text-sm)", fontWeight: 600,
               background: "var(--surface)", color: "var(--text)", textDecoration: "none",
               border: "1px solid var(--glass-border)", display: "inline-flex", alignItems: "center", gap: 6,
+              minHeight: "var(--click-target)",
             }}>
               Contact Me
             </a>
@@ -335,25 +332,26 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section style={{ padding: "0 24px 80px", textAlign: "center" }}>
-        <h2 style={{ fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.02em", marginBottom: 12 }}>
+      <section style={{ padding: "0 24px var(--space-4xl)", textAlign: "center" }}>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 16 }}>
           Stop paying for AI. Run it free, locally.
         </h2>
-        <p style={{ color: "var(--text-muted)", marginBottom: 28, fontSize: "1.05rem" }}>
+        <p style={{ color: "var(--text-muted)", marginBottom: 24, fontSize: "var(--text-body)" }}>
           ⭐ Star the repo and share it — virality is the only price.
         </p>
-        <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{
-            padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--surface)", color: "var(--text)", textDecoration: "none",
             border: "1px solid var(--glass-border)", display: "inline-flex", alignItems: "center", gap: 8,
+            minHeight: "var(--click-target)",
           }}>
             ⭐ Star on GitHub
           </a>
           <Link href="/playground" style={{
-            padding: "13px 22px", borderRadius: 12, fontSize: 15, fontWeight: 700,
+            padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
-            display: "inline-flex", alignItems: "center", gap: 8,
+            display: "inline-flex", alignItems: "center", gap: 8, minHeight: "var(--click-target)",
           }}>
             Open the App &rarr;
           </Link>

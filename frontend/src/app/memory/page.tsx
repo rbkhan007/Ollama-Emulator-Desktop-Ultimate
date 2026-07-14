@@ -116,12 +116,12 @@ export default function MemoryPage() {
           <h1>Memory</h1>
           <p>Conversation history, stored facts, and session management</p>
           {!databaseConnected && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 6, fontSize: 12, color: "var(--red)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 8, fontSize: 12, color: "var(--red)" }}>
               PostgreSQL not connected — memory features are unavailable
             </div>
           )}
           {databaseConnected && schema && !schema.synced && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 6, fontSize: 12, color: "var(--accent-4)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 8, fontSize: 12, color: "var(--accent-4)" }}>
               Schema out of date (v{schema.db_version} vs v{schema.expected_version}) — run migration
             </div>
           )}
@@ -172,7 +172,7 @@ export default function MemoryPage() {
                   {r.role}
                 </span>
                 <span style={{ color: "var(--text-muted)", marginLeft: 8 }}>{r.model || ""}</span>
-                <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 11 }}>{r.created_at}</span>
+                <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 12 }}>{r.created_at}</span>
                 <div style={{ marginTop: 4, color: "var(--text)" }}>{r.content.slice(0, 200)}{r.content.length > 200 ? "..." : ""}</div>
               </div>
             ))}
@@ -183,7 +183,7 @@ export default function MemoryPage() {
       {/* Messages tab */}
       {tab === "messages" && (
         <div className="card stagger-3">
-          <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Conversation Messages ({messages.length})</h2>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Conversation Messages ({messages.length})</h2>
           {messages.length === 0 ? (
             <div className="empty-state">No messages yet. Start chatting in the Playground.</div>
           ) : (
@@ -193,8 +193,8 @@ export default function MemoryPage() {
                   <span style={{ color: m.role === "user" ? "var(--accent)" : "var(--green)", fontWeight: 600 }}>
                     {m.role}
                   </span>
-                  <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 11 }}>{m.model || ""}</span>
-                  <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 11 }}>{m.created_at || ""}</span>
+                  <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 12 }}>{m.model || ""}</span>
+                  <span style={{ color: "var(--text-muted)", marginLeft: 8, fontSize: 12 }}>{m.created_at || ""}</span>
                   <div style={{ marginTop: 4, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                     {m.content.slice(0, 300)}{m.content.length > 300 ? "..." : ""}
                   </div>
@@ -209,7 +209,7 @@ export default function MemoryPage() {
       {tab === "facts" && (
         <div>
           <div className="card stagger-3" style={{ marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Add Fact</h2>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Add Fact</h2>
             <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
               <input aria-label="Fact to remember" placeholder="Fact to remember..." value={factText} onChange={e => setFactText(e.target.value)} style={{ flex: "2 1 200px", minWidth: 0 }} />
               <input aria-label="Source" placeholder="Source (optional)" value={factSource} onChange={e => setFactSource(e.target.value)} style={{ flex: "1 1 140px", minWidth: 0 }} />
@@ -217,7 +217,7 @@ export default function MemoryPage() {
             </div>
           </div>
           <div className="card">
-            <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Stored Facts ({facts.length})</h2>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Stored Facts ({facts.length})</h2>
             {facts.length === 0 ? (
               <div className="empty-state">No facts stored yet. Add facts about user preferences or data.</div>
             ) : (
@@ -229,7 +229,7 @@ export default function MemoryPage() {
                 }}>
                   <div className="min-w-0" style={{ minWidth: 0, flex: "1 1 auto" }}>
                     <div className="break-all" style={{ fontWeight: 500, wordBreak: "break-word" }}>{f.fact}</div>
-                    <div style={{ fontSize: 11, color: "var(--text-muted)", overflowWrap: "anywhere" }}>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", overflowWrap: "anywhere" }}>
                       {f.source} &middot; {f.importance} &middot; {f.created_at}
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export default function MemoryPage() {
       {/* Sessions tab */}
       {tab === "sessions" && (
         <div className="card stagger-3">
-          <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Sessions ({sessions.length})</h2>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Sessions ({sessions.length})</h2>
           {sessions.length === 0 ? (
             <div className="empty-state">No sessions yet. Start a conversation to create one.</div>
           ) : (

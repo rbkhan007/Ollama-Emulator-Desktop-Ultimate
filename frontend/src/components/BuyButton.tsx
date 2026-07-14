@@ -45,17 +45,19 @@ export default function BuyButton({ plan, label }: BuyButtonProps) {
           textAlign: "center",
           background: "var(--gradient-1)",
           color: "#fff",
-          padding: "10px",
-          borderRadius: 8,
+          padding: "12px 24px",
+          minHeight: "var(--click-target)",
+          borderRadius: 12,
           border: "none",
           textDecoration: "none",
           fontWeight: 600,
+          fontSize: 14,
           cursor: loading ? "wait" : "pointer",
         }}
       >
         {loading ? "Redirecting…" : label}
       </button>
-      {error && <p style={{ color: "var(--accent-2)", fontSize: 13, marginTop: 8 }}>{error}</p>}
+      {error && <p style={{ color: "var(--accent-2)", fontSize: "var(--text-sm)", lineHeight: "var(--leading-small)", marginTop: 8 }}>{error}</p>}
     </>
   );
 }

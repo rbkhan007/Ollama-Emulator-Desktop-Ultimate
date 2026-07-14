@@ -65,7 +65,7 @@ export function SecurityShowcase() {
     <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
       {pillars.map((pillar) => (
         <div key={pillar.title} style={{
-          background: "var(--surface)", borderRadius: 20, border: "1px solid var(--glass-border)",
+          background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)",
           padding: 32, overflow: "hidden",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
@@ -75,17 +75,17 @@ export function SecurityShowcase() {
             }}>
               {ICONS[pillar.icon as keyof typeof ICONS]}
             </span>
-            <h2 style={{ fontSize: "1.2rem", fontWeight: 700, margin: 0, color: pillar.color }}>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, margin: 0, color: pillar.color }}>
               {pillar.title}
             </h2>
           </div>
-          <p style={{ color: "var(--text-muted)", fontSize: 14, lineHeight: 1.7, marginBottom: 20, maxWidth: 720 }}>
+          <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.6, marginBottom: 20, maxWidth: 720 }}>
             {pillar.summary}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{
               display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0,
-              fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em",
+              fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em",
               color: "var(--text-muted)", padding: "0 4px 8px 4px", borderBottom: "1px solid var(--glass-border)",
             }}>
               <span>Feature</span>
@@ -98,9 +98,9 @@ export function SecurityShowcase() {
                 padding: "10px 4px", borderRadius: 8,
                 background: "rgba(108,92,231,0.03)",
               }}>
-                <div style={{ fontWeight: 600, fontSize: 13 }}>{item.feature}</div>
-                <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{item.implementation}</div>
-                <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>{item.benefit}</div>
+                <div style={{ fontWeight: 600, fontSize: "var(--text-sm)" }}>{item.feature}</div>
+                <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: 1.4 }}>{item.implementation}</div>
+                <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", lineHeight: 1.4 }}>{item.benefit}</div>
               </div>
             ))}
           </div>

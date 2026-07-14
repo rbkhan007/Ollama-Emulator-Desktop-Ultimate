@@ -15,6 +15,12 @@ const SUGGESTS = [
   "Write a Python script to analyze CSV data",
   "Create a sequence diagram for a REST API call",
   "What are the best free LLMs available today?",
+  "Write a React component with TypeScript",
+  "Explain the CAP theorem with examples",
+  "Create a PostgreSQL query optimizer script",
+  "Design a microservices architecture diagram",
+  "Write unit tests for a REST API",
+  "Explain how transformers work in AI",
 ];
 
 const STORAGE_KEY = "ollamomui-playground";
@@ -47,6 +53,11 @@ export default function PlaygroundPage() {
   const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant. When asked to draw diagrams, use Mermaid markdown syntax. When asked to generate images, respond with a markdown image link.");
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2048);
+  const [topP, setTopP] = useState(1.0);
+  const [frequencyPenalty, setFrequencyPenalty] = useState(0);
+  const [presencePenalty, setPresencePenalty] = useState(0);
+  const [stopSequences, setStopSequences] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<HTMLDivElement>(null);
@@ -70,6 +81,9 @@ export default function PlaygroundPage() {
         if (parsed.systemPrompt) setSystemPrompt(parsed.systemPrompt);
         if (parsed.temperature) setTemperature(parsed.temperature);
         if (parsed.maxTokens) setMaxTokens(parsed.maxTokens);
+        if (parsed.topP) setTopP(parsed.topP);
+        if (parsed.frequencyPenalty) setFrequencyPenalty(parsed.frequencyPenalty);
+        if (parsed.presencePenalty) setPresencePenalty(parsed.presencePenalty);
       } catch {}
     }
   }, []);
@@ -97,7 +111,7 @@ export default function PlaygroundPage() {
 
   function saveToStorage(msgs: Msg[]) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages: msgs.slice(-50), systemPrompt, temperature, maxTokens }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ messages: msgs.slice(-50), systemPrompt, temperature, maxTokens, topP, frequencyPenalty, presencePenalty }));
     } catch {}
   }
 
@@ -106,6 +120,15 @@ export default function PlaygroundPage() {
     setInput("");
     localStorage.removeItem(STORAGE_KEY);
   }
+
+  const SYSTEM_PROMPT_PRESETS = [
+    { name: "Default", prompt: "You are a helpful AI assistant. When asked to draw diagrams, use Mermaid markdown syntax. When asked to generate images, respond with a markdown image link." },
+    { name: "Code Expert", prompt: "You are an expert software engineer. Write clean, well-documented code with proper error handling. Always explain your approach before diving into code." },
+    { name: "Creative Writer", prompt: "You are a creative writer with a talent for vivid descriptions and engaging narratives. Use metaphors and sensory language." },
+    { name: "Data Analyst", prompt: "You are a data analyst. When analyzing data, provide clear insights with supporting evidence. Use tables and structured formats." },
+    { name: "Teacher", prompt: "You are a patient teacher. Explain concepts step by step with examples. Use analogies to make complex topics accessible." },
+    { name: "Concise", prompt: "Be brief and to the point. Answer in as few words as possible while still being accurate and helpful." },
+  ];
 
   function useSuggest(text: string) {
     setInput(text);
@@ -135,6 +158,10 @@ export default function PlaygroundPage() {
           stream: true,
           temperature,
           max_tokens: maxTokens,
+          top_p: topP,
+          frequency_penalty: frequencyPenalty,
+          presence_penalty: presencePenalty,
+          stop: stopSequences.trim() ? stopSequences.split(",").map(s => s.trim()).filter(Boolean) : undefined,
         }),
       });
 
@@ -220,15 +247,15 @@ export default function PlaygroundPage() {
           const id = `mermaid-${Date.now()}-${i}`;
           return (
             <div key={i} className="mermaid-svg" id={id} data-code={code}
-              style={{ background: "var(--bg)", padding: 16, borderRadius: 10, margin: "8px 0", overflow: "auto", minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "var(--text-muted)", fontSize: 13 }}>Rendering diagram...</span>
+              style={{ background: "var(--bg)", padding: 16, borderRadius: 12, margin: "8px 0", overflow: "auto", minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)" }}>Rendering diagram...</span>
             </div>
           );
         }
         if (lang === "image" || lang === "img") {
           const src = code.trim();
           if (!isSafeImageUrl(src)) {
-            return <p key={i} style={{ color: "var(--red)", fontSize: 12, margin: "8px 0" }}>Blocked unsafe image URL</p>;
+            return <p key={i} style={{ color: "var(--text-sm-color)", fontSize: 12, margin: "8px 0" }}>Blocked unsafe image URL</p>;
           }
           return (
             <div key={i} style={{ margin: "8px 0", textAlign: "center" }}>
@@ -238,7 +265,7 @@ export default function PlaygroundPage() {
           );
         }
         return (
-          <pre key={i} style={{ background: "var(--bg)", padding: 12, borderRadius: 8, overflow: "auto", fontSize: 13, margin: "8px 0" }}>
+          <pre key={i} style={{ background: "var(--bg)", padding: 12, borderRadius: 8, overflow: "auto", fontSize: "var(--text-sm)", margin: "8px 0" }}>
             <code>{code}</code>
           </pre>
         );
@@ -249,7 +276,7 @@ export default function PlaygroundPage() {
         if (imgMatch) {
           const src = imgMatch[2];
           if (!isSafeImageUrl(src)) {
-            return <p key={`${i}-${j}`} style={{ color: "var(--red)", fontSize: 12, margin: "2px 0" }}>Blocked unsafe image URL</p>;
+            return <p key={`${i}-${j}`} style={{ color: "var(--text-sm-color)", fontSize: 12, margin: "2px 0" }}>Blocked unsafe image URL</p>;
           }
           return (
             <div key={`${i}-${j}`} style={{ margin: "8px 0", textAlign: "center" }}>
@@ -258,9 +285,9 @@ export default function PlaygroundPage() {
             </div>
           );
         }
-        if (line.startsWith("### ")) return <h3 key={`${i}-${j}`} style={{ fontSize: 16, fontWeight: 600, margin: "8px 0 4px" }}>{line.slice(4)}</h3>;
-        if (line.startsWith("## ")) return <h2 key={`${i}-${j}`} style={{ fontSize: 18, fontWeight: 600, margin: "8px 0 4px" }}>{line.slice(3)}</h2>;
-        if (line.startsWith("# ")) return <h1 key={`${i}-${j}`} style={{ fontSize: 20, fontWeight: 700, margin: "8px 0 4px" }}>{line.slice(2)}</h1>;
+        if (line.startsWith("### ")) return <h3 key={`${i}-${j}`} style={{ fontSize: "var(--text-h3)", fontWeight: 700, background: "var(--gradient-h3)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", margin: "8px 0 4px" }}>{line.slice(4)}</h3>;
+        if (line.startsWith("## ")) return <h2 key={`${i}-${j}`} style={{ fontSize: "var(--text-h2)", fontWeight: 700, margin: "8px 0 4px" }}>{line.slice(3)}</h2>;
+        if (line.startsWith("# ")) return <h1 key={`${i}-${j}`} style={{ fontSize: "var(--text-h1)", fontWeight: 700, margin: "8px 0 4px" }}>{line.slice(2)}</h1>;
         if (line.startsWith("- ") || line.startsWith("• ")) return <li key={`${i}-${j}`} style={{ marginLeft: 16 }}>{line.slice(2)}</li>;
         if (line.trim() === "") return <br key={`${i}-${j}`} />;
         return <p key={`${i}-${j}`} style={{ margin: "2px 0" }}>{line}</p>;
@@ -276,9 +303,9 @@ export default function PlaygroundPage() {
           <div className="page-header-icon" style={{ background: "rgba(0,206,201,0.1)" }}>
             <PageIcon type="chat" color="var(--accent-2)" />
           </div>
-          <h1 style={{ fontSize: 22, fontWeight: 700 }}>AI Playground</h1>
+          <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700 }}>AI Playground</h1>
           <span style={{
-            fontSize: 12, padding: "3px 10px", borderRadius: 6,
+            fontSize: "var(--text-sm)", padding: "3px 10px", borderRadius: 8,
             background: "var(--surface-2)", color: "var(--text-muted)",
             display: "inline-flex", alignItems: "center", gap: 6
           }}>
@@ -287,7 +314,7 @@ export default function PlaygroundPage() {
           </span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <label style={{ fontSize: 13, color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+          <label style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
             <input type="checkbox" checked={freeOnly} onChange={e => setFreeOnly(e.target.checked)} style={{ width: "auto" }} />
             Free only
           </label>
@@ -327,7 +354,7 @@ export default function PlaygroundPage() {
           display: "flex", flexDirection: "column", gap: 12,
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <h2 style={{ fontSize: 14, fontWeight: 700 }}>Chat Settings</h2>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Chat Settings</h2>
             <button className="btn btn-ghost btn-sm" onClick={() => setShowSettings(false)}>Close</button>
           </div>
 
@@ -335,11 +362,28 @@ export default function PlaygroundPage() {
             <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
               System Prompt
             </label>
+            <div style={{ display: "flex", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+              {SYSTEM_PROMPT_PRESETS.map(preset => (
+                <button
+                  key={preset.name}
+                  onClick={() => { setSystemPrompt(preset.prompt); setSelectedPreset(preset.name); }}
+                  style={{
+                    padding: "6px 14px", borderRadius: 8, fontSize: 12, fontWeight: 500,
+                    background: selectedPreset === preset.name ? "var(--accent)" : "var(--surface-2)",
+                    color: selectedPreset === preset.name ? "white" : "var(--text-muted)",
+                    border: "1px solid var(--border)", cursor: "pointer", transition: "all 0.2s",
+                    minHeight: "var(--click-target)",
+                  }}
+                >
+                  {preset.name}
+                </button>
+              ))}
+            </div>
             <textarea
               value={systemPrompt}
-              onChange={e => setSystemPrompt(e.target.value)}
+              onChange={e => { setSystemPrompt(e.target.value); setSelectedPreset(""); }}
               rows={3}
-              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: 13, fontFamily: "inherit", resize: "vertical" }}
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)", fontFamily: "inherit", resize: "vertical" }}
             />
           </div>
 
@@ -353,9 +397,23 @@ export default function PlaygroundPage() {
                 onChange={e => setTemperature(parseFloat(e.target.value))}
                 style={{ width: "100%", accentColor: "var(--accent)" }}
               />
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-muted)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
                 <span>Precise (0)</span>
                 <span>Creative (2)</span>
+              </div>
+            </div>
+            <div style={{ flex: 1, minWidth: 180 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
+                Top P: {topP.toFixed(2)}
+              </label>
+              <input
+                type="range" min={0} max={1} step={0.05} value={topP}
+                onChange={e => setTopP(parseFloat(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--accent)" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                <span>Focused (0)</span>
+                <span>Diverse (1)</span>
               </div>
             </div>
             <div style={{ flex: 1, minWidth: 120 }}>
@@ -365,7 +423,49 @@ export default function PlaygroundPage() {
               <input
                 type="number" min={64} max={8192} step={64} value={maxTokens}
                 onChange={e => setMaxTokens(Number(e.target.value) || 2048)}
-                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: 13 }}
+                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+            <div style={{ flex: 1, minWidth: 180 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
+                Frequency Penalty: {frequencyPenalty.toFixed(1)}
+              </label>
+              <input
+                type="range" min={0} max={2} step={0.1} value={frequencyPenalty}
+                onChange={e => setFrequencyPenalty(parseFloat(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--accent)" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                <span>None (0)</span>
+                <span>High (2)</span>
+              </div>
+            </div>
+            <div style={{ flex: 1, minWidth: 180 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
+                Presence Penalty: {presencePenalty.toFixed(1)}
+              </label>
+              <input
+                type="range" min={0} max={2} step={0.1} value={presencePenalty}
+                onChange={e => setPresencePenalty(parseFloat(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--accent)" }}
+              />
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "var(--text-muted)" }}>
+                <span>None (0)</span>
+                <span>High (2)</span>
+              </div>
+            </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4 }}>
+                Stop Sequences (comma-separated)
+              </label>
+              <input
+                type="text" value={stopSequences}
+                onChange={e => setStopSequences(e.target.value)}
+                placeholder="e.g. END, STOP"
+                style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg)", color: "var(--text)", fontSize: "var(--text-sm)" }}
               />
             </div>
           </div>
@@ -384,7 +484,7 @@ export default function PlaygroundPage() {
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
             <div style={{ fontSize: 15, color: "var(--text-muted)" }}>Start a conversation</div>
-            <div style={{ fontSize: 13, marginTop: 4, color: "var(--text-muted)", textAlign: "center", maxWidth: 400 }}>
+            <div style={{ fontSize: "var(--text-sm)", marginTop: 4, color: "var(--text-muted)", textAlign: "center", maxWidth: 400 }}>
               Ask me anything — I can write code, draw diagrams with Mermaid, generate images, and more.
             </div>
 
@@ -392,9 +492,9 @@ export default function PlaygroundPage() {
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 24, maxWidth: 500 }}>
                 {SUGGESTS.map(s => (
                   <button key={s} onClick={() => useSuggest(s)} style={{
-                    padding: "8px 14px", borderRadius: 20, fontSize: 12, fontWeight: 500,
+                    padding: "8px 16px", borderRadius: 20, fontSize: 12, fontWeight: 500,
                     background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text-muted)",
-                    cursor: "pointer", transition: "all 0.2s",
+                    cursor: "pointer", transition: "all 0.2s", minHeight: "var(--click-target)",
                   }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-muted)"; }}
@@ -440,7 +540,7 @@ export default function PlaygroundPage() {
           rows={2}
           disabled={loading}
           style={{
-            flex: 1, minWidth: 0, width: "100%", padding: "10px 12px", borderRadius: 10,
+            flex: 1, minWidth: 0, width: "100%", padding: "10px 12px", borderRadius: 12,
             border: "1px solid var(--border)", background: "var(--surface)", color: "var(--text)",
             fontSize: 14, fontFamily: "inherit", resize: "none",
           }}

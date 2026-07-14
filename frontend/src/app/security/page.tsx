@@ -22,9 +22,9 @@ export const metadata: Metadata = {
 
 export default function SecurityPage() {
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "clamp(1.6rem, 4vw, 2.2rem)", fontWeight: 800, marginBottom: 8, letterSpacing: "-0.02em", color: "var(--text)" }}>Security Architecture</h1>
-      <p style={{ color: "var(--text)", fontSize: "clamp(0.95rem, 2vw, 1.05rem)", marginBottom: 40, maxWidth: 640, lineHeight: 1.7 }}>
+    <main style={{ maxWidth: "var(--container-max)", margin: "0 auto", padding: "64px 24px" }}>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, lineHeight: "var(--leading-heading)", marginBottom: 8, letterSpacing: "-0.02em", color: "var(--text)" }}>Security Architecture</h1>
+      <p style={{ color: "var(--text)", fontSize: "var(--text-body)", marginBottom: 40, maxWidth: "var(--text-max)", lineHeight: 1.6 }}>
         OllamoMUI was built with security as a first-class concern. Every layer — from password storage to
         API middleware to frontend rendering — includes explicit defense-in-depth measures.
       </p>

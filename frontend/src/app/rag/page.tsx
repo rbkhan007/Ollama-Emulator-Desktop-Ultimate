@@ -124,12 +124,12 @@ export default function RagPage() {
           <h1>Knowledge Base (RAG)</h1>
           <p>Upload documents, paste text, and search your indexed content</p>
           {!databaseConnected && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 6, fontSize: 12, color: "var(--red)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 8, fontSize: 12, color: "var(--text-sm-color)" }}>
               PostgreSQL not connected — RAG features are unavailable
             </div>
           )}
           {databaseConnected && schema && !schema.synced && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 6, fontSize: 12, color: "var(--accent-4)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 8, fontSize: 12, color: "var(--text-sm-color)" }}>
               Schema out of date (v{schema.db_version} vs v{schema.expected_version}) — run migration
             </div>
           )}
@@ -145,7 +145,7 @@ export default function RagPage() {
         ].map((s, i) => (
           <div key={s.label} className={`card stagger-${i + 1}`} style={{ textAlign: "center", padding: 16 }}>
             <div style={{ fontSize: 28, fontWeight: 700, marginBottom: 4 }}>{s.value}</div>
-            <div style={{ fontSize: 13, color: "var(--text-muted)" }}>{s.label}</div>
+            <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -154,7 +154,7 @@ export default function RagPage() {
       <div className="stagger-1" style={{ display: "flex", gap: 12, marginBottom: 24, alignItems: "center", flexWrap: "wrap", justifyContent: "space-between" }}>
         <div style={{ display: "flex", gap: 12, alignItems: "end" }}>
           <div>
-            <label style={{ fontSize: 13, color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Collection</label>
+            <label style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", display: "block", marginBottom: 4 }}>Collection</label>
             <select value={activeCollection} onChange={e => setActiveCollection(e.target.value)} style={{ flex: "1 1 160px", minWidth: 0, maxWidth: 220 }}>
               {collections.length === 0 && <option value="default">default</option>}
               {collections.map(c => <option key={c.name} value={c.name}>{c.name} ({c.chunks} chunks, {c.documents} docs)</option>)}
@@ -175,10 +175,10 @@ export default function RagPage() {
         <div className="card">
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <PageIcon type="upload" color="var(--accent)" />
-            <h2 style={{ fontSize: 16, fontWeight: 600 }}>Upload File</h2>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Upload File</h2>
           </div>
           <input type="file" aria-label="Upload file" ref={fileRef} style={{ marginBottom: 12 }} />
-          <button className="btn btn-primary" onClick={uploadFile} disabled={uploading} style={{ fontSize: 13 }}>
+          <button className="btn btn-primary" onClick={uploadFile} disabled={uploading} style={{ fontSize: 14 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
@@ -191,10 +191,10 @@ export default function RagPage() {
         <div className="card">
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <PageIcon type="doc" color="var(--accent-2)" />
-            <h2 style={{ fontSize: 16, fontWeight: 600 }}>Paste Text</h2>
+            <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Paste Text</h2>
           </div>
           <input aria-label="Document name" placeholder="Document name (optional)" value={textName} onChange={e => setTextName(e.target.value)} style={{ marginBottom: 8 }} />
-           <textarea aria-label="Text content" placeholder="Paste your text content here..." value={textInput} onChange={e => setTextInput(e.target.value)} rows={4} style={{ marginBottom: 8, fontFamily: "var(--font-jetbrains), monospace", fontSize: 13 }} />
+           <textarea aria-label="Text content" placeholder="Paste your text content here..." value={textInput} onChange={e => setTextInput(e.target.value)} rows={4} style={{ marginBottom: 8, fontFamily: "var(--font-jetbrains), monospace", fontSize: "var(--text-sm)" }} />
           <button className="btn btn-primary" onClick={addText}>Add Text</button>
         </div>
       </div>
@@ -203,7 +203,7 @@ export default function RagPage() {
       <div className="card stagger-3" style={{ marginBottom: 24 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <PageIcon type="search" color="var(--accent-4)" />
-          <h2 style={{ fontSize: 16, fontWeight: 600 }}>Search Knowledge Base</h2>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Search Knowledge Base</h2>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <input aria-label="Search query" placeholder="Search query..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onKeyDown={e => { if (e.key === "Enter") search(); }} />
@@ -214,16 +214,16 @@ export default function RagPage() {
             {searchResults.map((r, i) => (
               <div key={i} style={{ padding: 12, background: "var(--surface-2)", borderRadius: 8 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "var(--accent)" }}>{r.source}</span>
-                  <span style={{ fontSize: 12, color: "var(--accent-2)" }}>score: {(r.score * 100).toFixed(1)}%</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: "var(--accent)" }}>{r.source}</span>
+                  <span style={{ fontSize: 12, color: "var(--text-sm-color)" }}>score: {(r.score * 100).toFixed(1)}%</span>
                 </div>
-                <div style={{ fontSize: 13, color: "var(--text)", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>{r.content}</div>
+                <div style={{ fontSize: 14, color: "var(--text)", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>{r.content}</div>
               </div>
             ))}
           </div>
         )}
         {searchResults.length === 0 && searchQuery && (
-          <p style={{ marginTop: 12, color: "var(--text-muted)", fontSize: 13 }}>No results found for &quot;{searchQuery}&quot;</p>
+          <p style={{ marginTop: 12, color: "var(--text-muted)", fontSize: "var(--text-sm)" }}>No results found for &quot;{searchQuery}&quot;</p>
         )}
       </div>
 
@@ -231,7 +231,7 @@ export default function RagPage() {
       <div className="card stagger-4">
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
           <PageIcon type="doc" color="var(--accent-3)" />
-          <h2 style={{ fontSize: 16, fontWeight: 600 }}>Indexed Documents ({docs.length})</h2>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700 }}>Indexed Documents ({docs.length})</h2>
         </div>
         {docs.length === 0 ? (
           <div className="empty-state">
@@ -240,7 +240,7 @@ export default function RagPage() {
               <polyline points="14 2 14 8 20 8" />
             </svg>
             <div>No documents indexed yet</div>
-            <div style={{ fontSize: 13, marginTop: 4 }}>Upload a file or paste text above to get started.</div>
+            <div style={{ fontSize: "var(--text-sm)", marginTop: 4 }}>Upload a file or paste text above to get started.</div>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>

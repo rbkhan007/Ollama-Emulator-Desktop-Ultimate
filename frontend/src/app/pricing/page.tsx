@@ -29,11 +29,11 @@ export const metadata: Metadata = {
 
 export default function Pricing() {
   return (
-    <main style={{ maxWidth: 1000, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "clamp(1.8rem, 5vw, 2.5rem)", fontWeight: 800, textAlign: "center", marginBottom: 8, color: "var(--text)" }}>
+    <main style={{ maxWidth: 1000, margin: "0 auto", padding: "clamp(64px, 5vw, 96px) clamp(16px, 4vw, 24px)" }}>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, textAlign: "center", marginBottom: 8, color: "var(--text)", lineHeight: "var(--leading-heading)" }}>
         Choose your plan
       </h1>
-      <p style={{ textAlign: "center", color: "var(--text-muted)", marginBottom: 40 }}>
+      <p style={{ textAlign: "center", color: "var(--text-sm-color)", marginBottom: 40 }}>
         Start free, upgrade when you need more.
       </p>
 
@@ -41,7 +41,7 @@ export default function Pricing() {
         <div className="spidey-panel" style={{
           background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
         }}>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Free</h2>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 4 }}>Free</h2>
           <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$0</p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
             <li style={{ padding: "4px 0" }}>✅ 26 free models</li>
@@ -49,7 +49,7 @@ export default function Pricing() {
             <li style={{ padding: "4px 0" }}>✅ RAG (limited)</li>
             <li style={{ padding: "4px 0" }}>⏳ 10 requests/day</li>
           </ul>
-          <a href="/playground" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "10px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Try now</a>
+          <a href="/playground" style={{ display: "block", textAlign: "center", background: "var(--gradient-1)", color: "#fff", padding: "12px 24px", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>Try now</a>
         </div>
 
         <div className="spidey-panel" style={{
@@ -58,11 +58,11 @@ export default function Pricing() {
           <div style={{
             position: "absolute", top: -10, right: 16,
             background: "var(--accent-2)", color: "#fff",
-            fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: 20,
+            fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: 24,
             letterSpacing: "0.05em",
           }}>POPULAR</div>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Web Pro</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$9.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 4 }}>Web Pro</h2>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$9.99<small style={{ fontSize: "var(--text-sm)", fontWeight: 400, color: "var(--text-sm-color)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
             <li style={{ padding: "4px 0" }}>✅ Unlimited RAG storage</li>
             <li style={{ padding: "4px 0" }}>✅ Persistent memory sync</li>
@@ -75,8 +75,8 @@ export default function Pricing() {
         <div className="spidey-panel" style={{
           background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
         }}>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Desktop Pro</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$4.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 4 }}>Desktop Pro</h2>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$4.99<small style={{ fontSize: "var(--text-sm)", fontWeight: 400, color: "var(--text-sm-color)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
             <li style={{ padding: "4px 0" }}>✅ Pre-built EXE</li>
             <li style={{ padding: "4px 0" }}>✅ Auto-updates</li>
@@ -89,8 +89,8 @@ export default function Pricing() {
         <div className="spidey-panel" style={{
           background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)",
         }}>
-          <h2 style={{ fontSize: "1.25rem", marginBottom: 4 }}>Mobile Ultimate</h2>
-          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$2.99<small style={{ fontSize: 14, fontWeight: 400, color: "var(--text-muted)" }}>/mo</small></p>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 4 }}>Mobile Ultimate</h2>
+          <p style={{ fontSize: "2rem", fontWeight: 700, marginBottom: 12 }}>$2.99<small style={{ fontSize: "var(--text-sm)", fontWeight: 400, color: "var(--text-sm-color)" }}>/mo</small></p>
           <ul style={{ listStyle: "none", padding: 0, marginBottom: 20 }}>
             <li style={{ padding: "4px 0" }}>✅ Play Store app</li>
             <li style={{ padding: "4px 0" }}>✅ Sync with desktop</li>
@@ -102,21 +102,21 @@ export default function Pricing() {
       </div>
 
       <div className="spidey-panel" style={{ background: "var(--surface)", padding: 24, borderRadius: 16, border: "1px solid var(--glass-border)", marginTop: 32, textAlign: "center" }}>
-        <h2 style={{ fontSize: "1.25rem", marginBottom: 8 }}>Prefer to pay directly?</h2>
-        <p style={{ color: "var(--text-muted)", marginBottom: 16 }}>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 8 }}>Prefer to pay directly?</h2>
+        <p style={{ color: "var(--text-sm-color)", marginBottom: 16 }}>
           No automated checkout yet — message me and I&apos;ll send payment details (Bkash / Nagad / bank transfer) and your license key.
         </p>
         <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ display: "inline-block", background: "#25D366", color: "#fff", padding: "12px 24px", borderRadius: 10, textDecoration: "none", fontWeight: 700 }}
+          style={{ display: "inline-block", background: "#25D366", color: "#fff", padding: "12px 24px", borderRadius: 12, textDecoration: "none", fontWeight: 700 }}
         >
           💬 Contact me on WhatsApp to buy
         </a>
       </div>
 
-      <p style={{ textAlign: "center", marginTop: 40, color: "var(--text-muted)", fontSize: 14 }}>
+      <p style={{ textAlign: "center", marginTop: 40, color: "var(--text-sm-color)", fontSize: "var(--text-sm)" }}>
         All plans include the same 26 free models. Upgrade for convenience and extra features.
         <br />
         Questions? <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>Open an issue</a> on GitHub,

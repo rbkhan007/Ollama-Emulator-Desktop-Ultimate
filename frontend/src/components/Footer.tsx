@@ -20,11 +20,11 @@ export default function Footer() {
       <div style={{
         maxWidth: 1100,
         margin: "0 auto",
-        padding: "clamp(20px, 3vw, 28px) clamp(12px, 3vw, 24px) clamp(16px, 2.5vw, 20px)",
+        padding: "clamp(24px, 3vw, 32px) clamp(16px, 3vw, 24px) clamp(16px, 2.5vw, 24px)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 14,
+        gap: 16,
       }}>
         <div style={{
           display: "flex",
@@ -42,17 +42,18 @@ export default function Footer() {
               style={{
                 color: "var(--text-muted)",
                 fontWeight: 500,
-                fontSize: "clamp(12px, 1.2vw, 13px)",
+                fontSize: "var(--text-sm)",
                 textDecoration: "none",
-                padding: "clamp(5px, 0.6vw, 6px) clamp(10px, 1.2vw, 14px)",
+                padding: "8px 16px",
                 borderRadius: 8,
                 border: "1px solid var(--glass-border)",
                 background: "var(--surface)",
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 6,
+                gap: 8,
                 transition: "all 0.2s",
                 whiteSpace: "nowrap",
+                minHeight: "var(--click-target)",
               }}
             >
               {link.label}
@@ -64,11 +65,11 @@ export default function Footer() {
           flexDirection: "column",
           alignItems: "center",
           gap: 4,
-          fontSize: "clamp(11px, 1.2vw, 12px)",
-          color: "var(--text-muted)",
-          lineHeight: 1.6,
+          fontSize: "var(--text-sm)",
+          color: "var(--text-sm-color)",
+          lineHeight: "var(--leading-small)",
           textAlign: "center",
-          padding: "0 12px",
+          padding: "0 16px",
         }}>
           <span style={{ fontWeight: 600, color: "var(--text)", letterSpacing: "0.01em" }}>
             &copy; 2024-2026 Rhasan@dev. All rights reserved.

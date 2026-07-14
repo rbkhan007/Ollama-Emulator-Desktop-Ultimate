@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 export default function CaseStudyPage() {
   return (
     <main style={{ maxWidth: 960, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "clamp(1.6rem, 4vw, 2.2rem)", fontWeight: 800, marginBottom: 8, letterSpacing: "-0.02em", color: "var(--text)" }}>Cross-Platform Case Study</h1>
-      <p style={{ color: "var(--text)", fontSize: "clamp(0.95rem, 2vw, 1.05rem)", marginBottom: 40, maxWidth: 640, lineHeight: 1.7 }}>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, marginBottom: 8, letterSpacing: "-0.02em", color: "var(--text)" }}>Cross-Platform Case Study</h1>
+      <p style={{ color: "var(--text)", fontSize: "clamp(0.95rem, 2vw, 1.05rem)", marginBottom: 40, maxWidth: 640, lineHeight: 1.6 }}>
         How OllamoMUI delivers a unified AI experience across Windows, macOS, Linux, Android, iOS, and
         Web — with a single backend and platform-tailored frontends.
       </p>

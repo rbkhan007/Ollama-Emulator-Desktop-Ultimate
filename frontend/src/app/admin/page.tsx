@@ -45,7 +45,7 @@ export default function AdminLicense() {
 
   return (
     <main style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 8 }}>Manual License Issuer</h1>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, marginBottom: 8 }}>Manual License Issuer</h1>
       <p style={{ color: "var(--text-muted)", marginBottom: 24 }}>
         Direct sales (WhatsApp / Bkash / bank). Paste your <b>admin</b> Bearer token
         (from logging in as the admin user), enter the customer&apos;s email, and generate a key.
@@ -99,5 +99,5 @@ const inputStyle: React.CSSProperties = {
 };
 const buttonStyle: React.CSSProperties = {
   display: "inline-block", background: "var(--gradient-1)", color: "#fff",
-  border: "none", padding: "12px 20px", borderRadius: 10, fontWeight: 700, cursor: "pointer",
+  border: "none", padding: "12px 24px", borderRadius: 8, fontWeight: 700, cursor: "pointer",
 };

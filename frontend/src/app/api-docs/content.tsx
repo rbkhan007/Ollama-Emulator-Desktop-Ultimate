@@ -110,7 +110,7 @@ function MethodBadge({ method }: { method: string }) {
   const c = colors[method] || { bg: "rgba(255,255,255,0.08)", text: "var(--text-muted)" };
   return (
     <span style={{
-      display: "inline-block", padding: "2px 10px", borderRadius: 6, fontSize: 12, fontWeight: 700,
+      display: "inline-block", padding: "2px 10px", borderRadius: 8, fontSize: 12, fontWeight: 700,
       background: c.bg, color: c.text, fontFamily: "monospace", letterSpacing: "0.03em",
     }}>
       {method}
@@ -135,7 +135,7 @@ export function ApiDocsContent() {
     <>
       {sections.map((section) => (
         <section key={section} style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)", color: "var(--text)" }}>
+          <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16, paddingBottom: 8, borderBottom: "1px solid var(--glass-border)", color: "var(--text)" }}>
             {section}
           </h2>
           {endpoints.filter((e) => e.section === section).map((ep, i) => {
@@ -164,8 +164,8 @@ export function ApiDocsContent() {
                   <button
                     onClick={() => copy(globalIdx, ep.code)}
                     style={{
-                      position: "absolute", top: 8, right: 8, padding: "4px 10px", borderRadius: 6,
-                      fontSize: 11, fontWeight: 600, border: "1px solid var(--glass-border)",
+                      position: "absolute", top: 8, right: 8, padding: "4px 10px", borderRadius: 8,
+                      fontSize: 12, fontWeight: 600, border: "1px solid var(--glass-border)",
                       background: "var(--surface)", color: "var(--text-muted)", cursor: "pointer",
                     }}
                   >

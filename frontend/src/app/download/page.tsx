@@ -48,13 +48,13 @@ const downloadItems = [
 
 export default function Download() {
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "clamp(1.8rem, 5vw, 2.5rem)", fontWeight: 800, textAlign: "center", marginBottom: 8, color: "var(--text)" }}>Download OllamoMUI</h1>
-      <p style={{ textAlign: "center", color: "var(--text)", marginBottom: 40, fontSize: "clamp(0.95rem, 2vw, 1.05rem)" }}>
+    <main style={{ maxWidth: 800, margin: "0 auto", padding: "clamp(64px, 5vw, 96px) clamp(16px, 4vw, 24px)" }}>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, textAlign: "center", marginBottom: 8, color: "var(--text)", lineHeight: "var(--leading-heading)" }}>Download OllamoMUI</h1>
+      <p style={{ textAlign: "center", color: "var(--text)", marginBottom: 40, fontSize: "var(--text-body)" }}>
         Get the pre-built EXE, the mobile app, or build from source.
       </p>
 
-      <div style={{ display: "grid", gap: 20 }}>
+      <div style={{ display: "grid", gap: 16 }}>
         {downloadItems.map((item) => (
           <div key={item.title} className="card-hover" style={{
             display: "flex", alignItems: "center", gap: 18,
@@ -62,20 +62,20 @@ export default function Download() {
             background: "var(--surface)", border: "1px solid var(--glass-border)",
           }}>
             <div style={{
-              width: 52, height: 52, borderRadius: 14, flexShrink: 0,
+              width: 52, height: 52, borderRadius: 16, flexShrink: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
               background: item.btnStyle === "primary" ? "rgba(108,92,231,0.1)" : "rgba(128,128,128,0.06)",
-              color: item.btnStyle === "primary" ? "var(--accent)" : "var(--text-muted)",
+              color: item.btnStyle === "primary" ? "var(--accent)" : "var(--text-sm-color)",
             }}>
               {item.svg}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, marginBottom: 4 }}>{item.title}</h2>
-              <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>{item.desc}</p>
+              <h2 style={{ fontSize: "var(--text-h3)", fontWeight: 700, marginBottom: 4 }}>{item.title}</h2>
+              <p style={{ color: "var(--text-sm-color)", fontSize: "var(--text-sm)", margin: 0 }}>{item.desc}</p>
             </div>
             <a href={item.href} style={{
               flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 6,
-              padding: "10px 20px", borderRadius: 10, fontSize: 14, fontWeight: 600,
+              padding: "12px 24px", borderRadius: 12, fontSize: "var(--text-sm)", fontWeight: 600,
               textDecoration: "none", whiteSpace: "nowrap",
               background: item.btnStyle === "primary" ? "var(--gradient-1)" : "var(--surface)",
               color: item.btnStyle === "primary" ? "#fff" : "var(--text)",
@@ -88,16 +88,16 @@ export default function Download() {
       </div>
 
       {/* Deploy Buttons */}
-      <section style={{ marginTop: 48 }}>
-        <h2 style={{ fontSize: "1.3rem", fontWeight: 700, textAlign: "center", marginBottom: 8 }}>Deploy Your Own Instance</h2>
-        <p style={{ textAlign: "center", color: "var(--text-muted)", fontSize: 14, marginBottom: 20 }}>
+      <section style={{ marginTop: 64 }}>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, textAlign: "center", marginBottom: 8 }}>Deploy Your Own Instance</h2>
+        <p style={{ textAlign: "center", color: "var(--text-sm-color)", fontSize: "var(--text-sm)", marginBottom: 20 }}>
           One-click deployment to your preferred cloud provider.
         </p>
         <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
           <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frbkhan007%2Followomui%2Ftree%2Fmain&project-name=ollamomui&repository-name=ollamomui" target="_blank" rel="noopener noreferrer" style={{
             display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
-            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>
             Deploy to Vercel
@@ -105,7 +105,7 @@ export default function Download() {
           <a href="https://render.com/deploy?repo=https://github.com/rbkhan007/ollamomui" target="_blank" rel="noopener noreferrer" style={{
             display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
-            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /></svg>
             Deploy to Render
@@ -113,7 +113,7 @@ export default function Download() {
           <a href="https://railway.app/template/ollamomui?referralCode=ollamomui" target="_blank" rel="noopener noreferrer" style={{
             display: "inline-flex", alignItems: "center", gap: 10, padding: "12px 24px",
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
-            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: 14,
+            color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
             Deploy to Railway

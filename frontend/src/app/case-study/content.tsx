@@ -37,7 +37,7 @@ export function CaseStudyContent() {
   return (
     <>
       <section style={{ marginBottom: 48 }}>
-        <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 16 }}>Platform Breakdown</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16 }}>Platform Breakdown</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {platforms.map((p) => (
             <div key={p.name} style={{
@@ -45,7 +45,7 @@ export function CaseStudyContent() {
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                 <span style={{ fontSize: 24 }}>{p.icon}</span>
-                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>{p.name}</h3>
+                <h3 style={{ fontSize: "var(--text-h3)", background: "var(--gradient-h3)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent", fontWeight: 700, margin: 0 }}>{p.name}</h3>
               </div>
               <div style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600, marginBottom: 16 }}>
                 {p.tech}
@@ -53,13 +53,13 @@ export function CaseStudyContent() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>Features</div>
-                  <ul style={{ margin: 0, paddingLeft: 18, color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8 }}>
+                  <ul style={{ margin: 0, paddingLeft: 18, color: "var(--text-muted)", fontSize: 13, lineHeight: 1.6 }}>
                     {p.features.map((f) => (<li key={f}>{f}</li>))}
                   </ul>
                 </div>
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 8 }}>Challenges</div>
-                  <ul style={{ margin: 0, paddingLeft: 18, color: "var(--text-muted)", fontSize: 13, lineHeight: 1.8 }}>
+                  <ul style={{ margin: 0, paddingLeft: 18, color: "var(--text-muted)", fontSize: 13, lineHeight: 1.6 }}>
                     {p.challenges.map((c) => (<li key={c}>{c}</li>))}
                   </ul>
                 </div>
@@ -70,7 +70,7 @@ export function CaseStudyContent() {
       </section>
 
       <section>
-        <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: 16 }}>Key Metrics</h2>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 16 }}>Key Metrics</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
           {metrics.map((m) => (
             <div key={m.label} style={{
@@ -80,7 +80,7 @@ export function CaseStudyContent() {
               <div style={{ fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.04em" }}>
                 {m.label}
               </div>
-              <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--accent)", letterSpacing: "-0.02em", marginBottom: 4 }}>
+              <div style={{ fontSize: "var(--text-h2)", fontWeight: 700, color: "var(--accent)", letterSpacing: "-0.02em", marginBottom: 4 }}>
                 {m.value}
               </div>
               <div style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.4 }}>

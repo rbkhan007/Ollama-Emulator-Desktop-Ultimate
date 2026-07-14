@@ -231,7 +231,7 @@ export default function SettingsPage() {
 
   return (
     <main style={{ maxWidth: 760, margin: "0 auto", padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 24px)" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 6 }}>Settings</h1>
+      <h1 style={{ fontSize: "var(--text-h1)", fontWeight: 700, marginBottom: 6 }}>Settings</h1>
       <p style={{ color: "var(--text-muted)", marginBottom: 28 }}>
         Connect to your gateway and add an API key for any model provider. Keys are stored
         by the backend you connect to — nothing is kept in this browser.
@@ -254,7 +254,7 @@ export default function SettingsPage() {
           />
           <button style={btn} onClick={saveBase}>Save</button>
         </div>
-        <div style={{ marginTop: 12, fontSize: 13 }}>
+        <div style={{ marginTop: 12, fontSize: "var(--text-sm)" }}>
           {connected === null && <span style={{ color: "var(--text-muted)" }}>Checking…</span>}
           {connected === true && (
             <span style={{ color: "var(--green, #00b894)" }}>
@@ -292,7 +292,7 @@ export default function SettingsPage() {
             {dbBusy === "test" ? "Testing…" : "Test"}
           </button>
         </div>
-        <div style={{ marginTop: 12, fontSize: 13 }}>
+        <div style={{ marginTop: 12, fontSize: "var(--text-sm)" }}>
           {dbStatus === null && <span style={{ color: "var(--text-muted)" }}>No status yet — save a URL or click Test.</span>}
           {dbStatus?.connected && (
             <span style={{ color: "var(--green, #00b894)" }}>
@@ -431,7 +431,7 @@ export default function SettingsPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "block" }}>
-      <span style={{ display: "block", fontSize: 12, color: "var(--text-muted)", marginBottom: 6, fontWeight: 600 }}>{label}</span>
+      <span style={{ display: "block", fontSize: 12, color: "var(--text-sm-color)", marginBottom: 6, fontWeight: 600 }}>{label}</span>
       {children}
     </label>
   );
@@ -440,7 +440,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 const panel: React.CSSProperties = {
   background: "var(--surface)",
   border: "1px solid var(--glass-border)",
-  borderRadius: 16,
+  borderRadius: 12,
   padding: 24,
   marginBottom: 20,
 };
@@ -450,8 +450,8 @@ const subPanel: React.CSSProperties = {
   borderRadius: 12,
   padding: 16,
 };
-const h2: React.CSSProperties = { fontSize: "1.15rem", fontWeight: 700, marginBottom: 6 };
-const hint: React.CSSProperties = { color: "var(--text-muted)", fontSize: 13, lineHeight: 1.6, marginBottom: 14 };
+const h2: React.CSSProperties = { fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 6 };
+const hint: React.CSSProperties = { color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.6, marginBottom: 14 };
 const input: React.CSSProperties = {
   width: "100%",
   padding: "10px 12px",
@@ -465,8 +465,8 @@ const btn: React.CSSProperties = {
   background: "var(--gradient-1)",
   color: "#fff",
   border: "none",
-  padding: "10px 18px",
-  borderRadius: 10,
+  padding: "12px 24px",
+  borderRadius: 12,
   fontWeight: 700,
   fontSize: 14,
   cursor: "pointer",
@@ -475,28 +475,28 @@ const ghostBtn: React.CSSProperties = {
   background: "var(--surface)",
   color: "var(--text)",
   border: "1px solid var(--glass-border)",
-  padding: "10px 16px",
-  borderRadius: 10,
+  padding: "12px 24px",
+  borderRadius: 12,
   fontWeight: 600,
-  fontSize: 13,
+  fontSize: 14,
   cursor: "pointer",
 };
 const dangerBtn: React.CSSProperties = {
   background: "transparent",
   color: "var(--red, #e17055)",
   border: "1px solid rgba(225,112,85,0.4)",
-  padding: "10px 16px",
-  borderRadius: 10,
+  padding: "12px 24px",
+  borderRadius: 12,
   fontWeight: 600,
-  fontSize: 13,
+  fontSize: 14,
   cursor: "pointer",
 };
 const badge: React.CSSProperties = {
-  fontSize: 11,
+  fontSize: 12,
   padding: "3px 8px",
-  borderRadius: 6,
+  borderRadius: 8,
   background: "rgba(128,128,128,0.12)",
-  color: "var(--text-muted)",
+  color: "var(--text-sm-color)",
   fontWeight: 600,
 };
 const grid2: React.CSSProperties = {

@@ -29,7 +29,7 @@ function StatusIcon({ status }: { status: "loading" | "ok" | "error" }) {
       width: 22, height: 22, borderRadius: "50%",
       background: status === "ok" ? "rgba(0,206,201,0.15)" : "rgba(255,107,107,0.15)",
       color: status === "ok" ? "#00cec9" : "#ff6b6b",
-      fontSize: 13, fontWeight: 700,
+      fontSize: 12, fontWeight: 700,
     }}>
       {status === "ok" ? "✓" : "✗"}
     </span>
@@ -90,8 +90,8 @@ export function StatusDashboard() {
         padding: 24, display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div>
-          <div style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500, marginBottom: 4 }}>Overall Status</div>
-          <div style={{ fontSize: "1.8rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+          <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", fontWeight: 500, marginBottom: 4 }}>Overall Status</div>
+          <div style={{ fontSize: "var(--text-h2)", fontWeight: 700, letterSpacing: "-0.02em" }}>
             {allDone
               ? (okCount === results.length ? "All Systems Operational" : `${okCount}/${results.length} Services Healthy`)
               : "Running Checks..."}
@@ -101,10 +101,10 @@ export function StatusDashboard() {
           onClick={runAll}
           disabled={refreshing}
           style={{
-            padding: "8px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+            padding: "12px 24px", borderRadius: 12, fontSize: "var(--text-sm)", fontWeight: 600,
             border: "1px solid var(--glass-border)", background: "var(--surface)",
             color: "var(--text)", cursor: refreshing ? "not-allowed" : "pointer",
-            opacity: refreshing ? 0.5 : 1,
+            opacity: refreshing ? 0.5 : 1, minHeight: "var(--click-target)",
           }}
         >
           {refreshing ? "Refreshing..." : "Refresh All"}
@@ -118,12 +118,12 @@ export function StatusDashboard() {
         }}>
           <StatusIcon status={r.status} />
           <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>{r.label}</div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{r.detail}</div>
+            <div style={{ fontWeight: 600, fontSize: "var(--text-sm)" }}>{r.label}</div>
+            <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)", marginTop: 2 }}>{r.detail}</div>
           </div>
           <code style={{
-            fontSize: 11, color: "var(--text-muted)", fontFamily: "monospace",
-            background: "rgba(0,0,0,0.15)", padding: "4px 8px", borderRadius: 6,
+            fontSize: 12, color: "var(--text-muted)", fontFamily: "monospace",
+            background: "rgba(0,0,0,0.15)", padding: "4px 8px", borderRadius: 8,
           }}>
             {r.endpoint}
           </code>
