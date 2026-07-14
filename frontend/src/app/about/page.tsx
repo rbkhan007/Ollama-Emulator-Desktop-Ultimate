@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
-import MediaImage from "@/components/MediaImage";
 import { SITE_URL, REPO_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -60,11 +59,12 @@ export default function About() {
         </p>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 28 }}>
-          <MediaImage
-            mediaKey="indie-dev"
+          <img
+            src="/Rhasan@dev.jpg"
             alt="Rhasan@dev — indie developer"
             width={117}
             height={127}
+            loading="lazy"
             style={{ borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }}
           />
           <div style={{ textAlign: "left", fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
