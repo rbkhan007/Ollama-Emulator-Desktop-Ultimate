@@ -113,12 +113,14 @@ export default function Home() {
       <JsonLd data={breadcrumbLd} />
       {/* Hero */}
       <section style={{
+        width: "100%", maxWidth: "var(--container-max)", margin: "0 auto",
         padding: "var(--space-4xl) 24px var(--space-3xl)", textAlign: "center",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       }}>
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
           padding: "8px 24px", borderRadius: 50,
-          background: "rgba(13,148,136,0.08)", border: "1px solid rgba(13,148,136,0.15)",
+          background: "var(--accent-alpha-10)", border: "1px solid var(--accent-alpha-20)",
           fontSize: "var(--text-sm)", color: "var(--text-muted)", marginBottom: 24, fontWeight: 500,
         }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green)", boxShadow: "0 0 10px var(--green)" }} />
@@ -130,8 +132,8 @@ export default function Home() {
           fontSize: "var(--text-h1)", margin: "0 auto 24px", maxWidth: "var(--text-max)",
         }}>
           <span style={{
-            background: "linear-gradient(135deg, var(--text) 0%, var(--accent) 45%, var(--accent-2) 75%, var(--text) 100%)",
-            backgroundSize: "200% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            backgroundImage: "var(--gradient-h1)", backgroundSize: "200% 200%",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             animation: "shimmer 4s linear infinite",
           }}>
             Your free LLMs,
@@ -156,7 +158,7 @@ export default function Home() {
             padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
             display: "inline-flex", alignItems: "center", gap: 8, minHeight: "var(--click-target)",
-            boxShadow: "0 6px 24px rgba(13,148,136,0.35)",
+            boxShadow: "0 6px 24px var(--accent-alpha-30)",
           }}>
             <Star size={18} fill="currentColor" />
             Star on GitHub
@@ -164,7 +166,7 @@ export default function Home() {
           <a href={DOWNLOAD_URL} target="_blank" rel="noopener noreferrer" style={{
             padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--surface)", color: "var(--text)", textDecoration: "none",
-            border: "1px solid var(--glass-border)", minHeight: "var(--click-target)",
+            border: "1px solid var(--border)", minHeight: "var(--click-target)",
             display: "inline-flex", alignItems: "center", gap: 8,
           }}>
             <Download size={18} />
@@ -172,8 +174,8 @@ export default function Home() {
           </a>
           <a href={FREETIER_URL} target="_blank" rel="noopener noreferrer" style={{
             padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
-            background: "rgba(13,148,136,0.12)", color: "var(--accent-2)", textDecoration: "none",
-            border: "1px solid rgba(13,148,136,0.3)", minHeight: "var(--click-target)",
+            background: "var(--accent-2-alpha-10)", color: "var(--accent-2)", textDecoration: "none",
+            border: "1px solid var(--accent-2-alpha-20)", minHeight: "var(--click-target)",
             display: "inline-flex", alignItems: "center", gap: 8,
           }}>
             <Globe size={18} />
@@ -181,7 +183,7 @@ export default function Home() {
           </a>
         </div>
         <div style={{ fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
-          or <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>browse all releases</a> &middot; macOS / Linux via <code style={{ fontFamily: "var(--font-mono)" }}>run.sh</code>
+          or <a href={RELEASES_URL} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>browse all releases</a> &middot; macOS / Linux via <code style={{ fontFamily: "var(--font-mono)", color: "var(--text)", background: "var(--surface-2)", padding: "2px 6px", borderRadius: 4 }}>run.sh</code>
         </div>
 
       </section>

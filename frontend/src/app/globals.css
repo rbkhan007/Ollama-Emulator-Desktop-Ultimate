@@ -44,6 +44,13 @@
   --text-max: 650px;
   --click-target: 44px;
 
+  /* Theme-adaptive alpha backgrounds (use color-mix for light/dark adaptability) */
+  --accent-alpha-10: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-alpha-20: color-mix(in srgb, var(--accent) 20%, transparent);
+  --accent-alpha-30: color-mix(in srgb, var(--accent) 30%, transparent);
+  --accent-2-alpha-10: color-mix(in srgb, var(--accent-2) 10%, transparent);
+  --accent-2-alpha-20: color-mix(in srgb, var(--accent-2) 20%, transparent);
+
   /* ===========================
      COLORS — LIGHT THEME — "Neural Control Panel"
      =========================== */
