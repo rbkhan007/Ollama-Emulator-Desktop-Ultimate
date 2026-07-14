@@ -93,8 +93,12 @@ export async function testDatabaseConnection() {
   });
 }
 
-export async function getDatabaseStatus() {
-  return apiJson<{ database_url_set: boolean; connected: boolean; message: string }>(
-    "/api/settings/database/status", { method: "GET" },
-  );
+export async function getDatabaseStatus(): Promise<{ database_url_set: boolean; connected: boolean; message: string }> {
+  try {
+    return await apiJson<{ database_url_set: boolean; connected: boolean; message: string }>(
+      "/api/settings/database/status", { method: "GET" },
+    );
+  } catch {
+    return { database_url_set: false, connected: false, message: "Backend unreachable" };
+  }
 }

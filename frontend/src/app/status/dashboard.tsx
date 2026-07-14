@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { getApiBase } from "@/lib/api";
 
 type CheckResult = {
   label: string;
@@ -66,10 +67,11 @@ export function StatusDashboard() {
     setRefreshing(true);
     setResults((prev) => prev.map((r) => ({ ...r, status: "loading" as const, detail: "Checking..." })));
 
-    const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:8080";
+    const base = getApiBase();
+    const prefix = base || (typeof window !== "undefined" ? window.location.origin : "");
     const updates = await Promise.all(
       INITIAL.map(async (item) => {
-        const { ok, detail } = await checkEndpoint(`${origin}${item.endpoint}`);
+        const { ok, detail } = await checkEndpoint(`${prefix}${item.endpoint}`);
         return { ...item, status: ok ? ("ok" as const) : ("error" as const), detail };
       }),
     );
