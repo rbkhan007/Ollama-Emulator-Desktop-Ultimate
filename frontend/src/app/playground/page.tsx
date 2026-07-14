@@ -54,7 +54,7 @@ export default function PlaygroundPage() {
   const [provider, setProvider] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
-  const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant. When asked to draw diagrams, use Mermaid markdown syntax. When asked to generate images, respond with a markdown image link.");
+  const [systemPrompt, setSystemPrompt] = useState("You are a helpful AI assistant. When asked to draw a flowchart or diagram, output a valid JSON object with 'nodes' and 'edges' arrays wrapped in a ```reactflow code block. When asked to draw Mermaid diagrams, use ```mermaid syntax. When asked to generate images, respond with a markdown image link.");
   const [temperature, setTemperature] = useState(0.7);
   const [maxTokens, setMaxTokens] = useState(2048);
   const [topP, setTopP] = useState(1.0);
@@ -158,7 +158,7 @@ export default function PlaygroundPage() {
   }
 
   const SYSTEM_PROMPT_PRESETS = [
-    { name: "Default", prompt: "You are a helpful AI assistant. When asked to draw diagrams, use Mermaid markdown syntax. When asked to generate images, respond with a markdown image link." },
+    { name: "Default", prompt: "You are a helpful AI assistant. When asked to draw a flowchart or diagram, output a valid JSON object with 'nodes' and 'edges' arrays wrapped in a ```reactflow code block. When asked to draw Mermaid diagrams, use ```mermaid syntax. When asked to generate images, respond with a markdown image link." },
     { name: "Code Expert", prompt: "You are an expert software engineer. Write clean, well-documented code with proper error handling. Always explain your approach before diving into code." },
     { name: "Creative Writer", prompt: "You are a creative writer with a talent for vivid descriptions and engaging narratives. Use metaphors and sensory language." },
     { name: "Data Analyst", prompt: "You are a data analyst. When analyzing data, provide clear insights with supporting evidence. Use tables and structured formats." },
@@ -251,11 +251,15 @@ export default function PlaygroundPage() {
       if (assistantContent) finalMsgs.push({ role: "assistant", content: assistantContent });
       saveToStorage(finalMsgs);
 
-      // Extract artifacts from response
+      // Extract artifacts from response & strip from chat content
       const newArtifacts: Artifact[] = [];
-      assistantContent.replace(/```reactflow\s*([\s\S]*?)```/g, (_, json) => { newArtifacts.push({ type: "reactflow", content: json }); return ""; });
-      assistantContent.replace(/```mermaid\s*([\s\S]*?)```/g, (_, code) => { newArtifacts.push({ type: "mermaid", content: code }); return ""; });
-      if (newArtifacts.length) setArtifacts(prev => [...prev, ...newArtifacts]);
+      let cleanContent = assistantContent;
+      cleanContent = cleanContent.replace(/```reactflow\s*([\s\S]*?)```/g, (_, json) => { newArtifacts.push({ type: "reactflow", content: json }); return "📐 *[Flowchart rendered in Artifacts panel]*"; });
+      cleanContent = cleanContent.replace(/```mermaid\s*([\s\S]*?)```/g, (_, code) => { newArtifacts.push({ type: "mermaid", content: code }); return "🌊 *[Diagram rendered in Artifacts panel]*"; });
+      if (newArtifacts.length) {
+        setArtifacts(prev => [...prev, ...newArtifacts]);
+        setMessages(prev => { const c = [...prev]; c[c.length - 1] = { ...c[c.length - 1], content: cleanContent }; return c; });
+      }
 
       if (!assistantContent && messages[messages.length - 1]?.role !== "error") {
         setMessages(prev => {
