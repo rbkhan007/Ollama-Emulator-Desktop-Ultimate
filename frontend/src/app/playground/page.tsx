@@ -133,6 +133,7 @@ export default function PlaygroundPage() {
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    messagesRef.current?.scrollTo({ top: 0 });
     return () => { document.body.style.overflow = prev; };
   }, []);
 
@@ -515,29 +516,58 @@ export default function PlaygroundPage() {
           </button>
         )}
         {messages.length === 0 && (
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <MessageSquare size={48} strokeWidth={1.5} style={{ marginBottom: 16, opacity: 0.4 }} />
-            <div style={{ fontSize: 15, color: "var(--text-muted)" }}>Start a conversation</div>
-            <div style={{ fontSize: "var(--text-sm)", marginTop: 4, color: "var(--text-muted)", textAlign: "center", maxWidth: 400 }}>
-              Ask me anything — I can write code, draw diagrams with Mermaid, generate images, and more.
+          <div style={{
+            flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end",
+            fontFamily: "monospace", fontSize: "var(--text-sm)", padding: "0 4px 8px",
+          }}>
+            {/* Rhasan@dev banner with gradient frame */}
+            <div style={{ lineHeight: 1.7, padding: "8px 0" }}>
+              <div style={{
+                background: "var(--gradient-h1)", backgroundClip: "text",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                fontWeight: 700,
+              }}>
+                #&amp;# Rhasan@dev ──────────────────────────────
+              </div>
+              <div style={{ color: "var(--text-muted)" }}>│  Welcome to OllamoMUI Playground v1.0.0</div>
+              <div style={{ color: "var(--text-muted)" }}>│  I can write code, draw Mermaid diagrams,</div>
+              <div style={{ color: "var(--text-muted)" }}>│  generate images, and answer questions.</div>
             </div>
 
+            {/* Suggestions as terminal-style list */}
             {showSuggestions && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 24, maxWidth: 500 }}>
-                {SUGGESTS.map(s => (
-                  <button key={s} onClick={() => useSuggest(s)} style={{
-                    padding: "8px 16px", borderRadius: 20, fontSize: 12, fontWeight: 500,
-                    background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--text-muted)",
-                    cursor: "pointer", transition: "all 0.2s", minHeight: "var(--click-target)",
-                  }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--accent)"; e.currentTarget.style.color = "var(--accent)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-muted)"; }}
+              <div style={{ color: "var(--text-muted)", lineHeight: 1.8, padding: "4px 0 8px" }}>
+                <div style={{ color: "var(--text)", marginBottom: 4 }}>Try asking:</div>
+                {SUGGESTS.slice(0, 6).map((s, i) => (
+                  <button key={s} onClick={() => useSuggest(s)}
+                    style={{
+                      display: "block", width: "100%", textAlign: "left", background: "none",
+                      border: "none", color: "var(--text-muted)", cursor: "pointer",
+                      fontFamily: "inherit", fontSize: "inherit", padding: "2px 0",
+                      transition: "color 0.15s",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = "var(--accent)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = "var(--text-muted)"; }}
                   >
-                    {s.length > 45 ? s.slice(0, 45) + "…" : s}
+                    {`  ${i + 1}. ${s}`}
                   </button>
                 ))}
               </div>
             )}
+
+            {/* Prompt line */}
+            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--accent)", paddingTop: 4, borderTop: "1px solid var(--border)" }}>
+              <span style={{
+                fontWeight: 700,
+                background: "var(--gradient-h1)", backgroundClip: "text",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>$</span>
+              <span style={{ color: "var(--text-muted)" }}>share what u like</span>
+              <span style={{
+                display: "inline-block", width: 7, height: 15, background: "var(--accent)",
+                animation: "blink 1s step-end infinite",
+              }} />
+            </div>
           </div>
         )}
         {messages.map((msg, i) => (
@@ -596,6 +626,22 @@ export default function PlaygroundPage() {
           {loading ? "Thinking..." : "Send"}
         </button>
       </div>
+
+      {showScrollTop && (
+        <button onClick={scrollToTop} title="Scroll to top"
+          style={{
+            position: "fixed", bottom: 80, right: 24, zIndex: 100,
+            width: 40, height: 40, borderRadius: "50%",
+            background: "var(--accent)", border: "none",
+            color: "white", cursor: "pointer", display: "flex",
+            alignItems: "center", justifyContent: "center", fontSize: 20,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+            transition: "opacity 0.2s, transform 0.2s",
+            opacity: showScrollTop ? 1 : 0, transform: showScrollTop ? "scale(1)" : "scale(0.8)",
+          }}>
+          ↑
+        </button>
+      )}
     </div>
   );
 }
