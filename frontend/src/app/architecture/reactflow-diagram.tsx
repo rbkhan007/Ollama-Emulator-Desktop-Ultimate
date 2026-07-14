@@ -303,3 +303,131 @@ export function ArchitectureFlow() {
     </div>
   );
 }
+
+/* ─── Deployment Architecture ─── */
+
+const deployNodes: Node[] = [
+  { id: "user", type: "client", position: { x: 50, y: 160 }, data: { label: "User / Browser", sub: "Desktop, Mobile, CLI" } },
+  { id: "cloudflare", type: "middleware", position: { x: 300, y: 160 }, data: { label: "Cloudflare Tunnel", sub: "DDoS mitigation & SSL" } },
+  { id: "vercel", type: "gateway", position: { x: 550, y: 40 }, data: { label: "Vercel (Frontend)", sub: "Next.js static export" } },
+  { id: "render", type: "gateway", position: { x: 550, y: 160 }, data: { label: "Render (Backend)", sub: "FastAPI + Uvicorn" } },
+  { id: "neondb", type: "storage", position: { x: 550, y: 280 }, data: { label: "NeonDB (PostgreSQL)", sub: "pgvector + pg_trgm" } },
+  { id: "github", type: "provider", position: { x: 850, y: 40 }, data: { label: "GitHub", sub: "Source code & releases", color: "var(--text-muted)" } },
+  { id: "lemonsqueezy", type: "provider", position: { x: 850, y: 160 }, data: { label: "Lemon Squeezy", sub: "Payment processing", color: "var(--accent-4)" } },
+  { id: "desktop", type: "client", position: { x: 850, y: 280 }, data: { label: "Desktop EXE", sub: "PySide6 + QML bundle" } },
+  { id: "mobile", type: "client", position: { x: 850, y: 360 }, data: { label: "Mobile App", sub: "React Native + Expo" } },
+];
+
+const deployEdges: Edge[] = [
+  createEdge("d1", "user", "cloudflare", deployNodes),
+  createEdge("d2", "cloudflare", "render", deployNodes),
+  createEdge("d3", "cloudflare", "vercel", deployNodes),
+  createEdge("d4", "render", "neondb", deployNodes, { label: "SQL" }),
+  createEdge("d5", "vercel", "github", deployNodes, { dashed: true, label: "Build trigger" }),
+  createEdge("d6", "render", "lemonsqueezy", deployNodes, { dashed: true, label: "Webhook" }),
+  createEdge("d7", "neondb", "desktop", deployNodes, { dashed: true, label: "Local sync" }),
+  createEdge("d8", "render", "mobile", deployNodes, { dashed: true, label: "API" }),
+  createEdge("d9", "neondb", "mobile", deployNodes, { dashed: true, label: "API" }),
+];
+
+export function DeploymentFlow() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(deployNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(deployEdges);
+
+  return (
+    <div style={{
+      background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)",
+      overflow: "hidden", height: 480,
+    }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionLineComponent={ConnectionLine}
+        fitView
+        fitViewOptions={{ padding: 0.2 }}
+        attributionPosition="bottom-left"
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background color="var(--text-muted)" gap={24} size={1} />
+        <Controls style={{ background: "var(--surface)", borderRadius: 8, border: "1px solid var(--glass-border)" }} />
+        <Panel position="top-left" style={{
+          background: "color-mix(in srgb, var(--surface) 85%, transparent)",
+          padding: "8px 14px", borderRadius: 8, margin: 8,
+          backdropFilter: "blur(4px)",
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
+            ☁️ Deployment Architecture
+          </span>
+        </Panel>
+      </ReactFlow>
+    </div>
+  );
+}
+
+/* ─── Auth & Security Flow ─── */
+
+const authNodes: Node[] = [
+  { id: "client", type: "client", position: { x: 50, y: 120 }, data: { label: "Client Request", sub: "API key or session cookie" } },
+  { id: "rate", type: "middleware", position: { x: 280, y: 40 }, data: { label: "Rate Limiter", sub: "Sliding window per IP/key" } },
+  { id: "acl", type: "middleware", position: { x: 280, y: 200 }, data: { label: "ACL Middleware", sub: "Role & scope check" } },
+  { id: "auth", type: "middleware", position: { x: 520, y: 120 }, data: { label: "Auth Resolver", sub: "Session / API key / none" } },
+  { id: "sessions", type: "storage", position: { x: 780, y: 40 }, data: { label: "Sessions Table", sub: "Token → email lookup" } },
+  { id: "apikeys", type: "storage", position: { x: 780, y: 120 }, data: { label: "API Keys Table", sub: "Key hash → role lookup" } },
+  { id: "users", type: "storage", position: { x: 780, y: 200 }, data: { label: "Users Table", sub: "Email, role, subscription" } },
+  { id: "audit", type: "storage", position: { x: 780, y: 280 }, data: { label: "Audit Log", sub: "All auth events recorded" } },
+  { id: "allow", type: "gateway", position: { x: 1040, y: 120 }, data: { label: "Allow → Route", sub: "Request proceeds" } },
+];
+
+const authEdges: Edge[] = [
+  createEdge("a1", "client", "rate", authNodes),
+  createEdge("a2", "client", "acl", authNodes),
+  createEdge("a3", "rate", "auth", authNodes, { label: "Under limit" }),
+  createEdge("a4", "acl", "auth", authNodes, { label: "Authorized" }),
+  createEdge("a5", "auth", "sessions", authNodes, { dashed: true, label: "Cookie lookup" }),
+  createEdge("a6", "auth", "apikeys", authNodes, { dashed: true, label: "Key lookup" }),
+  createEdge("a7", "auth", "users", authNodes, { dashed: true, label: "Role fetch" }),
+  createEdge("a8", "auth", "audit", authNodes, { dashed: true, label: "Log event" }),
+  createEdge("a9", "auth", "allow", authNodes, { animated: true, label: "Authenticated" }),
+];
+
+export function AuthFlow() {
+  const [nodes, setNodes, onNodesChange] = useNodesState(authNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(authEdges);
+
+  return (
+    <div style={{
+      background: "var(--surface)", borderRadius: 16, border: "1px solid var(--glass-border)",
+      overflow: "hidden", height: 400,
+    }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        connectionLineComponent={ConnectionLine}
+        fitView
+        fitViewOptions={{ padding: 0.15 }}
+        attributionPosition="bottom-left"
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background color="var(--text-muted)" gap={24} size={1} />
+        <Controls style={{ background: "var(--surface)", borderRadius: 8, border: "1px solid var(--glass-border)" }} />
+        <Panel position="top-left" style={{
+          background: "color-mix(in srgb, var(--surface) 85%, transparent)",
+          padding: "8px 14px", borderRadius: 8, margin: 8,
+          backdropFilter: "blur(4px)",
+        }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text)" }}>
+            🔐 Auth &amp; Security Flow
+          </span>
+        </Panel>
+      </ReactFlow>
+    </div>
+  );
+}

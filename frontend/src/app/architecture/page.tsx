@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/config";
-import { ArchitectureFlow } from "./reactflow-diagram";
+import { ArchitectureFlow, DeploymentFlow, AuthFlow } from "./reactflow-diagram";
 
 export const metadata: Metadata = {
   title: "Architecture — Request Lifecycle & RAG Pipeline",
@@ -29,7 +29,25 @@ export default function ArchitecturePage() {
         provider router, and streaming response — plus how RAG retrieves and reranks context.
       </p>
 
-      <ArchitectureFlow />
+      <section style={{ marginBottom: 48 }}>
+        <ArchitectureFlow />
+      </section>
+
+      <section style={{ marginBottom: 48 }}>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>Deployment Architecture</h2>
+        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", marginBottom: 24, maxWidth: "var(--text-max)", lineHeight: "var(--leading-small)" }}>
+          How the frontend, backend, database, and client apps connect through Cloudflare, Vercel, Render, and NeonDB.
+        </p>
+        <DeploymentFlow />
+      </section>
+
+      <section>
+        <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 8, color: "var(--text)" }}>Auth &amp; Security Flow</h2>
+        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", marginBottom: 24, maxWidth: "var(--text-max)", lineHeight: "var(--leading-small)" }}>
+          How every request is rate-limited, authenticated via session cookie or API key, authorized by role, and logged to the audit trail.
+        </p>
+        <AuthFlow />
+      </section>
     </main>
   );
 }
