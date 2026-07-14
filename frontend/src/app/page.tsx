@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
-import InteractiveWireframe from "@/components/InteractiveWireframe";
 import ClientOnly from "@/components/ClientOnly";
 
 import {
@@ -187,9 +186,6 @@ export default function Home() {
         </div>
 
       </section>
-
-      {/* Interactive Wireframe */}
-      <InteractiveWireframe />
 
       {/* Works with */}
       <section className="lazy-section" style={{ padding: "0 24px 24px", textAlign: "center" }}>
