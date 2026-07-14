@@ -2668,6 +2668,45 @@ def _start_free_model_refresh():
 
 
 # ============================================================
+# MEDIA STORE
+# ============================================================
+
+@app.post("/api/media/{key}")
+async def media_upload(key: str, request: Request):
+    """Upload a media file (image, etc.) and store it in the database."""
+    _require_auth(request, admin=True)
+    form = await request.form()
+    file = form.get("file")
+    if not file or not hasattr(file, "filename") or not file.filename:
+        raise HTTPException(status_code=400, detail="file is required")
+    data = await file.read()
+    if len(data) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="file too large (max 5 MB)")
+    content_type = file.content_type or "application/octet-stream"
+    ok = _db.save_media(key, file.filename, content_type, data)
+    if not ok:
+        raise HTTPException(status_code=503, detail="database not available")
+    return {"status": "saved", "key": key, "size": len(data), "content_type": content_type}
+
+
+@app.get("/api/media/{key}")
+async def media_download(key: str):
+    """Serve a media file from the database by key."""
+    record = _db.get_media(key)
+    if not record:
+        raise HTTPException(status_code=404, detail="media not found")
+    from starlette.responses import Response
+    return Response(
+        content=record["data"],
+        media_type=record["content_type"],
+        headers={
+            "Content-Disposition": f'inline; filename="{record["filename"]}"',
+            "Cache-Control": "public, max-age=31536000, immutable",
+        },
+    )
+
+
+# ============================================================
 # SPA FALLBACK - serve Next.js static frontend
 # ============================================================
 

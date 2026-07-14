@@ -377,6 +377,16 @@ CREATE TABLE IF NOT EXISTS licenses (
 CREATE INDEX IF NOT EXISTS idx_licenses_user ON licenses(user_id);
 CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(key_hash);
 
+-- ── Media Store ──────────────────────────────────────
+CREATE TABLE IF NOT EXISTS media_store (
+    key         TEXT PRIMARY KEY,
+    filename    TEXT NOT NULL,
+    content_type TEXT NOT NULL DEFAULT 'application/octet-stream',
+    data        BYTEA NOT NULL,
+    size        INTEGER DEFAULT 0,
+    created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ── IVFFlat index for pgvector (requires data to exist) ──
 -- Created after first documents are inserted.
 """
@@ -826,3 +836,48 @@ def logout_all_sessions(email: str):
         return
     with get_cursor() as cur:
         cur.execute("DELETE FROM sessions WHERE email=%s", (email,))
+
+
+# ============================================================
+# MEDIA STORE DB OPERATIONS
+# ============================================================
+
+def save_media(key: str, filename: str, content_type: str, data: bytes) -> bool:
+    """Store a media file (image, etc.) in the database. Upserts by key."""
+    if not is_connected():
+        return False
+    with get_cursor() as cur:
+        cur.execute(
+            """INSERT INTO media_store (key, filename, content_type, data, size)
+               VALUES (%s, %s, %s, %s, %s)
+               ON CONFLICT (key) DO UPDATE SET
+                 filename=EXCLUDED.filename,
+                 content_type=EXCLUDED.content_type,
+                 data=EXCLUDED.data,
+                 size=EXCLUDED.size,
+                 created_at=NOW()""",
+            (key, filename, content_type, psycopg.Binary(data), len(data)),
+        )
+        return True
+
+
+def get_media(key: str) -> Optional[dict]:
+    """Retrieve a media file by key. Returns dict with filename, content_type, data (bytes)."""
+    if not is_connected():
+        return None
+    with get_cursor(commit=False) as cur:
+        cur.execute(
+            "SELECT key, filename, content_type, data, size, created_at FROM media_store WHERE key=%s",
+            (key,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        return {
+            "key": row["key"],
+            "filename": row["filename"],
+            "content_type": row["content_type"],
+            "data": bytes(row["data"]),
+            "size": row["size"],
+            "created_at": str(row["created_at"]),
+        }

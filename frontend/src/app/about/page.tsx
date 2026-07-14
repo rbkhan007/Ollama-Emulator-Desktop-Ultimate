@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/JsonLd";
+import MediaImage from "@/components/MediaImage";
 import { SITE_URL, REPO_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -57,6 +58,21 @@ export default function About() {
           to the best <b style={{ color: "var(--text)" }}>completely free</b> LLM available. Then we added RAG, memory,
           a desktop app, a mobile app, and a full payment/licensing system. All open-source.
         </p>
+
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 28 }}>
+          <MediaImage
+            mediaKey="indie-dev"
+            alt="Rhasan@dev — indie developer"
+            width={48}
+            height={48}
+            style={{ borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }}
+          />
+          <div style={{ textAlign: "left", fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
+            <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 15 }}>Rhasan@dev</div>
+            <div>Indie developer · Full-stack · AI/LLM</div>
+          </div>
+        </div>
+
         <div style={{ marginTop: 24 }}>
           <a href={REPO_URL} target="_blank" rel="noopener noreferrer"
              style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "12px 24px",
