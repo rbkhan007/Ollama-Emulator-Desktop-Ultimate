@@ -5,7 +5,7 @@
 <h1 align="center">OllamoMUI — Full-Stack AI Gateway Portfolio</h1>
 
 <p align="center">
-  <b>FastAPI + Next.js + React Native + PySide6 · 22 static routes · 4-pillar enterprise security</b>
+  <b>FastAPI + Next.js + React Native + PySide6 · 23 pages · 4-pillar enterprise security</b>
   <br />
   <i>Architecture deep-dive · API docs · System status · Security showcase · Cross-platform case study</i>
 </p>
@@ -44,7 +44,8 @@ https://ollamomui.vercel.app
 | [/status](https://ollamomui.vercel.app/status) | Live client-side health dashboard checking backend, database, RAG, memory, and provider endpoints with auto-refresh |
 | [/security](https://ollamomui.vercel.app/security) | 4-pillar enterprise security architecture: Data Sovereignty, Authentication & Access Control, Network & Infrastructure Defense, Operational Integrity & Safety |
 | [/case-study](https://ollamomui.vercel.app/case-study) | Cross-platform parity analysis: desktop (Tauri/PySide6), mobile (React Native), and web (Next.js) with features, challenges, and key metrics |
-| [/about](https://ollamomui.vercel.app/about) | Project story, timeline, stats, Hire Me section with email CTA and sponsor link, plus security philosophy case study |
+| [/about](https://ollamomui.vercel.app/about) | Project story, 1-week build timeline, stats, Hire Me section with email CTA and sponsor link, plus security philosophy case study |
+| [/resume](https://ollamomui.vercel.app/resume) | Developer CV (Rakibul Hasan / Rhasan@dev) — ATS-friendly, BD job-hunt optimized, with Download / Print-to-PDF |
 | [/download](https://ollamomui.vercel.app/download) | Windows EXE, mobile APK, source code — plus one-click Deploy to Vercel / Render / Railway buttons |
 
 ---
@@ -98,7 +99,7 @@ This project was designed with security as a first-class concern, not an afterth
 | Area | Technologies |
 |------|-------------|
 | **Backend** | Python 3.14, FastAPI, PostgreSQL + pgvector, pg_trgm, SQLAlchemy |
-| **Frontend Web** | Next.js 15, TypeScript, 22 static routes, SSR/SSG, PWA |
+| **Frontend Web** | Next.js 15, TypeScript, 23 pages, SSR/SSG, PWA |
 | **Desktop** | PySide6, QML, embedded Python backend, auto-updater |
 | **Mobile** | React Native, Expo, Hermes, push notifications |
 | **Security** | PBKDF2, JWT, RBAC, SSRF guard, CSP/HSTS, rate limiting, audit logging |
@@ -201,7 +202,7 @@ ollamomui/
 | `/about` | Server | Project story, timeline, Hire Me, security case study |
 | `/download` | Server | Downloads + Deploy to Vercel/Render/Railway |
 | `/pricing` | Server | Plan cards with Lemon Squeezy checkout |
-| `/playground` | Client | Streaming chat UI with model selector |
+| `/playground` | Client | AI Playground (temporarily being upgraded; connects to OllamoMUI backend) |
 | `/settings` | Client | Backend URL, provider keys, database URL |
 | `/admin` | Client | Manual license key generator |
 | `/payment-result` | Client | Post-checkout license key display |
@@ -214,7 +215,8 @@ ollamomui/
 | `/status` | Client | **Portfolio:** live health dashboard |
 | `/security` | Server | **Portfolio:** 4-pillar enterprise security |
 | `/case-study` | Server | **Portfolio:** cross-platform deep dive |
-| `/sitemap.xml` | Server | Dynamic sitemap (18 routes) |
+| `/resume` | Server | **Portfolio:** developer CV with PDF download |
+| `/sitemap.xml` | Server | Dynamic sitemap (all routes) |
 | `/robots.txt` | Server | Robots directive |
 
 ---
@@ -256,12 +258,21 @@ Built by [Rhasan@dev](https://github.com/rbkhan007). I build full-stack applicat
 
 ## Work Log
 
+- **2026-07-16 — Final polish, bug fixes & CV**
+  - `/about`: square avatar border, reworked 1-week project timeline (Day 1-7 build story)
+  - `/resume`: rewrote as ATS-friendly BD job-hunt CV (`Rhasan@CV.tsx`) with real photo, UIU education (2022-Present), availability, skills, contact; reliable Download / Print-to-PDF via native print stylesheet (replaced broken html2pdf)
+  - `/settings`: corrected placeholders (Base URL example, key hint), availability-aware copy
+  - `/architecture`, `/api-docs`: verified interactive diagrams + 16-endpoint reference render cleanly
+  - Global: darkened light-theme text colors for contrast; `tsc --noEmit` 0 errors, `eslint` clean, `next build` 23/23 pages
+  - Backend: added `canvas.py` (canvas node/models) wired into `main.py`
+  - Removed dead/stray files (`InteractiveWireframe.tsx`, `FeatureMatchSection.tsx`, stray backend copies in `frontend/`); ensured `.env`, `.vercel`, and `.opencode` secrets stay out of git
+
 - **2026-07-14 — Portfolio Hire Me pages**
   - 5 new portfolio pages: `/architecture` (request lifecycle SVG + RAG pipeline diagram), `/api-docs` (16 endpoints with copy buttons), `/status` (live health dashboard), `/security` (4-pillar enterprise architecture), `/case-study` (cross-platform parity)
   - Updated `/about` with Hire Me section, security case study, email CTA, sponsor link
   - Updated `/download` with one-click Deploy to Vercel/Render/Railway buttons
   - Updated navbar with all new routes + SVG icons
-  - Updated sitemap with all 22 routes
+  - Updated sitemap with all routes
   - Enhanced security pages with four-pillar structure (sovereignty, auth, network, ops)
   - Build: 22/22 static pages, 0 errors
 
