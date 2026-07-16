@@ -112,6 +112,7 @@ const RhasanCV = () => {
         }
         .cv-page {
           width: var(--cv-page-w);
+          max-width: 100%;
           min-height: var(--cv-page-h);
           margin: 0 auto;
           padding: 14mm 14mm 12mm;
@@ -133,7 +134,7 @@ const RhasanCV = () => {
       >
         <div>
           {/* Header */}
-          <header style={{ borderBottom: "2px solid var(--cv-text-strong)", paddingBottom: 24, marginBottom: 24 }}>
+          <header className="cv-header-wrap" style={{ borderBottom: "2px solid var(--cv-text-strong)", paddingBottom: 24, marginBottom: 24 }}>
             <div className="flex justify-between items-start gap-6 flex-wrap">
               <div className="min-w-0">
                 <h1 className="text-4xl font-extrabold tracking-tight" style={{ color: "var(--cv-text-strong)" }}>
@@ -157,7 +158,7 @@ const RhasanCV = () => {
                 </div>
               </div>
               <div
-                className="w-32 h-32 rounded-lg overflow-hidden flex items-center justify-center shrink-0"
+                className="cv-photo w-32 h-32 rounded-lg overflow-hidden flex items-center justify-center shrink-0"
                 style={{ border: `2px solid var(--cv-photo-border)`, background: "var(--cv-photo-bg)" }}
               >
                 <img src="/Rhasan%40dev.jpg" alt="Rakibul Hasan" width={128} height={128} className="w-full h-full object-cover" />
@@ -166,7 +167,7 @@ const RhasanCV = () => {
           </header>
 
           {/* Body */}
-          <main className="grid grid-cols-3 gap-8">
+          <main className="cv-body-grid grid grid-cols-3 gap-8">
             {/* Left column */}
             <div className="col-span-2 space-y-7">
               <section>

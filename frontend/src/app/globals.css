@@ -40,7 +40,7 @@
   /* ===========================
      DESIGN SYSTEM — LAYOUT
      =========================== */
-  --container-max: 1200px;
+  --container-max: 1400px;
   --text-max: 650px;
   --click-target: 44px;
 
@@ -904,4 +904,61 @@ h1, h2, h3, h4, h5, h6 {
 .cv-link:hover { color: var(--cv-link-hover); }
 @media print {
   .cv-link { color: #0f172a !important; text-decoration: none !important; }
+}
+
+/* ===========================
+   PLAYGROUND — responsive layout
+   Breakpoints: desktop >=1024px (3 columns), tablet 768-1023 (stacked),
+   mobile <=767px (stacked, full-width panels)
+   =========================== */
+@media (max-width: 1023px) {
+  .pg-workspace-main {
+    flex-direction: column !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    gap: 12px !important;
+  }
+  .pg-workspace-main > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+  .pg-workspace-main .pg-chat {
+    min-height: 60vh !important;
+  }
+}
+@media (max-width: 767px) {
+  .pg-workspace-root {
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+  .pg-workspace-main .pg-chat {
+    min-height: 70vh !important;
+  }
+  .pg-studio-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ===========================
+   RESUME / CV — responsive on screen
+   =========================== */
+@media screen and (max-width: 850px) {
+  .cv-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: auto !important;
+    padding: 16px !important;
+  }
+  .cv-body-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .cv-header-wrap {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .cv-photo {
+    width: 88px !important;
+    height: 88px !important;
+  }
 }

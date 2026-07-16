@@ -63,7 +63,7 @@ export function StudioPanel({
         <Pill color="var(--text-muted)">{artifacts.length}</Pill>
       </header>
 
-      <div className="grid grid-cols-3 gap-2">
+      <div className="pg-studio-grid grid grid-cols-3 gap-2">
         {STUDIO_ITEMS.map((item) => {
           const busy = generating === item.kind;
           return (

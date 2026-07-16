@@ -38,7 +38,7 @@ function ChatPanel({
   };
 
   return (
-    <GlassCard className="flex-1 flex flex-col min-w-0">
+    <GlassCard className="pg-chat flex-1 flex flex-col min-w-0">
       <header className="flex items-center justify-between gap-3 p-5 border-b" style={{ borderColor: "var(--glass-border)" }}>
         <div className="flex items-center gap-2 min-w-0">
           <IconChip color="var(--accent-2)"><MessageSquare className="w-4 h-4" /></IconChip>
@@ -229,7 +229,7 @@ export default function PlaygroundWorkspace() {
   const addNote = () => setArtifacts((prev) => [createNote(), ...prev]);
 
   return (
-    <div className={`${theme === "dark" ? "dark" : ""} relative h-[calc(100vh-130px)]`}>
+    <div className={`pg-workspace-root ${theme === "dark" ? "dark" : ""} relative h-[calc(100vh-130px)]`}>
       <GradientOrbs />
       <div className="relative z-10 h-full w-full p-2" style={{ color: "var(--text)" }}>
         <div className="flex items-center justify-between mb-2 px-1">
@@ -244,7 +244,7 @@ export default function PlaygroundWorkspace() {
           </div>
         </div>
 
-        <main className="flex h-[calc(100%-40px)] w-full gap-3 overflow-x-auto pg-scroll">
+        <main className="pg-workspace-main flex h-[calc(100%-40px)] w-full gap-3 overflow-x-auto pg-scroll">
           <SourcesPanel sources={sources} onCreate={createSource} onUpdate={updateSource} onDelete={deleteSource} />
           <ChatPanel
             messages={messages}
