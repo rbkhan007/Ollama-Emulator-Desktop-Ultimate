@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Globe, Zap, FileText, Trash2, Pencil, Check, X } from "lucide-react";
+import {
+  Plus, Globe, Zap, FileText, Trash2, Pencil, Check, X,
+  Database, Sparkles,
+} from "lucide-react";
+import { GlassCard, IconButton, IconChip, Pill } from "./playground-ui";
 
 export interface Source {
   id: string;
@@ -14,10 +18,6 @@ const TYPE_ICON: Record<Source["type"], typeof Globe> = {
   doc: FileText,
   note: FileText,
 };
-
-function surfaceCls(extra = "") {
-  return `bg-[var(--surface)] border border-[var(--border)] ${extra}`;
-}
 
 export function SourcesPanel({
   sources,
@@ -44,48 +44,52 @@ export function SourcesPanel({
   const saveEdit = () => {
     const v = editLabel.trim();
     if (!v || !editingId) return;
-    onUpdate({ ...sources.find((s) => s.id === editingId)!, label: v });
+    const target = sources.find((s) => s.id === editingId);
+    if (target) onUpdate({ ...target, label: v });
     setEditingId(null);
     setEditLabel("");
   };
 
   return (
-    <div className={`w-72 ${surfaceCls("rounded-xl p-4 flex flex-col shrink-0 shadow-sm")}`}>
-      <h2 className="font-semibold mb-4" style={{ color: "var(--text)" }}>Sources</h2>
+    <GlassCard className="w-72 shrink-0 flex flex-col p-4">
+      <header className="flex items-center gap-2 mb-4">
+        <IconChip color="var(--accent)"><Database className="w-4 h-4" /></IconChip>
+        <h2 className="font-semibold text-[15px] flex-1" style={{ color: "var(--text)" }}>Sources</h2>
+        <Pill color="var(--text-muted)">{sources.length}</Pill>
+      </header>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-3">
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && add()}
-          placeholder="+ Add a source"
-          className="flex-1 px-3 py-2 rounded-lg text-sm outline-none bg-[var(--bg-2)] border border-[var(--border)]"
+          placeholder="Add a source…"
+          className="pg-input flex-1 px-3 py-2 rounded-xl text-sm outline-none bg-[var(--bg-2)] border border-[var(--glass-border)]"
           style={{ color: "var(--text)" }}
         />
-        <button
-          onClick={add}
-          className="px-3 rounded-lg text-sm font-medium flex items-center gap-1"
-          style={{ background: "var(--accent-2)", color: "#fff" }}
-          title="Create source"
-        >
+        <IconButton onClick={add} title="Create source" variant="accent" disabled={!label.trim()}>
           <Plus className="w-4 h-4" />
+        </IconButton>
+      </div>
+
+      <div
+        className="rounded-xl p-3 mb-3 flex gap-2"
+        style={{ background: "color-mix(in srgb, var(--accent) 7%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 18%, transparent)" }}
+      >
+        <button className="pg-studio-btn !flex-row !gap-1.5 !py-1.5 !px-2 !flex-1 !text-[11px]" style={{ flexDirection: "row" }}>
+          <Globe className="w-3.5 h-3.5" style={{ color: "var(--accent)" }} /> Web
+        </button>
+        <button className="pg-studio-btn !flex-row !gap-1.5 !py-1.5 !px-2 !flex-1 !text-[11px]" style={{ flexDirection: "row" }}>
+          <Zap className="w-3.5 h-3.5" style={{ color: "var(--accent-2)" }} /> Fast Research
         </button>
       </div>
 
-      <div className={`rounded-lg p-3 ${surfaceCls()}`}>
-        <div className="flex gap-2 text-xs">
-          <button className="flex items-center gap-1 px-2 py-1 rounded bg-[var(--bg-2)] border border-[var(--border)]">
-            <Globe className="w-3 h-3" /> Web
-          </button>
-          <button className="flex items-center gap-1 px-2 py-1 rounded bg-[var(--bg-2)] border border-[var(--border)]">
-            <Zap className="w-3 h-3" /> Fast Research
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-4 flex-1 overflow-y-auto space-y-2">
+      <div className="pg-scroll mt-1 flex-1 overflow-y-auto space-y-2 pr-1">
         {sources.length === 0 && (
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>No sources yet.</p>
+          <div className="text-center py-8" style={{ color: "var(--text-muted)" }}>
+            <Sparkles className="w-6 h-6 mx-auto mb-2 opacity-50" />
+            <p className="text-xs">No sources yet. Add your first one above.</p>
+          </div>
         )}
         {sources.map((s) => {
           const Icon = TYPE_ICON[s.type];
@@ -93,40 +97,37 @@ export function SourcesPanel({
           return (
             <div
               key={s.id}
-              className={`text-xs px-3 py-2 rounded-lg flex items-center gap-2 ${surfaceCls()}`}
+              className="group flex items-center gap-2 rounded-xl px-3 py-2 transition-colors"
+              style={{ background: "var(--bg-2)", border: "1px solid var(--glass-border)" }}
             >
-              <Icon className="w-3 h-3" style={{ color: "var(--text-muted)" }} />
+              <IconChip color="var(--accent)" size={14}><Icon className="w-3.5 h-3.5" /></IconChip>
               {editing ? (
                 <input
                   autoFocus
                   value={editLabel}
                   onChange={(e) => setEditLabel(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && saveEdit()}
-                  className="flex-1 bg-[var(--bg-2)] outline-none px-1 rounded"
+                  className="flex-1 bg-transparent outline-none text-xs"
                   style={{ color: "var(--text)" }}
                 />
               ) : (
-                <span className="truncate flex-1" style={{ color: "var(--text)" }}>{s.label}</span>
+                <span className="truncate flex-1 text-xs font-medium" style={{ color: "var(--text)" }}>{s.label}</span>
               )}
               {editing ? (
-                <>
-                  <button onClick={saveEdit} title="Save"><Check className="w-3.5 h-3.5" style={{ color: "var(--accent)" }} /></button>
-                  <button onClick={() => setEditingId(null)} title="Cancel"><X className="w-3.5 h-3.5" style={{ color: "var(--text-muted)" }} /></button>
-                </>
+                <div className="flex items-center gap-1">
+                  <IconButton onClick={saveEdit} title="Save"><Check className="w-3.5 h-3.5" /></IconButton>
+                  <IconButton onClick={() => setEditingId(null)} title="Cancel"><X className="w-3.5 h-3.5" /></IconButton>
+                </div>
               ) : (
-                <>
-                  <button onClick={() => { setEditingId(s.id); setEditLabel(s.label); }} title="Edit">
-                    <Pencil className="w-3.5 h-3.5" style={{ color: "var(--text-muted)" }} />
-                  </button>
-                  <button onClick={() => onDelete(s.id)} title="Delete">
-                    <Trash2 className="w-3.5 h-3.5" style={{ color: "var(--text-muted)" }} />
-                  </button>
-                </>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <IconButton onClick={() => { setEditingId(s.id); setEditLabel(s.label); }} title="Edit"><Pencil className="w-3.5 h-3.5" /></IconButton>
+                  <IconButton onClick={() => onDelete(s.id)} title="Delete" variant="danger"><Trash2 className="w-3.5 h-3.5" /></IconButton>
+                </div>
               )}
             </div>
           );
         })}
       </div>
-    </div>
+    </GlassCard>
   );
 }

@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sun, Moon, Wifi, WifiOff, Loader2, Trash2, ArrowRight } from "lucide-react";
+import { Sun, Moon, Wifi, WifiOff, Loader2, Trash2, ArrowUp, Send, MessageSquare, Bot, User } from "lucide-react";
 import { SourcesPanel, type Source } from "@/components/playground/SourcesPanel";
 import { StudioPanel, type GenerateKind } from "@/components/playground/StudioPanel";
+import { GlassCard, IconButton, IconChip, Pill } from "@/components/playground/playground-ui";
+import { GradientOrbs } from "@/components/Background";
 import { useChat, useModels, type ChatMessage } from "./chat-hooks";
 import {
-  downloadMarkdown, generateFlashcards, generateMindMap, generateQuiz, generateReport,
+  createNote, generateFlashcards, generateMindMap, generateQuiz, generateReport,
   type StudioArtifact,
 } from "./studio";
 
 /* ------------------------------------------------------------------ */
-/* Chat panel (inline)                                                 */
+/* Chat panel                                                          */
 /* ------------------------------------------------------------------ */
 function ChatPanel({
   messages, streaming, error, onSend, onStop, onReset, model, onModelChange, models, backendOnline,
@@ -36,57 +38,76 @@ function ChatPanel({
   };
 
   return (
-    <div className="flex-1 rounded-xl flex flex-col shadow-sm overflow-hidden bg-[var(--surface)] border border-[var(--border)]">
-      <div className="p-6 border-b flex justify-between items-center" style={{ borderColor: "var(--border)" }}>
-        <div>
-          <h2 className="text-2xl font-semibold" style={{ color: "var(--text)" }}>Untitled notebook</h2>
-          <p className="text-sm flex items-center gap-1.5" style={{ color: "var(--text-muted)" }}>
-            {backendOnline ? (
-              <><Wifi className="w-3 h-3 text-green-500" /> gateway online</>
-            ) : (
-              <><WifiOff className="w-3 h-3 text-red-400" /> gateway offline</>
-            )}
-            {" · "}{messages.filter((m) => m.role === "user").length} messages
-          </p>
+    <GlassCard className="flex-1 flex flex-col min-w-0">
+      <header className="flex items-center justify-between gap-3 p-5 border-b" style={{ borderColor: "var(--glass-border)" }}>
+        <div className="flex items-center gap-2 min-w-0">
+          <IconChip color="var(--accent-2)"><MessageSquare className="w-4 h-4" /></IconChip>
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold leading-tight truncate" style={{ color: "var(--text)" }}>Untitled notebook</h2>
+            <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-muted)" }}>
+              {backendOnline ? (
+                <><Wifi className="w-3 h-3 text-green-500" /> gateway online</>
+              ) : (
+                <><WifiOff className="w-3 h-3 text-red-400" /> gateway offline</>
+              )}
+              <span>·</span>
+              <span>{messages.filter((m) => m.role === "user").length} messages</span>
+            </div>
+          </div>
         </div>
-        <div className="relative">
+        <div className="relative shrink-0">
           <select
             value={model}
             onChange={(e) => onModelChange(e.target.value)}
-            className="appearance-none rounded-lg pl-3 pr-8 py-2 text-xs font-medium outline-none cursor-pointer max-w-[220px] bg-[var(--bg-2)] border border-[var(--border)]"
+            className="pg-input appearance-none rounded-xl pl-3 pr-9 py-2 text-xs font-medium outline-none cursor-pointer max-w-[230px] bg-[var(--bg-2)] border border-[var(--glass-border)]"
             style={{ color: "var(--text)" }}
           >
             {models.map((m) => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
           </select>
-          <ArrowRight className="w-3 h-3 absolute right-2 top-3 pointer-events-none hidden" />
+          <svg className="w-3.5 h-3.5 absolute right-3 top-3 pointer-events-none" style={{ color: "var(--text-muted)" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
         </div>
-      </div>
+      </header>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="pg-scroll flex-1 overflow-y-auto p-5 space-y-4">
         {messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-sm gap-2" style={{ color: "var(--text-muted)" }}>
-            <Loader2 className="w-8 h-8 opacity-40" />
-            <p>Ask anything to start your notebook.</p>
+          <div className="h-full flex flex-col items-center justify-center text-center gap-3" style={{ color: "var(--text-muted)" }}>
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center"
+              style={{ background: "color-mix(in srgb, var(--accent-2) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--accent-2) 25%, transparent)" }}
+            >
+              <Bot className="w-8 h-8" style={{ color: "var(--accent-2)" }} />
+            </div>
+            <p className="text-sm font-medium" style={{ color: "var(--text)" }}>Start your notebook</p>
+            <p className="text-xs max-w-xs">Ask anything to begin. Responses stream live from your free gateway models.</p>
             {!backendOnline && (
-              <p className="text-xs max-w-xs text-center" style={{ color: "var(--accent-3)" }}>
-                Backend not detected — start it to get real streamed replies.
-              </p>
+              <Pill color="var(--accent-3)">Backend offline — start it for live replies</Pill>
             )}
           </div>
         ) : (
           messages.map((m) => {
             const isUser = m.role === "user";
             return (
-              <div key={m.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+              <div key={m.id} className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
                 <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed border ${
+                  className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                  style={{
+                    background: isUser ? "color-mix(in srgb, var(--accent-2) 16%, transparent)" : "color-mix(in srgb, var(--accent) 16%, transparent)",
+                    border: `1px solid ${isUser ? "color-mix(in srgb, var(--accent-2) 30%, transparent)" : "color-mix(in srgb, var(--accent) 30%, transparent)"}`,
+                  }}
+                >
+                  {isUser ? <User className="w-4 h-4" style={{ color: "var(--accent-2)" }} /> : <Bot className="w-4 h-4" style={{ color: "var(--accent)" }} />}
+                </div>
+                <div
+                  className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed border ${
                     isUser
-                      ? "bg-[var(--accent-2-alpha-10)] border-[var(--accent-2)] text-[var(--text)]"
+                      ? "bg-[var(--accent-2-alpha-10)] border-[color-mix(in_srgb,var(--accent-2)_35%,transparent)] text-[var(--text)]"
                       : m.error
-                      ? "bg-[color-mix(in_srgb,var(--accent-3)_10%,transparent)] border-[var(--accent-3)]"
-                      : "bg-[var(--bg-2)] border-[var(--border)] text-[var(--text)]"
+                      ? "border-[var(--accent-3)] bg-[color-mix(in_srgb,var(--accent-3)_10%,transparent)]"
+                      : "bg-[var(--bg-2)] border-[var(--glass-border)] text-[var(--text)]"
                   }`}
                 >
                   {m.pending && !m.content ? (
@@ -101,45 +122,34 @@ function ChatPanel({
             );
           })
         )}
-        {error && !backendOnline && <p className="text-xs" style={{ color: "var(--accent-3)" }}>{error}</p>}
+        {error && !backendOnline && <p className="text-xs text-center" style={{ color: "var(--accent-3)" }}>{error}</p>}
       </div>
 
-      <div className="p-4 border-t" style={{ borderColor: "var(--border)" }}>
-        <div className="rounded-xl p-2 flex items-center gap-2 bg-[var(--bg-2)] border border-[var(--border)]">
+      <div className="p-4 border-t" style={{ borderColor: "var(--glass-border)" }}>
+        <div className="flex items-center gap-2 rounded-2xl p-2 bg-[var(--bg-2)] border border-[var(--glass-border)]">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="Start typing…"
-            className="flex-1 bg-transparent outline-none text-sm px-2"
+            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && submit()}
+            placeholder="Message your notebook…"
+            className="pg-input flex-1 bg-transparent outline-none text-sm px-3"
             style={{ color: "var(--text)" }}
           />
-          <button
-            onClick={onReset}
-            title="Clear conversation"
-            className="p-1.5 rounded-full hover:bg-[var(--surface)]"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <IconButton onClick={onReset} title="Clear conversation" variant="ghost">
             <Trash2 className="w-4 h-4" />
-          </button>
+          </IconButton>
           {streaming ? (
-            <button onClick={onStop} className="p-1.5 rounded-full text-white" style={{ background: "var(--accent-3)" }} title="Stop">
+            <IconButton onClick={onStop} title="Stop" variant="danger">
               <Loader2 className="w-4 h-4 animate-spin" />
-            </button>
+            </IconButton>
           ) : (
-            <button
-              onClick={submit}
-              className="p-1.5 rounded-full text-white disabled:opacity-50"
-              style={{ background: "var(--accent-2)" }}
-              disabled={!input.trim()}
-              title="Send"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <IconButton onClick={submit} title="Send" variant="accent" disabled={!input.trim()}>
+              <ArrowUp className="w-4 h-4" />
+            </IconButton>
           )}
         </div>
       </div>
-    </div>
+    </GlassCard>
   );
 }
 
@@ -183,38 +193,35 @@ export default function PlaygroundWorkspace() {
 
   const modelList = useMemo(() => models.map((m) => ({ id: m.id, name: m.name })), [models]);
 
-  /* ---- CRUD: sources ---- */
   const createSource = (s: Source) => setSources((prev) => [...prev, s]);
   const updateSource = (s: Source) => setSources((prev) => prev.map((x) => (x.id === s.id ? s : x)));
   const deleteSource = (id: string) => setSources((prev) => prev.filter((x) => x.id !== id));
 
-  /* ---- CRUD: studio artifacts ---- */
   const generate = (kind: GenerateKind) => {
     const fn = { mindmap: generateMindMap, report: generateReport, flashcards: generateFlashcards, quiz: generateQuiz }[kind];
     setArtifacts((prev) => [fn(messages), ...prev]);
   };
   const updateArtifact = (a: StudioArtifact) => setArtifacts((prev) => prev.map((x) => (x.id === a.id ? a : x)));
   const deleteArtifact = (id: string) => setArtifacts((prev) => prev.filter((x) => x.id !== id));
+  const addNote = () => setArtifacts((prev) => [createNote(), ...prev]);
 
   return (
-    <div className={`${theme === "dark" ? "dark" : ""} h-[calc(100vh-120px)]`}>
-      <div
-        className="h-full w-full font-sans transition-colors duration-300 p-2"
-        style={{ background: "var(--bg)", color: "var(--text)" }}
-      >
+    <div className={`${theme === "dark" ? "dark" : ""} relative h-[calc(100vh-130px)]`}>
+      <GradientOrbs />
+      <div className="relative z-10 h-full w-full p-2" style={{ color: "var(--text)" }}>
         <div className="flex items-center justify-between mb-2 px-1">
-          <span className="text-xs" style={{ color: "var(--text-muted)" }}>Notebook-style AI workspace</span>
-          <button
-            onClick={toggle}
-            className="p-2 rounded-lg hover:bg-[var(--bg-2)] border border-[var(--border)]"
-            style={{ color: "var(--text)" }}
-            title="Toggle theme"
-          >
+          <div className="flex items-center gap-2">
+            <IconChip color="var(--accent)"><Bot className="w-4 h-4" /></IconChip>
+            <span className="text-xs font-medium" style={{ color: "var(--text-muted)" }}>
+              Notebook-style AI workspace
+            </span>
+          </div>
+          <IconButton onClick={toggle} title="Toggle theme" variant="ghost">
             {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </button>
+          </IconButton>
         </div>
 
-        <main className="flex h-[calc(100%-36px)] w-full gap-2">
+        <main className="flex h-[calc(100%-40px)] w-full gap-3 overflow-x-auto pg-scroll">
           <SourcesPanel sources={sources} onCreate={createSource} onUpdate={updateSource} onDelete={deleteSource} />
           <ChatPanel
             messages={messages}
@@ -228,7 +235,13 @@ export default function PlaygroundWorkspace() {
             models={modelList}
             backendOnline={backendOnline}
           />
-          <StudioPanel artifacts={artifacts} onGenerate={generate} onUpdate={updateArtifact} onDelete={deleteArtifact} />
+          <StudioPanel
+            artifacts={artifacts}
+            onGenerate={generate}
+            onUpdate={updateArtifact}
+            onDelete={deleteArtifact}
+            onAddNote={addNote}
+          />
         </main>
       </div>
     </div>
