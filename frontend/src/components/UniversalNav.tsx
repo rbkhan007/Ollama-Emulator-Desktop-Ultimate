@@ -7,7 +7,7 @@ import { useTheme } from "@/lib/ThemeContext";
 import { useDb } from "@/lib/DbContext";
 import { REPO_URL } from "@/lib/config";
 import styles from "./UniversalNav.module.css";
-import { House, Code2, Library, BrainCircuit, Activity, FileText, GitBranch, BookOpen, Shield, DollarSign, Download, UserCheck, Info, Settings, ShieldCheck, Sun, Moon, Star, ChevronDown } from "lucide-react";
+import { House, Code2, Library, BrainCircuit, Activity, FileText, GitBranch, BookOpen, Shield, DollarSign, Download, UserCheck, Info, Settings, ShieldCheck, Sun, Moon, Star, ChevronDown, Briefcase, Server, Coins, Database, Zap, Workflow, TrendingUp, Layers, Atom } from "lucide-react";
 
 interface NavLink {
   label: string;
@@ -36,6 +36,18 @@ const MORE_LINKS: NavLink[] = [
   { label: "Admin", href: "/admin", icon: ShieldCheck },
 ];
 
+const BLOG_LINKS: NavLink[] = [
+  { label: "Hire Next.js Dev (BD)", href: "/hire-nextjs-developer-bangladesh", icon: Briefcase },
+  { label: "FastAPI Dev Dhaka", href: "/custom-fastapi-development-dhaka", icon: Server },
+  { label: "AI App Cost in BD", href: "/cost-to-build-ai-applications-bangladesh", icon: Coins },
+  { label: "Prisma + pgvector", href: "/configure-prisma-orm-with-pgvector", icon: Database },
+  { label: "Vercel Edge Cache", href: "/optimizing-vercel-edge-cache-nextjs-15", icon: Zap },
+  { label: "Monorepo CI", href: "/multi-app-monorepo-github-actions", icon: Workflow },
+  { label: "SE Trends BD 2026", href: "/software-engineering-trends-bangladesh-2026", icon: TrendingUp },
+  { label: "Scalable Architecture", href: "/best-practices-scalable-system-architecture", icon: Layers },
+  { label: "React 19 Enterprise", href: "/react-19-features-enterprise-systems", icon: Atom },
+];
+
 const ALL_LINKS = [...PRIMARY_LINKS, ...MORE_LINKS];
 
 export default memo(function UniversalNav() {
@@ -44,7 +56,9 @@ export default memo(function UniversalNav() {
   const { databaseConnected } = useDb();
   const [isOpen, setIsOpen] = useState(false);
   const [ddOpen, setDdOpen] = useState(false);
+  const [blogOpen, setBlogOpen] = useState(false);
   const ddRef = useRef<HTMLDivElement>(null);
+  const blogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
@@ -59,14 +73,17 @@ export default memo(function UniversalNav() {
     if (ddRef.current && !ddRef.current.contains(e.target as Node)) {
       setDdOpen(false);
     }
+    if (blogRef.current && !blogRef.current.contains(e.target as Node)) {
+      setBlogOpen(false);
+    }
   }, []);
 
   const handleEscape = useCallback((e: KeyboardEvent) => {
-    if (e.key === "Escape") setDdOpen(false);
+    if (e.key === "Escape") { setDdOpen(false); setBlogOpen(false); }
   }, []);
 
   useEffect(() => {
-    if (ddOpen) {
+    if (ddOpen || blogOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscape);
       return () => {
@@ -74,7 +91,7 @@ export default memo(function UniversalNav() {
         document.removeEventListener("keydown", handleEscape);
       };
     }
-  }, [ddOpen, handleClickOutside, handleEscape]);
+  }, [ddOpen, blogOpen, handleClickOutside, handleEscape]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -89,7 +106,7 @@ export default memo(function UniversalNav() {
   return (
     <nav className={styles.nav}>
       <div className={styles.container}>
-        <Link href="/" className={styles.brand} onClick={() => { setIsOpen(false); setDdOpen(false); }}>
+        <Link href="/" className={styles.brand} onClick={() => { setIsOpen(false); setDdOpen(false); setBlogOpen(false); }}>
           <div className={styles.brandLogo}>
             <svg width="28" height="28" viewBox="0 0 64 64" fill="none" role="img" aria-label="OllamoMUI logo" style={{ display: 'block' }}>
               <defs>
@@ -178,6 +195,37 @@ export default memo(function UniversalNav() {
               </div>
             )}
           </div>
+
+          {/* Blog / SEO content dropdown */}
+          <div className={styles.dropdownWrap} ref={blogRef}>
+            <button
+              className={styles.dropdownBtn}
+              onClick={() => setBlogOpen((o) => !o)}
+              aria-expanded={blogOpen}
+              aria-haspopup="true"
+            >
+              Blog
+              <ChevronDown size={14} style={{ transition: "transform 0.2s", transform: blogOpen ? "rotate(180deg)" : "" }} />
+            </button>
+            {blogOpen && (
+              <div className={styles.dropdownPanel}>
+                {BLOG_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`${styles.ddLink} ${isActive(link.href) ? styles.ddLinkActive : ""}`}
+                      onClick={() => setBlogOpen(false)}
+                    >
+                      <Icon size={16} />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile: burger menu */}
@@ -188,6 +236,21 @@ export default memo(function UniversalNav() {
           aria-label="Navigation menu"
         >
           {ALL_LINKS.map((link) => {
+            const Icon = link.icon;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`${styles.link} ${isActive(link.href) ? styles.linkActive : ""}`}
+                onClick={() => setIsOpen(false)}
+              >
+                <Icon size={18} />
+                {link.label}
+              </Link>
+            );
+          })}
+          <div className={styles.menuSectionLabel}>Blog</div>
+          {BLOG_LINKS.map((link) => {
             const Icon = link.icon;
             return (
               <Link
