@@ -36,7 +36,7 @@ const PERSON_JSONLD = {
   jobTitle: "Full-Stack Developer",
   description:
     "Bangladesh-based full-stack developer in Dhaka (GMT+6) specializing in AI/LLM systems, cross-platform apps, and backend engineering. Open to remote, work-from-home, freelance, and local roles.",
-  url: "https://ollamomui.vercel.app/resume",
+  url: `${SITE_URL}/resume`,
   email: "mailto:rbkhan00009@gmail.com",
   telephone: "+8801774471120",
   address: {
@@ -52,8 +52,56 @@ const PERSON_JSONLD = {
   ],
   sameAs: [
     "https://github.com/rbkhan007",
-    "https://ollamomui.vercel.app",
+    `${SITE_URL}`,
   ],
+};
+
+const JOB_POSTING_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "JobPosting",
+  title: "Full-Stack Developer & AI/LLM Engineer (Remote / Freelance / Dhaka)",
+  description:
+    "Rakibul Hasan (Rhasan@dev) is a full-stack developer and AI/LLM engineer based in Dhaka, Bangladesh (GMT+6), available for remote, work-from-home, freelance, and local full-stack, backend, and AI engineering roles. Skills: Next.js, React, React Native, TypeScript, Python, FastAPI, PySide6, PostgreSQL, Docker, RAG, LLM integration.",
+  datePosted: "2026-07-16",
+  employmentType: ["REMOTE", "CONTRACTOR", "FULL_TIME", "PART_TIME"],
+  hiringOrganization: {
+    "@type": "Organization",
+    name: "Independent / Freelance",
+    sameAs: [`${SITE_URL}/resume`],
+  },
+  jobLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Dhaka",
+      addressCountry: "BD",
+    },
+  },
+  applicantLocationRequirements: {
+    "@type": "Country",
+    name: "BD",
+  },
+  jobLocationType: "TELECOMMUTE",
+  baseSalary: {
+    "@type": "MonetaryAmount",
+    currency: "USD",
+    value: { "@type": "QuantitativeValue", minValue: 8, maxValue: 40, unitText: "HOUR" },
+  },
+  industry: "Software Development",
+  occupationalCategory: "15-1252.00",
+  url: `${SITE_URL}/resume`,
+};
+
+const SERVICE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Full-Stack & AI/LLM Development Services",
+  serviceType: "Software Development",
+  provider: { "@type": "Person", name: "Rakibul Hasan", alternateName: "Rhasan@dev", url: `${SITE_URL}/resume` },
+  areaServed: ["Bangladesh", "Dhaka", "Remote"],
+  description:
+    "Hire Rakibul Hasan (Rhasan@dev), a Dhaka-based full-stack developer, for web apps, cross-platform desktop/mobile apps, AI/LLM integrations, RAG systems, and developer tools. Remote, freelance, and local engagements welcome.",
+  url: `${SITE_URL}/resume`,
 };
 
 export default function ResumePage() {
@@ -89,6 +137,14 @@ export default function ResumePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JOB_POSTING_JSONLD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_JSONLD) }}
       />
     </main>
   );

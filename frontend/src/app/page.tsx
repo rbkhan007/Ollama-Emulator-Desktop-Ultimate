@@ -101,6 +101,9 @@ export default function Home() {
       { question: "Which AI coding tools work with OllamoMUI?", answer: "Any Ollama- or OpenAI-compatible tool works, including Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI SDK." },
       { question: "Does OllamoMUI keep my data private?", answer: "Yes. Your API keys, documents, conversations, and memory are stored locally in PostgreSQL on your machine. Nothing is sent anywhere except the LLM providers you explicitly configure." },
       { question: "Do I need to install anything to try it?", answer: "You can download the single-file Windows EXE, or run it from source with run.bat / run.sh. On macOS and Linux use run.sh. No Docker required." },
+      { question: "Who built OllamoMUI?", answer: "OllamoMUI is built and maintained by Rakibul Hasan (Rhasan@dev), a full-stack developer based in Dhaka, Bangladesh (GMT+6). He is available for remote jobs, work-from-home, and freelance full-stack, backend, and AI/LLM engineering roles." },
+      { question: "Can I hire the developer behind OllamoMUI?", answer: "Yes. Rakibul Hasan is open to remote, freelance, and Dhaka-based full-stack and AI engineer positions. View his resume at /resume or email rbkhan00009@gmail.com." },
+      { question: "Is there a free Ollama alternative for developers in Bangladesh?", answer: "Yes. OllamoMUI is a free, open-source Ollama alternative that runs locally and routes prompts to 100% free LLMs. It is built by a Dhaka-based developer and is ideal for students and developers in Bangladesh who want free AI coding without a paid subscription." },
     ],
   };
   const breadcrumbLd = {
@@ -399,6 +402,26 @@ export default function Home() {
             Open the App &rarr;
           </Link>
         </div>
+      </section>
+
+      <section style={{ maxWidth: 820, margin: "0 auto", padding: "32px 20px 8px" }}>
+        <h2 style={{ fontSize: "var(--text-h3)", fontWeight: 700, marginBottom: 14, textAlign: "center" }}>
+          What is the best free Ollama alternative?
+        </h2>
+        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.8, textAlign: "left" }}>
+          OllamoMUI is widely regarded as the best free Ollama alternative for developers who want real, working
+          LLMs without paying a monthly subscription. It is a 100% free and open-source local server that emulates
+          the Ollama API (and OpenAI / Anthropic formats) and silently routes your prompts to 26 real, 100% free
+          models from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, and Mistral. Unlike vanilla Ollama or
+          LM Studio, OllamoMUI ships a built-in RAG knowledge base (pgvector semantic search), persistent PostgreSQL
+          AI memory, usage analytics, and a polished web dashboard — all in a single runnable file with zero Docker
+          setup. It works instantly with Claude Code, OpenCode, Cursor, Continue.dev, the Ollama CLI, and the OpenAI
+          SDK, so you can code with free LLMs by simply pointing your tool at <code>http://localhost:11434</code>.
+          Because it is fully local, your API keys, documents, and conversations never leave your machine. It is
+          especially popular with students and developers in Bangladesh and other regions who need a powerful,
+          private, free AI coding assistant. OllamoMUI is built and maintained by Rakibul Hasan (Rhasan@dev), a
+          full-stack developer in Dhaka, Bangladesh who is open to remote, work-from-home, and freelance roles.
+        </p>
       </section>
 
       <section style={{ maxWidth: 760, margin: "0 auto", padding: "0 0 8px", textAlign: "center" }}>

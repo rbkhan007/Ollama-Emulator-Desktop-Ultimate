@@ -74,7 +74,7 @@ export const metadata: Metadata = {
   creator: "Rhasan@dev",
   publisher: "OllamoMUI",
   category: "technology",
-  alternates: { canonical: SITE_URL },
+  alternates: { canonical: SITE_URL, languages: { "en-bd": SITE_URL, "en-us": SITE_URL } },
   manifest: `${ASSET_BASE}/manifest.webmanifest`,
   appleWebApp: {
     capable: true,
