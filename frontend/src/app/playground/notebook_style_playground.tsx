@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Sun, Moon, Wifi, WifiOff, Loader2, Trash2, ArrowUp, Send, MessageSquare, Bot, User } from "lucide-react";
+import { Wifi, WifiOff, Loader2, Trash2, ArrowUp, Send, MessageSquare, Bot, User } from "lucide-react";
 import { SourcesPanel, type Source } from "@/components/playground/SourcesPanel";
 import { StudioPanel } from "@/components/playground/StudioPanel";
 import { GlassCard, IconButton, IconChip, Pill } from "@/components/playground/playground-ui";
@@ -175,7 +175,7 @@ function useAppTheme() {
 /* Main workspace                                                      */
 /* ------------------------------------------------------------------ */
 export default function PlaygroundWorkspace() {
-  const { theme, toggle } = useAppTheme();
+  const { theme } = useAppTheme();
   const { models, backendOnline, refresh } = useModels();
   const [selectedModel, setSelectedModel] = useState(models[0]?.id ?? "");
   const [sources, setSources] = useState<Source[]>([
@@ -242,9 +242,6 @@ export default function PlaygroundWorkspace() {
               · free OpenRouter AI workspace
             </span>
           </div>
-          <IconButton onClick={toggle} title="Toggle theme" variant="ghost">
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </IconButton>
         </div>
 
         <main className="flex h-[calc(100%-40px)] w-full gap-3 overflow-x-auto pg-scroll">
