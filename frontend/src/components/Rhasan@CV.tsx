@@ -55,6 +55,9 @@ const RhasanCV = () => {
     >
       <style>{`
         .cv-root {
+          /* A4 page: 210mm x 297mm */
+          --cv-page-w: 210mm;
+          --cv-page-h: 297mm;
           --cv-bg: #ffffff;
           --cv-surface: #f1f5f9;
           --cv-surface-border: #e2e8f0;
@@ -107,13 +110,28 @@ const RhasanCV = () => {
             --cv-photo-bg: #e2e8f0 !important;
           }
         }
+        .cv-page {
+          width: var(--cv-page-w);
+          min-height: var(--cv-page-h);
+          margin: 0 auto;
+          padding: 14mm 14mm 12mm;
+          box-sizing: border-box;
+        }
+        @media screen {
+          .cv-page { box-shadow: 0 10px 40px rgba(0,0,0,0.12); border-radius: 4px; }
+        }
+        @media print {
+          .cv-page { width: auto; min-height: auto; padding: 0; box-shadow: none; border-radius: 0; }
+        }
+        .cv-justify { text-align: justify; text-justify: inter-word; }
+        .cv-justify li, .cv-justify p { text-align: justify; text-justify: inter-word; }
       `}</style>
 
       <div
-        className="p-8 print:p-0"
+        className="cv-page"
         style={{ background: "var(--cv-bg)", color: "var(--cv-text)" }}
       >
-        <div className="max-w-[794px] mx-auto">
+        <div>
           {/* Header */}
           <header style={{ borderBottom: "2px solid var(--cv-text-strong)", paddingBottom: 24, marginBottom: 24 }}>
             <div className="flex justify-between items-start gap-6 flex-wrap">
@@ -155,7 +173,7 @@ const RhasanCV = () => {
                 <h2 className="text-xs font-black uppercase tracking-widest mb-3 pb-1" style={{ color: "var(--cv-text-strong)", borderBottom: `1px solid var(--cv-heading-border)` }}>
                   Professional Summary
                 </h2>
-                <p className="text-sm leading-relaxed font-medium" style={{ color: "var(--cv-text-muted)" }}>
+                <p className="text-sm leading-relaxed font-medium cv-justify" style={{ color: "var(--cv-text-muted)" }}>
                   Results-driven Full-Stack Developer specializing in AI / LLM systems, API orchestration, and
                   cross-platform product design. Proven ability to architect production-grade software from
                   database schema to polished UI. Adept at building secure, performant, and scalable applications
@@ -175,7 +193,7 @@ const RhasanCV = () => {
                       <p className="text-xs font-semibold mb-1" style={{ color: "var(--cv-text-soft)" }}>
                         {job.org} · {job.period}
                       </p>
-                      <ul className="text-xs list-disc list-inside space-y-1 font-medium" style={{ color: "var(--cv-text-muted)" }}>
+                      <ul className="text-xs list-disc list-inside space-y-1 font-medium cv-justify" style={{ color: "var(--cv-text-muted)" }}>
                         {job.points.map((p, i) => (
                           <li key={i}>{p}</li>
                         ))}
@@ -224,7 +242,7 @@ const RhasanCV = () => {
                 <h2 className="text-xs font-black uppercase tracking-widest mb-3 pb-1" style={{ color: "var(--cv-text-strong)", borderBottom: `1px solid var(--cv-heading-border)` }}>
                   Education
                 </h2>
-                <div className="text-sm font-medium" style={{ color: "var(--cv-text-muted)" }}>
+                <div className="text-sm font-medium cv-justify" style={{ color: "var(--cv-text-muted)" }}>
                   <p className="font-bold" style={{ color: "var(--cv-text-strong)" }}>B.Sc. in Computer Science & Engineering</p>
                   <p>Independent University, Bangladesh (UIU) · 2022 — Present (Continuing)</p>
                 </div>
@@ -237,7 +255,7 @@ const RhasanCV = () => {
                 <h2 className="text-xs font-black uppercase tracking-widest mb-3 pb-1" style={{ color: "var(--cv-text-strong)", borderBottom: `1px solid var(--cv-heading-border)` }}>
                   Looking For
                 </h2>
-                <ul className="text-xs font-medium list-disc list-inside space-y-1.5" style={{ color: "var(--cv-text-muted)" }}>
+                <ul className="text-xs font-medium list-disc list-inside space-y-1.5 cv-justify" style={{ color: "var(--cv-text-muted)" }}>
                   {AVAILABILITY.map((a, i) => (
                     <li key={i}>{a}</li>
                   ))}
@@ -248,11 +266,11 @@ const RhasanCV = () => {
                 <h2 className="text-xs font-black uppercase tracking-widest mb-3 pb-1" style={{ color: "var(--cv-text-strong)", borderBottom: `1px solid var(--cv-heading-border)` }}>
                   Core Skills
                 </h2>
-                <div className="text-xs space-y-3 font-medium" style={{ color: "var(--cv-text-muted)" }}>
+                <div className="text-xs space-y-3 font-medium cv-justify" style={{ color: "var(--cv-text-muted)" }}>
                   {SKILLS.map((g) => (
                     <div key={g.group}>
                       <strong className="block font-bold mb-0.5" style={{ color: "var(--cv-text-strong)" }}>{g.group}</strong>
-                      {g.items.join(", ")}
+                      <span>{g.items.join(", ")}</span>
                     </div>
                   ))}
                 </div>

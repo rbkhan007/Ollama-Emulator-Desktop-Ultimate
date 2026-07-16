@@ -26,7 +26,7 @@ export default function ResumePage() {
     <main style={{ background: "var(--bg)", minHeight: "100vh", padding: "clamp(16px, 4vw, 32px)" }}>
       <style>{`
         @media print {
-          @page { size: A4; margin: 10mm; }
+          @page { size: A4; margin: 12mm; }
           html, body { background: #fff !important; }
           body * { visibility: hidden; }
           #cv-document, #cv-document * { visibility: visible; }
