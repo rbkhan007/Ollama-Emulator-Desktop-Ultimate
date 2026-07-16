@@ -114,26 +114,26 @@ This project was designed with security as a first-class concern, not an afterth
 
 ```mermaid
 graph TD
-    subgraph Clients
-        A[Desktop EXE<br/>PySide6 + QML]
-        B[Mobile App<br/>React Native]
-        C[Web Browser<br/>Next.js]
+    subgraph Clients["Clients"]
+        A["Desktop EXE<br/>PySide6 + QML"]
+        B["Mobile App<br/>React Native"]
+        C["Web Browser<br/>Next.js"]
     end
 
-    subgraph Backend
-        D[FastAPI Server<br/>Python]
-        E[Local PostgreSQL<br/>(Desktop bundle)]
-        F[Cloud PostgreSQL<br/>NeonDB]
-        G[Payment / Licensing<br/>Lemon Squeezy]
+    subgraph Backend["Backend"]
+        D["FastAPI Server<br/>Python"]
+        E["Local PostgreSQL<br/>(Desktop bundle)"]
+        F["Cloud PostgreSQL<br/>NeonDB"]
+        G["Payment / Licensing<br/>Lemon Squeezy"]
     end
 
-    subgraph External
-        H[LLM Providers<br/>OpenRouter, OpenAI, Gemini]
+    subgraph External["External Providers"]
+        H["LLM Providers<br/>OpenRouter, OpenAI, Gemini"]
     end
 
-    A -->|HTTP| D
-    B -->|HTTPS| D
-    C -->|HTTPS| D
+    A -->|"HTTP"| D
+    B -->|"HTTPS"| D
+    C -->|"HTTPS"| D
     D --> E
     D --> F
     D --> G
@@ -144,10 +144,10 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant FastAPI
-    participant DB
-    participant LLM
+    participant Client as Client
+    participant FastAPI as FastAPI Server
+    participant DB as PostgreSQL
+    participant LLM as LLM Provider
 
     Client->>FastAPI: POST /v1/chat/completions
     FastAPI->>FastAPI: Auth & rate limiting
@@ -161,17 +161,17 @@ sequenceDiagram
 
 ```mermaid
 graph TD
-    subgraph Cloud
-        Vercel[Vercel<br/>Frontend]
-        Render[Render<br/>Backend]
-        Neon[NeonDB<br/>PostgreSQL]
-        GitHub[GitHub Actions<br/>CI/CD]
+    subgraph Cloud["Cloud Infrastructure"]
+        Vercel["Vercel<br/>Frontend"]
+        Render["Render<br/>Backend"]
+        Neon["NeonDB<br/>PostgreSQL"]
+        GitHub["GitHub Actions<br/>CI/CD"]
     end
 
-    GitHub -->|Build & Deploy| Vercel
-    GitHub -->|Build & Deploy| Render
+    GitHub -->|"Build & Deploy"| Vercel
+    GitHub -->|"Build & Deploy"| Render
     Render --> Neon
-    Vercel -->|API calls| Render
+    Vercel -->|"API calls"| Render
 ```
 
 ---
