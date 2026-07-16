@@ -76,6 +76,13 @@ export default memo(function UniversalNav() {
     }
   }, [ddOpen, handleClickOutside, handleEscape]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   const isActive = (href: string) =>
     pathname === href || (href !== "/" && pathname.startsWith(href));
 
@@ -174,7 +181,12 @@ export default memo(function UniversalNav() {
         </div>
 
         {/* Mobile: burger menu */}
-        <div className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}>
+        <div
+          className={`${styles.menu} ${isOpen ? styles.menuOpen : ""}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+        >
           {ALL_LINKS.map((link) => {
             const Icon = link.icon;
             return (

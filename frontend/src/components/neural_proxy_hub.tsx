@@ -154,7 +154,7 @@ export default function NeuralProxyHub() {
           ))}
         </svg>
 
-        <div style={{
+        <div className="nph-grid" style={{
           position: "relative", zIndex: 2,
           display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr)",
           gap: 16, alignItems: "center",

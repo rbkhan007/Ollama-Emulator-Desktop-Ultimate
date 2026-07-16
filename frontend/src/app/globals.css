@@ -962,3 +962,17 @@ h1, h2, h3, h4, h5, h6 {
     height: 88px !important;
   }
 }
+
+/* ===========================
+   NEURAL PROXY HUB — responsive
+   =========================== */
+@media (max-width: 767px) {
+  .nph-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+    text-align: center;
+  }
+  .nph-grid > div {
+    align-items: center !important;
+  }
+}
