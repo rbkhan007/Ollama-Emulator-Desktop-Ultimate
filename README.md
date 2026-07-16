@@ -202,7 +202,7 @@ ollamomui/
 | `/about` | Server | Project story, timeline, Hire Me, security case study |
 | `/download` | Server | Downloads + Deploy to Vercel/Render/Railway |
 | `/pricing` | Server | Plan cards with Lemon Squeezy checkout |
-| `/playground` | Client | AI Playground (temporarily being upgraded; connects to OllamoMUI backend) |
+| `/playground` | Client | Notebook-style AI workspace — streamed chat to 26 free LLMs, Sources panel, and Studio generators (mind map, quiz, flashcards, report) |
 | `/settings` | Client | Backend URL, provider keys, database URL |
 | `/admin` | Client | Manual license key generator |
 | `/payment-result` | Client | Post-checkout license key display |
