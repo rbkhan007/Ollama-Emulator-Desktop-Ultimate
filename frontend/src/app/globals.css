@@ -896,3 +896,12 @@ h1, h2, h3, h4, h5, h6 {
   border-color: color-mix(in srgb, var(--accent-2) 55%, transparent) !important;
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 16%, transparent);
 }
+
+/* ===========================
+   RESUME / CV — theme-adaptive links
+   =========================== */
+.cv-link { color: var(--cv-link); transition: color 0.2s; }
+.cv-link:hover { color: var(--cv-link-hover); }
+@media print {
+  .cv-link { color: #0f172a !important; text-decoration: none !important; }
+}
