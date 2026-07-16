@@ -34,7 +34,7 @@
   --gradient-h3: linear-gradient(90deg, #0d9488, #d97706);
 
   /* Small text: light theme → deep warm, dark theme → warm white (set in theme blocks below) */
-  --text-sm-color: #2d2b3f;
+  --text-sm-color: #1a1726;
   --on-gradient: #ffffff;
 
   /* ===========================
@@ -59,14 +59,14 @@
   --surface: rgba(255,252,248,0.88);
   --surface-2: rgba(255,252,248,0.94);
   --border: rgba(0,0,0,0.07);
-  --text: #1f2937;
-  --text-muted: #5c6b7a;
-  --accent: #0d9488;
-  --accent-2: #d97706;
-  --accent-3: #e11d48;
+  --text: #0d1117;
+  --text-muted: #38434f;
+  --accent: #0d7a70;
+  --accent-2: #b45309;
+  --accent-3: #be123c;
   --accent-4: #7c2d12;
-  --green: #059669;
-  --red: #dc2626;
+  --green: #047857;
+  --red: #b91c1c;
   --gradient-1: linear-gradient(135deg, #0d9488, #d97706);
   --gradient-2: linear-gradient(135deg, #0d9488, #1e293b);
   --gradient-3: linear-gradient(135deg, #d97706, #e11d48);
@@ -83,15 +83,7 @@
   --orb-1: rgba(13,148,136,0.08);
   --orb-2: rgba(217,119,6,0.06);
   --orb-3: rgba(225,29,72,0.04);
-  --comic-dot: rgba(13,148,136,0.04);
-  --comic-dot-2: rgba(217,119,6,0.03);
-  --comic-bg: rgba(255,252,248,0);
-  --ink: #1f2937;
   --ink-soft: rgba(31,41,55,0.06);
-  --water-1: rgba(13,148,136,0.08);
-  --water-2: rgba(217,119,6,0.06);
-  --water-3: rgba(225,29,72,0.04);
-  --water-4: rgba(13,148,136,0.04);
 }
 
 [data-theme="dark"] {
@@ -126,10 +118,6 @@
   --orb-1: rgba(20,184,166,0.18);
   --orb-2: rgba(245,158,11,0.14);
   --orb-3: rgba(251,113,133,0.10);
-  --comic-dot: rgba(20,184,166,0.08);
-  --comic-dot-2: rgba(245,158,11,0.06);
-  --comic-bg: rgba(8,12,20,0);
-  --ink: #e2e8f0;
   --ink-soft: rgba(226,232,240,0.10);
 }
 
@@ -169,59 +157,7 @@ img, video { max-width: 100%; height: auto; }
 /* Utility: allow a flex child to shrink below its content size
    (prevents long text / inputs from forcing horizontal scroll). */
 .min-w-0 { min-width: 0; }
-.no-wrap { white-space: nowrap; }
 .break-all { overflow-wrap: anywhere; word-break: break-all; }
-
-/* ===========================
-   DESIGN SYSTEM — UTILITY CLASSES
-   =========================== */
-.ds-section {
-  padding: var(--space-3xl) var(--space-lg); /* 64px 24px */
-}
-.ds-section-lg {
-  padding: var(--space-4xl) var(--space-lg); /* 96px 24px */
-}
-.ds-container {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  width: 100%;
-}
-.ds-text-block {
-  max-width: var(--text-max);
-}
-.ds-h1 {
-  font-size: var(--text-h1);
-  line-height: var(--leading-heading);
-  font-weight: 700;
-}
-.ds-h2 {
-  font-size: var(--text-h2);
-  line-height: var(--leading-heading);
-  font-weight: 700;
-}
-.ds-h3 {
-  font-size: var(--text-h3);
-  line-height: var(--leading-heading);
-  font-weight: 600;
-  background: var(--gradient-h3);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.ds-body {
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-}
-.ds-small {
-  font-size: var(--text-sm);
-  line-height: var(--leading-small);
-  color: var(--text-sm-color);
-}
-.ds-btn {
-  padding: 12px 24px;
-  min-height: var(--click-target);
-  font-size: 14px;
-}
 
 body {
   font-family: var(--font-body);
@@ -523,6 +459,37 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes fb-dash { to { stroke-dashoffset: -16; } }
+
+/* FeatureBenefit blueprint handles */
+.fb-blueprint .react-flow__handle {
+  width: 10px; height: 10px; border: 2px solid transparent; background: var(--text-muted);
+  border-radius: 50%; transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.fb-blueprint .react-flow__handle.source { background: var(--accent); }
+.fb-blueprint .react-flow__handle.target { background: var(--text-muted); }
+.fb-blueprint .react-flow__handle:hover {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px var(--accent-alpha-20);
+}
+.fb-blueprint .react-flow__handle.connectionindicator:focus,
+.fb-blueprint .react-flow__handle.connectingfrom,
+.fb-blueprint .react-flow__handle.connectingto {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-alpha-20);
+  animation: handle-pulse 1.2s ease-in-out infinite;
+}
+.fb-blueprint .react-flow__node { cursor: grab; }
+.fb-blueprint .react-flow__node.dragging { cursor: grabbing; }
+/* smoothly carve/morph connection paths as nodes are dragged */
+.fb-blueprint .fb-edge-path {
+  transition: d 120ms linear;
+}
+@keyframes handle-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--accent-alpha-20); }
+  50% { box-shadow: 0 0 0 7px var(--accent-alpha-10); }
+}
 @keyframes orbFloat1 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(30px,-40px) scale(1.1); } 66% { transform: translate(-20px,20px) scale(0.95); } }
 @keyframes orbFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-40px,30px) scale(0.9); } 66% { transform: translate(25px,-15px) scale(1.05); } }
 @keyframes orbFloat3 { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(20px,-30px); } }
@@ -588,98 +555,8 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 .orb-3 { background: radial-gradient(circle, var(--orb-3) 0%, transparent 70%); }
 
 /* ===========================
-   WATER RIPPLE EFFECT (LIGHT THEME)
-   =========================== */
-.water-ripple {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  opacity: 0.6;
-}
-[data-theme="light"] .water-ripple {
-  background:
-    radial-gradient(ellipse 600px 200px at 20% 30%, var(--water-1) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 250px at 70% 60%, var(--water-2) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 180px at 50% 80%, var(--water-3) 0%, transparent 70%),
-    radial-gradient(ellipse 350px 150px at 80% 20%, var(--water-4) 0%, transparent 70%);
-  animation: waterShift 20s ease-in-out infinite alternate;
-}
-[data-theme="dark"] .water-ripple {
-  display: none;
-}
-@keyframes waterShift {
-  0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(20px, -15px) scale(1.02); }
-  66% { transform: translate(-15px, 10px) scale(0.98); }
-  100% { transform: translate(10px, -20px) scale(1.01); }
-}
-
-/* Water caustic light pattern */
-.water-caustics {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.08;
-  background:
-    repeating-conic-gradient(var(--water-1) 0% 25%, transparent 0% 50%) 0 0 / 80px 80px,
-    repeating-conic-gradient(var(--water-2) 0% 25%, transparent 0% 50%) 40px 40px / 80px 80px;
-  animation: causticDrift 30s linear infinite;
-}
-[data-theme="light"] .water-caustics {
-  opacity: 0.06;
-}
-[data-theme="dark"] .water-caustics {
-  opacity: 0.03;
-}
-@keyframes causticDrift {
-  0% { background-position: 0 0, 40px 40px; }
-  100% { background-position: 80px 80px, 120px 120px; }
-}
-
-/* Subtle wave overlay for light theme */
-[data-theme="light"] .wave-overlay {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 200px;
-  pointer-events: none;
-  z-index: 0;
-  background: linear-gradient(180deg,
-    transparent 0%,
-    rgba(56,189,248,0.03) 40%,
-    rgba(34,211,238,0.06) 70%,
-    rgba(103,232,249,0.04) 100%);
-  animation: waveFloat 8s ease-in-out infinite;
-}
-[data-theme="dark"] .wave-overlay {
-  display: none;
-}
-@keyframes waveFloat {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50% { transform: translateY(-10px); opacity: 0.8; }
-}
-
-/* ===========================
    SPIDER-VERSE COMIC THEME
    =========================== */
-.comic-halftone {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image:
-    radial-gradient(var(--comic-dot) 1.5px, transparent 1.6px),
-    radial-gradient(var(--comic-dot-2) 1.5px, transparent 1.6px);
-  background-size: 22px 22px, 22px 22px;
-  background-position: 0 0, 11px 11px;
-  opacity: 0.7;
-  transition: background-image 0.4s ease;
-}
-
 /* Poster headline: bold, slightly skewed, ink outline */
 .spidey-title {
   font-weight: 900;
@@ -763,15 +640,8 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
 /* ===========================
      RESPONSIVE
      =========================== */
-@media (max-width: 1080px) {
-  .nav-links, .nav-auth { display: none !important; }
-  .nav-burger { display: inline-flex !important; }
-}
-/* Phones: drop the inline GitHub button (it lives in the hamburger menu),
-   tighten nav padding, stack tight flex rows, and let buttons wrap. */
+/* Phones: tighten nav padding, stack tight flex rows, and let buttons wrap. */
 @media (max-width: 760px) {
-  .nav-star { display: none !important; }
-  .site-nav { padding: 10px 14px !important; gap: 6px !important; }
 }
 @media (max-width: 900px) {
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
@@ -824,24 +694,6 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
   align-items: center;
 }
 
-/* Mobile navbar */
-.nav-burger {
-  display: none;
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border);
-  background: var(--surface);
-  color: var(--text-muted);
-  cursor: pointer;
-  align-items: center; justify-content: center;
-  margin-left: auto;
-}
-.nav-auth {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 8px;
-}
 .nav-mobile {
   display: none;
   flex-direction: column;
@@ -872,253 +724,6 @@ input[type="file"]::file-selector-button:hover { background: var(--glass-hover);
    =========================== */
 html[data-theme] * {
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* ===========================
-   INTERACTIVE WIREFRAME
-   =========================== */
-.wireframe-container {
-  background: var(--surface);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-}
-.wireframe-container::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 25% 25%, rgba(245,158,11,0.04), transparent 60%);
-  pointer-events: none;
-}
-.wireframe-container::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 75% 75%, rgba(139,92,246,0.04), transparent 60%);
-  pointer-events: none;
-}
-@media (max-width: 600px) {
-  .wireframe-container { padding: 16px; }
-}
-
-/* ===========================
-   AGENT CARDS
-   =========================== */
-.agent-card {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-.agent-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--agent-color, var(--accent));
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.agent-card:hover {
-  border-color: var(--agent-color, var(--accent));
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08), 0 0 0 1px var(--agent-color, var(--accent));
-}
-.agent-card:hover::before {
-  opacity: 1;
-}
-.agent-card.active {
-  border-color: var(--agent-color, var(--accent));
-  background: color-mix(in srgb, var(--agent-color, var(--accent)) 8%, var(--surface));
-}
-.agent-card.active::before {
-  opacity: 1;
-}
-
-/* Agent status indicator */
-.agent-status {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.agent-status.online {
-  background: var(--green);
-  box-shadow: 0 0 8px rgba(0,184,148,0.6);
-  animation: statusPulse 2s ease-in-out infinite;
-}
-.agent-status.pending {
-  background: var(--accent-4);
-  box-shadow: 0 0 8px rgba(253,203,110,0.6);
-  animation: statusPulse 1.2s ease-in-out infinite;
-}
-.agent-status.offline {
-  background: var(--text-muted);
-  opacity: 0.5;
-}
-@keyframes statusPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.2); }
-}
-
-/* ===========================
-   PIPELINE STATUS
-   =========================== */
-.pipeline-step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-family: var(--font-mono);
-  transition: background 0.2s;
-}
-.pipeline-step:hover {
-  background: var(--glass);
-}
-.pipeline-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.pipeline-dot.active {
-  animation: pipelinePulse 1s ease-in-out infinite;
-}
-@keyframes pipelinePulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.4); }
-}
-.pipeline-dot.success { background: var(--green); box-shadow: 0 0 6px rgba(0,184,148,0.5); }
-.pipeline-dot.processing { background: var(--accent-2); box-shadow: 0 0 6px rgba(0,206,201,0.5); }
-.pipeline-dot.waiting { background: var(--accent-4); box-shadow: 0 0 6px rgba(253,203,110,0.5); }
-.pipeline-dot.error { background: var(--red); box-shadow: 0 0 6px rgba(225,112,85,0.5); }
-
-/* ===========================
-   STATS DASHBOARD
-   =========================== */
-.stat-card {
-  background: var(--glass);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  text-align: center;
-  transition: all 0.2s;
-}
-.stat-card:hover {
-  border-color: var(--accent-border);
-  transform: translateY(-1px);
-}
-.stat-value {
-  font-size: 24px;
-  font-weight: 700;
-  font-family: var(--font-mono);
-  color: var(--text);
-  line-height: 1.2;
-}
-.stat-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-top: 4px;
-}
-
-/* ===========================
-   CONSOLE LOG
-   =========================== */
-.console-container {
-  background: var(--surface);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  overflow: hidden;
-}
-.console-header {
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--glass-border);
-  font-size: 12px;
-  font-family: var(--font-mono);
-}
-.console-body {
-  padding: 12px 16px;
-  height: 220px;
-  overflow-y: auto;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  line-height: 1.5;
-  background: var(--surface);
-}
-.console-line {
-  display: flex;
-  gap: 8px;
-  padding: 1px 0;
-}
-.console-timestamp {
-  color: var(--text-muted);
-  opacity: 0.6;
-  flex-shrink: 0;
-  font-size: 10px;
-  min-width: 56px;
-}
-.console-text {
-  flex: 1;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-all;
-}
-.console-clear-btn {
-  background: none;
-  border: 1px solid var(--glass-border);
-  color: var(--text-muted);
-  font-size: 11px;
-  font-family: var(--font-mono);
-  padding: 2px 8px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: auto;
-}
-.console-clear-btn:hover {
-  color: var(--text);
-  border-color: var(--accent-border);
-  background: var(--glass);
-}
-
-/* ===========================
-   WIREFRAME GRID LAYOUT
-   =========================== */
-.wf-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-@media (max-width: 768px) {
-  .wf-grid { grid-template-columns: 1fr; }
-}
-.wf-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.wf-section-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0 4px 4px;
 }
 
 /* ===========================
@@ -1157,4 +762,74 @@ h1, h2, h3, h4, h5, h6 {
 /* React Flow surfaces must follow theme, not the library default white */
 .react-flow__renderer, .react-flow__pane {
   background: transparent;
+}
+.fb-blueprint.react-flow, .arch-flow.react-flow,
+.fb-blueprint .react-flow__background, .arch-flow .react-flow__background {
+  background: transparent;
+}
+
+/* React Flow Controls — theme-aware icons + buttons */
+.fb-blueprint .react-flow__controls,
+.arch-flow .react-flow__controls {
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.fb-blueprint .react-flow__controls-button,
+.arch-flow .react-flow__controls-button {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  fill: var(--text);
+  width: 26px; height: 26px;
+}
+.fb-blueprint .react-flow__controls-button:hover,
+.arch-flow .react-flow__controls-button:hover {
+  background: var(--surface-2);
+  color: var(--accent);
+  fill: var(--accent);
+}
+.fb-blueprint .react-flow__controls-button svg,
+.arch-flow .react-flow__controls-button svg {
+  fill: currentColor;
+  color: inherit;
+}
+.fb-blueprint .react-flow__controls-button:disabled,
+.arch-flow .react-flow__controls-button:disabled {
+  color: var(--text-muted);
+  fill: var(--text-muted);
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* MiniMap — theme-aware */
+.fb-blueprint .react-flow__minimap,
+.arch-flow .react-flow__minimap {
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+}
+.fb-blueprint .react-flow__minimap-mask,
+.arch-flow .react-flow__minimap-mask {
+  fill: var(--bg);
+  opacity: 0.6;
+}
+
+/* Architecture diagrams — connection handle highlight (mirrors FeatureBenefit blueprint) */
+.arch-flow .react-flow__handle {
+  width: 9px; height: 9px; border: 2px solid transparent;
+  background: var(--text-muted); border-radius: 50%;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.arch-flow .react-flow__handle.source { background: var(--accent); }
+.arch-flow .react-flow__handle.target { background: var(--text-muted); }
+.arch-flow .react-flow__handle:hover {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px var(--accent-alpha-20);
+}
+.arch-flow .react-flow__handle.connectionindicator:focus,
+.arch-flow .react-flow__handle.connectingfrom,
+.arch-flow .react-flow__handle.connectingto {
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-alpha-20);
+  animation: handle-pulse 1.2s ease-in-out infinite;
 }

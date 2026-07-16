@@ -20,8 +20,8 @@ export async function api(path: string, opts?: RequestInit) {
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       const res = await fetch(`${BASE}${path}`, {
-        headers: { "Content-Type": "application/json", ...opts?.headers },
         ...opts,
+        headers: { "Content-Type": "application/json", ...opts?.headers },
       });
       if (!res.ok) {
         const text = await res.text().catch(() => "");
@@ -41,8 +41,7 @@ export async function api(path: string, opts?: RequestInit) {
 }
 
 function isRetryable(err: Error): boolean {
-  const msg = err.message || "";
-  return msg.includes("Failed to fetch") || msg.includes("NetworkError") || msg.includes("ERR_CONNECTION");
+  return err.name === "TypeError" || /Failed to fetch|NetworkError|ERR_CONNECTION/.test(err.message);
 }
 
 export async function apiJson<T = unknown>(path: string, opts?: RequestInit): Promise<T> {

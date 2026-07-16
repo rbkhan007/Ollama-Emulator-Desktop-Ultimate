@@ -82,7 +82,7 @@ export function BrandIcon({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "rgba(13,148,136,0.12)",
+          background: "var(--accent-alpha-10)",
           color: "var(--text, #1a1a2e)",
           fontSize: size * 0.4,
           fontWeight: 700,

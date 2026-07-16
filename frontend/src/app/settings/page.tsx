@@ -248,6 +248,7 @@ export default function SettingsPage() {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <input
             style={{ ...input, flex: 1, minWidth: 0 }}
+            aria-label="Backend API base URL"
             placeholder="http://localhost:11434"
             value={apiBase}
             onChange={(e) => setApiBaseInput(e.target.value)}
@@ -280,6 +281,7 @@ export default function SettingsPage() {
           <input
             style={{ ...input, flex: 1, minWidth: 0 }}
             type="password"
+            aria-label="PostgreSQL database URL"
             placeholder="postgresql://user:pass@host:5432/db"
             value={dbUrl}
             onChange={(e) => setDbUrl(e.target.value)}
@@ -318,7 +320,8 @@ export default function SettingsPage() {
           <input
             style={{ ...input, flex: 1, minWidth: 0 }}
             type="password"
-            placeholder="sk-… / sk-or-v1-… / gsk_… "
+            aria-label="Provider API key to auto-detect"
+            placeholder="sk-… / sk-or-v1-… / gsk_…"
             value={detectKey}
             onChange={(e) => setDetectKey(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && autoDetect()}
@@ -343,7 +346,7 @@ export default function SettingsPage() {
             <div style={grid2}>
               <Field label="Name"><input style={input} placeholder="my-provider" value={np.name} onChange={(e) => setNp({ ...np, name: e.target.value })} /></Field>
               <Field label="Type"><input style={input} placeholder="openai | anthropic | ollama" value={np.type} onChange={(e) => setNp({ ...np, type: e.target.value })} /></Field>
-              <Field label="Base URL"><input style={input} placeholder="https://api.example.com/v1/chat/completions" value={np.url} onChange={(e) => setNp({ ...np, url: e.target.value })} /></Field>
+              <Field label="Base URL"><input style={input} placeholder="https://api.example.com/v1" value={np.url} onChange={(e) => setNp({ ...np, url: e.target.value })} /></Field>
               <Field label="Models URL (optional)"><input style={input} placeholder="https://api.example.com/v1/models" value={np.models_url} onChange={(e) => setNp({ ...np, models_url: e.target.value })} /></Field>
               <Field label="Auth type"><input style={input} placeholder="bearer" value={np.auth_type} onChange={(e) => setNp({ ...np, auth_type: e.target.value })} /></Field>
               <Field label="Default model"><input style={input} placeholder="gpt-4o-mini" value={np.default_model} onChange={(e) => setNp({ ...np, default_model: e.target.value })} /></Field>
@@ -368,14 +371,14 @@ export default function SettingsPage() {
             const isActive = p.name === active;
             const rowBusy = busy === p.name;
             return (
-              <div key={p.name} style={{ ...subPanel, borderColor: isActive ? "rgba(13,148,136,0.4)" : "var(--glass-border)" }}>
+              <div key={p.name} style={{ ...subPanel, borderColor: isActive ? "var(--accent-border)" : "var(--glass-border)" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
                   <ProviderIcon name={p.name} size={22} />
                   <div style={{ fontWeight: 700 }}>{p.name}</div>
                   <span style={badge}>{p.type}</span>
-                  {isActive && <span style={{ ...badge, background: "rgba(13,148,136,0.15)", color: "var(--accent)" }}>active</span>}
+                  {isActive && <span style={{ ...badge, background: "var(--accent-alpha-10)", color: "var(--accent)" }}>active</span>}
                   {p.api_key_set ? (
-                    <span style={{ ...badge, background: "rgba(0,184,148,0.15)", color: "var(--green)" }}>
+                    <span style={{ ...badge, background: "color-mix(in srgb, var(--green) 15%, transparent)", color: "var(--green)" }}>
                       key {p.api_key_masked}
                     </span>
                   ) : (
@@ -484,7 +487,7 @@ const ghostBtn: React.CSSProperties = {
 const dangerBtn: React.CSSProperties = {
   background: "transparent",
   color: "var(--red)",
-  border: "1px solid rgba(225,112,85,0.4)",
+  border: "1px solid color-mix(in srgb, var(--red) 40%, transparent)",
   padding: "12px 24px",
   borderRadius: 12,
   fontWeight: 600,

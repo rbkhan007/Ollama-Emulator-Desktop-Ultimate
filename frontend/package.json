@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@heyputer/puter.js": "^2.5.4",
     "@lobehub/fluent-emoji": "^4.1.0",
     "@lobehub/icons": "^5.10.1",
     "@lobehub/ui": "^5.20.2",
@@ -29,7 +30,6 @@
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "autoprefixer": "^10.5.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.3.1",
     "postcss": "^8.5.19",

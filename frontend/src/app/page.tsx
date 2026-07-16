@@ -12,8 +12,8 @@ import {
   SITE_URL,
 } from "@/lib/config";
 
-import InteractiveWireframe from "@/components/InteractiveWireframe";
-import { MessageSquare, Grid, Brain, Shield, Infinity, Zap, Terminal, Download, Star, Globe, Cloud, FolderOpen, Mail, Sparkles, ChevronRight } from "lucide-react";
+import NeuralProxyHub from "@/components/neural_proxy_hub";
+import { MessageSquare, Grid, Brain, Shield, Infinity, Zap, Terminal, Download, Star, Globe, Cloud, FolderOpen, Mail, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "The #1 Ollama Alternative with 26 Free LLMs",
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "var(--accent)", g1: "#0d9488", g2: "#14b8a6" },
-  { icon: "models", title: "Models Browser", desc: "Browse and search all available models across connected providers. Filter by free or paid, search by name.", color: "var(--accent-2)", g1: "#d97706", g2: "#f59e0b" },
-  { icon: "brain", title: "RAG Knowledge Base", desc: "Upload docs or paste text and get answers grounded in your own data via pgvector cosine similarity.", color: "var(--accent-3)", g1: "#e11d48", g2: "#fb7185" },
-  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to PostgreSQL. Facts, sessions & context survive restarts.", color: "var(--accent-4)", g1: "#7c2d12", g2: "#d97706" },
-  { icon: "infinity", title: "Multi-Provider", desc: "OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, Mistral, Together — one box.", color: "var(--green)", g1: "#059669", g2: "#34d399" },
-  { icon: "lightning", title: "Zero Config", desc: "One Python file. Run it, paste a free API key, and point Claude Code or OpenCode at it.", color: "var(--accent)", g1: "#0d9488", g2: "#14b8a6" },
-  { icon: "terminal", title: "Full Compatibility", desc: "Ollama, OpenAI, and Anthropic API formats — works with every major AI coding tool.", color: "var(--accent-2)", g1: "#d97706", g2: "#f59e0b" },
+  { icon: "chat", title: "Chat Playground", desc: "Stream any model in the browser with markdown rendering and real-time responses.", color: "var(--accent)" },
+  { icon: "models", title: "Models Browser", desc: "Browse and search all available models across connected providers. Filter by free or paid, search by name.", color: "var(--accent-2)" },
+  { icon: "brain", title: "RAG Knowledge Base", desc: "Upload docs or paste text and get answers grounded in your own data via pgvector cosine similarity.", color: "var(--accent-3)" },
+  { icon: "shield", title: "Persistent Memory", desc: "Every conversation auto-saves to PostgreSQL. Facts, sessions & context survive restarts.", color: "var(--accent-4)" },
+  { icon: "infinity", title: "Multi-Provider", desc: "OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, Gemini, Mistral, Together — one box.", color: "var(--green)" },
+  { icon: "lightning", title: "Zero Config", desc: "One Python file. Run it, paste a free API key, and point Claude Code or OpenCode at it.", color: "var(--accent)" },
+  { icon: "terminal", title: "Full Compatibility", desc: "Ollama, OpenAI, and Anthropic API formats — works with every major AI coding tool.", color: "var(--accent-2)" },
 ];
 
 const iconFeatureMap: Record<string, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
@@ -47,12 +47,12 @@ const iconFeatureMap: Record<string, React.ComponentType<{ size?: number; color?
 };
 
 const clients = [
-  { name: "Claude Code", color: "#d97706" },
-  { name: "OpenCode", color: "#0d9488" },
-  { name: "Cursor", color: "#e11d48" },
-  { name: "Continue.dev", color: "#059669" },
-  { name: "Ollama CLI", color: "#7c2d12" },
-  { name: "OpenAI SDK", color: "#14b8a6" },
+  { name: "Claude Code", color: "var(--accent-2)" },
+  { name: "OpenCode", color: "var(--accent)" },
+  { name: "Cursor", color: "var(--accent-3)" },
+  { name: "Continue.dev", color: "var(--green)" },
+  { name: "Ollama CLI", color: "var(--accent-4)" },
+  { name: "OpenAI SDK", color: "var(--accent)" },
 ];
 
 const steps = [
@@ -132,7 +132,7 @@ export default function Home() {
           fontSize: "var(--text-h1)", margin: "0 auto 24px", maxWidth: "var(--text-max)",
         }}>
           <span style={{
-            backgroundImage: "var(--gradient-h1)", backgroundSize: "200% 200%",
+            backgroundImage: "var(--gradient-1)", backgroundSize: "200% 200%",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
             animation: "shimmer 4s linear infinite",
           }}>
@@ -188,24 +188,28 @@ export default function Home() {
 
       </section>
 
-      {/* Works with */}
-      <section className="lazy-section" style={{ padding: "0 24px 24px", textAlign: "center" }}>
-        <p style={{ fontSize: "var(--text-sm)", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>
-          Works with your favorite tools
-        </p>
-        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
-          {clients.map((c) => (
-            <li key={c.name} style={{
-              padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 600,
-              background: "var(--surface)", border: "1px solid var(--glass-border)", color: "var(--text-muted)",
-              display: "inline-flex", alignItems: "center", gap: 8,
-            }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: c.color, boxShadow: `0 0 8px ${c.color}66`, flexShrink: 0 }} />
-              {c.name}
-            </li>
-          ))}
-        </ul>
-      </section>
+<section className="lazy-section" style={{ padding: "0 24px 24px", textAlign: "center" }}>
+         <p style={{ fontSize: "var(--text-sm)", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 16 }}>
+           Works with your favorite tools
+         </p>
+         <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+           {clients.map((c) => (
+             <li key={c.name} style={{
+               padding: "8px 16px", borderRadius: 8, fontSize: 14, fontWeight: 600,
+               background: "var(--surface)", border: "1px solid var(--glass-border)", color: "var(--text-muted)",
+               display: "inline-flex", alignItems: "center", gap: 8,
+             }}>
+               <span style={{ width: 8, height: 8, borderRadius: "50%", background: c.color, boxShadow: `0 0 8px ${c.color}66`, flexShrink: 0 }} />
+               {c.name}
+             </li>
+           ))}
+         </ul>
+       </section>
+
+       {/* Neural proxy routing */}
+       <section className="lazy-section" style={{ padding: "0 24px var(--space-3xl)", maxWidth: 1000, margin: "0 auto" }}>
+         <NeuralProxyHub />
+       </section>
 
       {/* Features */}
       <section className="lazy-section" style={{ padding: "var(--space-3xl) 24px", maxWidth: 1100, margin: "0 auto" }}>
@@ -239,10 +243,6 @@ export default function Home() {
             );
            })}
         </div>
-      </section>
-
-      <section className="lazy-section" style={{ padding: "var(--space-3xl) 24px", maxWidth: 1100, margin: "0 auto" }}>
-        <InteractiveWireframe />
       </section>
 
       <ClientOnly />
@@ -286,8 +286,8 @@ export default function Home() {
             return (
               <div key={c.name} className={isUs ? "spidey-panel compare-row" : "compare-row"} style={{
                 padding: "16px 24px", borderRadius: 16,
-                background: isUs ? "linear-gradient(135deg, rgba(13,148,136,0.12), rgba(13,148,136,0.10))" : "var(--surface)",
-                border: isUs ? "1px solid rgba(13,148,136,0.35)" : "1px solid var(--glass-border)",
+                background: isUs ? "linear-gradient(135deg, var(--accent-alpha-20), var(--accent-alpha-10))" : "var(--surface)",
+                border: isUs ? "1px solid var(--accent-border)" : "1px solid var(--glass-border)",
               }}>
                 <div style={{ fontWeight: 700, fontSize: 15 }}>{c.name}</div>
                 <div>
@@ -304,7 +304,7 @@ export default function Home() {
       <section className="lazy-section" style={{ padding: "0 24px var(--space-3xl)", maxWidth: 900, margin: "0 auto" }}>
         <div style={{
           padding: "48px 32px", borderRadius: 16, textAlign: "center",
-          background: "linear-gradient(135deg, rgba(13,148,136,0.12), rgba(13,148,136,0.12))",
+          background: "linear-gradient(135deg, var(--accent-alpha-20), var(--accent-alpha-10))",
           border: "1px solid var(--glass-border)",
         }}>
           <div style={{ marginBottom: 8, display: "flex", justifyContent: "center", color: "var(--accent)" }}>
@@ -321,7 +321,7 @@ export default function Home() {
             padding: "12px 24px", borderRadius: 12, fontSize: 15, fontWeight: 700,
             background: "var(--gradient-1)", color: "white", textDecoration: "none",
             display: "inline-flex", alignItems: "center", gap: 8, minHeight: "var(--click-target)",
-            boxShadow: "0 6px 24px rgba(13,148,136,0.35)",
+            boxShadow: "0 6px 24px color-mix(in srgb, var(--accent) 35%, transparent)",
           }}>
             <Globe size={18} />
             Open Free Tier &rarr;

@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { useNodesState, useEdgesState, addEdge } from "@xyflow/react";
+import { useNodesState, useEdgesState, addEdge, type Node, type Edge, type Connection } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 const ReactFlow = dynamic(() => import("@xyflow/react").then(m => m.ReactFlow), { ssr: false });
@@ -10,21 +10,30 @@ const Background = dynamic(() => import("@xyflow/react").then(m => m.Background)
 const Controls = dynamic(() => import("@xyflow/react").then(m => m.Controls), { ssr: false });
 
 export default function FlowRenderer({ code }: { code: string }) {
-  let parsed: { nodes?: any[]; edges?: any[] } = {};
-  try { parsed = JSON.parse(code); } catch {
-    return <p style={{ color: "var(--red)", fontSize: "var(--text-sm)", padding: 8 }}>Invalid flow JSON</p>;
-  }
+  const { initialNodes, initialEdges, parseError } = useMemo(() => {
+    try {
+      const parsed = JSON.parse(code);
+      return {
+        initialNodes: (parsed.nodes || []) as Node[],
+        initialEdges: (parsed.edges || []) as Edge[],
+        parseError: false,
+      };
+    } catch {
+      return { initialNodes: [] as Node[], initialEdges: [] as Edge[], parseError: true };
+    }
+  }, [code]);
 
-  const initialNodes = useMemo(() => parsed.nodes || [], [parsed.nodes]);
-  const initialEdges = useMemo(() => parsed.edges || [], [parsed.edges]);
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (params: any) => setEdges(eds => addEdge(params, eds)),
+    (params: Connection) => setEdges(eds => addEdge(params, eds)),
     [setEdges]
   );
+
+  if (parseError) {
+    return <p style={{ color: "var(--red)", fontSize: "var(--text-sm)", padding: 8 }}>Invalid flow JSON</p>;
+  }
 
   if (!initialNodes.length) {
     return <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", padding: 8 }}>No nodes in flow</p>;

@@ -48,10 +48,11 @@ export default memo(function UniversalNav() {
 
   useEffect(() => { setIsOpen(false); }, [pathname]);
 
+  const prevOverflowRef = useRef("");
   useEffect(() => {
-    const prev = document.body.style.overflow;
+    prevOverflowRef.current = document.body.style.overflow;
     document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = isOpen ? prev : ""; };
+    return () => { document.body.style.overflow = prevOverflowRef.current; };
   }, [isOpen]);
 
   const handleClickOutside = useCallback((e: MouseEvent) => {

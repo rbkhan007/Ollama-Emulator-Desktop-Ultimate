@@ -34,7 +34,7 @@ export default function AdminLicense() {
       if (!res.ok) {
         throw new Error(data.detail || `Error ${res.status}`);
       }
-      setResult(data.license as string);
+      setResult(typeof data.license === "string" ? data.license : "");
       toast("License generated — copy and send it to the customer.");
     } catch (e) {
       toast(e instanceof Error ? e.message : "Request failed", true);
@@ -99,7 +99,4 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid var(--glass-border)", background: "var(--surface)", color: "var(--text)",
   fontSize: 14,
 };
-const buttonStyle: React.CSSProperties = {
-  display: "inline-block", background: "var(--gradient-1)", color: "#fff",
-  border: "none", padding: "12px 24px", borderRadius: 8, fontWeight: 700, cursor: "pointer",
-};
+

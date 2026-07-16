@@ -32,6 +32,7 @@ from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel, field_validator
 
 from ollama_emu import acl as _acl
+from ollama_emu import canvas as _canvas
 from ollama_emu.payment import router as payment_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s", stream=sys.stdout)
@@ -337,6 +338,7 @@ def init_app_state():
     """
     global PROVIDER_CONFIGS, API_KEYS, ACTIVE_PROVIDER
     init_db()
+    _canvas.init_canvas_schema()
     PROVIDER_CONFIGS, API_KEYS = load_providers_from_db()
     if ACTIVE_PROVIDER not in PROVIDER_CONFIGS and PROVIDER_CONFIGS:
         ACTIVE_PROVIDER = next(iter(PROVIDER_CONFIGS))
@@ -754,6 +756,54 @@ class ConfigRequest(BaseModel):
         if not v or len(v) > 100:
             raise ValueError("Provider name must be 1-100 chars")
         return v
+
+
+# Canvas Models
+class CanvasNodeBase(BaseModel):
+    id: str
+    title: str
+    content: str
+    x: int = 0
+    y: int = 0
+    is_processing: bool = False
+    node_type: str = "default"
+
+class CanvasNodeCreate(CanvasNodeBase):
+    pass
+
+class CanvasNodeUpdate(BaseModel):
+    title: Optional[str] = None
+    content: Optional[str] = None
+    x: Optional[int] = None
+    y: Optional[int] = None
+    is_processing: Optional[bool] = None
+    node_type: Optional[str] = None
+
+class CanvasNodeResponse(CanvasNodeBase):
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+class CanvasConnectionBase(BaseModel):
+    id: str
+    source_node_id: str
+    target_node_id: str
+    is_streaming: bool = False
+    color: int = 0x3b82f6      # AI Blue
+    stream_color: int = 0x10b981  # AI Streaming Green
+
+class CanvasConnectionCreate(CanvasConnectionBase):
+    pass
+
+class CanvasConnectionUpdate(BaseModel):
+    source_node_id: Optional[str] = None
+    target_node_id: Optional[str] = None
+    is_streaming: Optional[bool] = None
+    color: Optional[int] = None
+    stream_color: Optional[int] = None
+
+class CanvasConnectionResponse(CanvasConnectionBase):
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
 class ProviderAddRequest(BaseModel):
     name: str

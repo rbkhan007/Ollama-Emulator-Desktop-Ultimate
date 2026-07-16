@@ -40,7 +40,7 @@ export default function MemoryPage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addFact() {
     if (!factText.trim()) { toast("Enter a fact", true); return; }
@@ -110,19 +110,19 @@ export default function MemoryPage() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <div className="page-header-icon" style={{ background: "rgba(13,148,136,0.1)" }}>
+        <div className="page-header-icon" style={{ background: "var(--accent-alpha-10)" }}>
           <PageIcon type="brain" color="var(--accent-2)" />
         </div>
         <div>
           <h1>Memory</h1>
           <p>Conversation history, stored facts, and session management</p>
           {!databaseConnected && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 8, fontSize: 12, color: "var(--red)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "color-mix(in srgb, var(--red) 10%, transparent)", borderRadius: 8, fontSize: 12, color: "var(--red)" }}>
               PostgreSQL not connected — memory features are unavailable
             </div>
           )}
           {databaseConnected && schema && !schema.synced && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 8, fontSize: 12, color: "var(--accent-4)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "color-mix(in srgb, var(--accent-2) 10%, transparent)", borderRadius: 8, fontSize: 12, color: "var(--accent-4)" }}>
               Schema out of date (v{schema.db_version} vs v{schema.expected_version}) — run migration
             </div>
           )}

@@ -33,18 +33,18 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install -r desktop/requirements.txt
+          pip install -e .
       - name: Run migrations
         run: |
           python -c "
 import os
 os.environ['DATABASE_URL'] = 'postgresql://ollamaemu:password@localhost:5432/ollamaemu'
-from backend.src.ollama_emu.db import migrate_schema
+from ollama_emu.db import migrate_schema
 migrate_schema()
           "
       - name: Start backend in background
         run: |
-          python -m backend.src.ollama_emu.main > backend.log 2>&1 &
+          ollamomui serve --host 127.0.0.1 --port 11434 > backend.log 2>&1 &
           echo "Waiting for server to start..."
           for i in {1..30}; do
             if curl -s -o /dev/null -w "%{http_code}" http://localhost:11434/api/status | grep -q 200; then

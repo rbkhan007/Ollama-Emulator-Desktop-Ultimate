@@ -60,6 +60,18 @@ where = ["backend/src"]
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "node_modules",
+    "frontend",
+    "mobile",
+    "desktop",
+    "dist",
+    "build",
+    "backend/src/ollamomui.egg-info",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]

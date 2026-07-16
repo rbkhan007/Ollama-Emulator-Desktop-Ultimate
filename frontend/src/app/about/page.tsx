@@ -22,9 +22,11 @@ export const metadata: Metadata = {
 };
 
 const timeline = [
-  { year: "2024", event: "Project started as a simple Ollama API emulator for free OpenRouter models." },
-  { year: "2025", event: "Added RAG engine with pgvector, persistent memory system, and the first desktop GUI prototype." },
-  { year: "2026", event: "Full rebrand to OllamoMUI. Mobile app, Lemon Squeezy payments, license management, and marketing site launched." },
+  { year: "Day 1–2", event: "Scaffolded the FastAPI gateway — Ollama-compatible /api/chat & /api/generate routing to free OpenRouter models. First prompt streamed end-to-end." },
+  { year: "Day 3–4", event: "Added RAG engine with pgvector + pg_trgm hybrid search, persistent memory with summarization, and rate limiting / audit logging middleware." },
+  { year: "Day 5", event: "Built the PySide6/QML desktop client with dual theme, chat playground, and RAG/memory browsers." },
+  { year: "Day 6", event: "Shipped the Next.js marketing site (23 pages), Lemon Squeezy payments, and license-key activation." },
+  { year: "Day 7", event: "Launched the React Native mobile app, Cloudflare Tunnel deploy, and rebranded everything to OllamoMUI — live in one week." },
 ];
 
 const stats = [
@@ -58,18 +60,40 @@ export default function About() {
           a desktop app, a mobile app, and a full payment/licensing system. All open-source.
         </p>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginTop: 28 }}>
-          <img
-            src="/Rhasan@dev.jpg"
-            alt="Rhasan@dev — indie developer"
-            width={117}
-            height={127}
-            loading="lazy"
-            style={{ borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }}
-          />
-          <div style={{ textAlign: "left", fontSize: "var(--text-sm)", color: "var(--text-muted)" }}>
-            <div style={{ fontWeight: 700, color: "var(--text)", fontSize: 15 }}>Rhasan@dev</div>
-            <div>Indie developer · Full-stack · AI/LLM</div>
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 18, marginTop: 28,
+          padding: "16px 24px 16px 16px", borderRadius: 20,
+          background: "var(--surface)", border: "1px solid var(--glass-border)",
+          boxShadow: "0 8px 28px var(--accent-alpha-15)",
+        }}>
+          <div style={{
+            width: 92, height: 92, borderRadius: 16, overflow: "hidden", flexShrink: 0,
+            border: "3px solid var(--accent)",
+            boxShadow: "0 0 0 4px var(--accent-alpha-10), 0 4px 16px var(--accent-alpha-30)",
+          }}>
+            <img
+              src="/Rhasan%40dev.jpg"
+              alt="Rakibul Hasan — Rhasan@dev"
+              width={92}
+              height={92}
+              loading="lazy"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </div>
+          <div style={{ textAlign: "left" }}>
+            <div style={{ fontWeight: 800, color: "var(--text)", fontSize: 18, letterSpacing: "-0.01em" }}>
+              Rakibul Hasan
+            </div>
+            <div style={{
+              display: "inline-block", marginTop: 4, padding: "2px 10px", borderRadius: 8,
+              background: "var(--accent-alpha-10)", color: "var(--accent)", fontWeight: 700,
+              fontSize: 12, fontFamily: "monospace",
+            }}>
+              @Rhasan@dev
+            </div>
+            <div style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", marginTop: 4 }}>
+              Indie developer · Full-stack · AI/LLM
+            </div>
           </div>
         </div>
 

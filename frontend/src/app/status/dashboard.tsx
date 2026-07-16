@@ -28,7 +28,7 @@ function StatusIcon({ status }: { status: "loading" | "ok" | "error" }) {
     <span style={{
       display: "inline-flex", alignItems: "center", justifyContent: "center",
       width: 22, height: 22, borderRadius: "50%",
-      background: status === "ok" ? "rgba(13,148,136,0.15)" : "rgba(248,113,113,0.15)",
+      background: status === "ok" ? "var(--accent-alpha-10)" : "color-mix(in srgb, var(--red) 15%, transparent)",
       color: status === "ok" ? "var(--accent)" : "var(--red)",
       fontSize: 12, fontWeight: 700,
     }}>
@@ -125,7 +125,7 @@ export function StatusDashboard() {
           </div>
           <code style={{
             fontSize: 12, color: "var(--text-muted)", fontFamily: "monospace",
-            background: "rgba(0,0,0,0.15)", padding: "4px 8px", borderRadius: 8,
+            background: "var(--surface-2)", padding: "4px 8px", borderRadius: 8,
           }}>
             {r.endpoint}
           </code>

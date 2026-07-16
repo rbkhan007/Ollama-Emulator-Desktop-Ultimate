@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useDb } from "@/lib/DbContext";
-import { apiJson, toast } from "@/lib/api";
+import { apiJson, toast, getApiBase } from "@/lib/api";
 import { PageIcon } from "@/components/Icons";
 import { Trash2, Upload, FileText } from "lucide-react";
 
@@ -42,7 +42,7 @@ export default function RagPage() {
     }
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function uploadFile() {
     const file = fileRef.current?.files?.[0];
@@ -52,7 +52,7 @@ export default function RagPage() {
       const form = new FormData();
       form.append("file", file);
       form.append("collection", activeCollection);
-      const res = await fetch("/api/rag/upload", { method: "POST", body: form });
+      const res = await fetch(`${getApiBase()}/api/rag/upload`, { method: "POST", body: form });
       if (!res.ok) throw new Error(await res.text());
       toast("File indexed successfully!");
       if (fileRef.current) fileRef.current.value = "";
@@ -118,19 +118,19 @@ export default function RagPage() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <div className="page-header-icon" style={{ background: "rgba(253,121,168,0.1)" }}>
+        <div className="page-header-icon" style={{ background: "color-mix(in srgb, var(--accent-3) 10%, transparent)" }}>
           <PageIcon type="book" color="var(--accent-3)" />
         </div>
         <div>
           <h1>Knowledge Base (RAG)</h1>
           <p>Upload documents, paste text, and search your indexed content</p>
           {!databaseConnected && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(225,112,85,0.1)", borderRadius: 8, fontSize: 12, color: "var(--red)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "color-mix(in srgb, var(--red) 10%, transparent)", borderRadius: 8, fontSize: 12, color: "var(--red)" }}>
               PostgreSQL not connected — RAG features are unavailable
             </div>
           )}
           {databaseConnected && schema && !schema.synced && (
-            <div style={{ marginTop: 8, padding: "6px 12px", background: "rgba(253,203,110,0.1)", borderRadius: 8, fontSize: 12, color: "var(--accent-4)" }}>
+            <div style={{ marginTop: 8, padding: "6px 12px", background: "color-mix(in srgb, var(--accent-2) 10%, transparent)", borderRadius: 8, fontSize: 12, color: "var(--accent-4)" }}>
               Schema out of date (v{schema.db_version} vs v{schema.expected_version}) — run migration
             </div>
           )}

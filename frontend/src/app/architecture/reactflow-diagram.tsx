@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, CSSProperties } from "react";
+import React, { memo, useCallback, CSSProperties } from "react";
 import * as RF from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -10,6 +10,7 @@ import type {
   NodeProps,
   EdgeProps,
   ReactFlowProps,
+  Connection,
 } from "@xyflow/react";
 
 const ReactFlow = RF.ReactFlow as unknown as React.FC<ReactFlowProps>;
@@ -19,6 +20,7 @@ const {
   MiniMap,
   useNodesState,
   useEdgesState,
+  addEdge,
   MarkerType,
   BaseEdge,
   getBezierPath,
@@ -48,10 +50,10 @@ function ConnectionLine({
   return (
     <g>
       <path fill="none" stroke="var(--accent)" strokeWidth={2} strokeDasharray="8 4" d={path} style={{ animation: "dash-flow 1s linear infinite" }} />
-      <circle r={4} fill="var(--accent)" stroke="#fff" strokeWidth={1.5}>
+      <circle r={4} fill="var(--accent)" stroke="var(--surface)" strokeWidth={1.5}>
         <animateMotion dur="2s" repeatCount="indefinite" path={path} />
       </circle>
-      <circle cx={toX} cy={toY} fill="var(--accent)" r={4} stroke="#fff" strokeWidth={1.5} />
+      <circle cx={toX} cy={toY} fill="var(--accent)" r={4} stroke="var(--surface)" strokeWidth={1.5} />
     </g>
   );
 }
@@ -87,7 +89,7 @@ const CustomEdge = memo(function CustomEdge({
       <BaseEdge
         id={id}
         path={edgePath}
-        style={{ stroke: "#1e293b", strokeWidth: 2, ...(animated ? { strokeDasharray: "8 4" } : {}) }}
+        style={{ stroke: "var(--border)", strokeWidth: 2, ...(animated ? { strokeDasharray: "8 4" } : {}) }}
         markerEnd={markerEnd}
       />
       {/* Active animated flow path */}
@@ -102,7 +104,7 @@ const CustomEdge = memo(function CustomEdge({
             style={{ animation: "dash-flow 1s linear infinite", opacity: 0.8 }}
           />
           {/* Flowing particle */}
-          <circle r={4} fill={strokeColor} stroke="#fff" strokeWidth={1.5}>
+          <circle r={4} fill={strokeColor} stroke="var(--surface)" strokeWidth={1.5}>
             <animateMotion dur="2.5s" repeatCount="indefinite" path={edgePath} />
           </circle>
         </>
@@ -266,9 +268,9 @@ const initialNodes: Node[] = pos([
   { id: "acl", type: "middleware", position: { x: 560, y: 70 }, data: { label: "ACL Middleware", sub: "Auth & Rate Limiting" } },
   { id: "router", type: "gateway", position: { x: 560, y: 190 }, data: { label: "Provider Router", sub: "Smart Model Selection" } },
   { id: "stream", type: "gateway", position: { x: 560, y: 310 }, data: { label: "Stream Handler", sub: "SSE Response Buffer" } },
-  { id: "openai", type: "provider", position: { x: 850, y: 40 }, data: { label: "OpenAI", sub: "gpt-4o, o1-pro", color: "#10a37f" } },
+  { id: "openai", type: "provider", position: { x: 850, y: 40 }, data: { label: "OpenAI", sub: "gpt-4o, o1-pro", color: "var(--green)" } },
   { id: "anthropic", type: "provider", position: { x: 850, y: 110 }, data: { label: "Anthropic", sub: "claude-3.7-sonnet", color: "var(--accent-3)" } },
-  { id: "groq", type: "provider", position: { x: 850, y: 180 }, data: { label: "Groq", sub: "llama-3.3-70b", color: "#f59e0b" } },
+  { id: "groq", type: "provider", position: { x: 850, y: 180 }, data: { label: "Groq", sub: "llama-3.3-70b", color: "var(--accent-2)" } },
   { id: "deepseek", type: "provider", position: { x: 850, y: 250 }, data: { label: "DeepSeek", sub: "deepseek-v3", color: "var(--accent)" } },
   { id: "gemini", type: "provider", position: { x: 850, y: 320 }, data: { label: "Gemini", sub: "gemini-2.5-pro", color: "var(--accent-2)" } },
 
@@ -368,16 +370,23 @@ const panelStyle: CSSProperties = {
 const panelLabelStyle: CSSProperties = { fontSize: 13, fontWeight: 700, color: "var(--text)" };
 
 export function ArchitectureFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: "custom", animated: true }, eds)),
+    [setEdges],
+  );
+
   return (
-    <div style={{ ...flowContainerStyle, height: 520 }}>
+    <div className="arch-flow" style={{ ...flowContainerStyle, height: 520 }}>
       <ReactFlow
+        className="arch-flow"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionLineComponent={ConnectionLine}
@@ -394,15 +403,6 @@ export function ArchitectureFlow() {
         </Panel>
         <Panel position="top-right" style={panelStyle}>
           <span style={panelLabelStyle}>📚 Hybrid RAG Pipeline</span>
-        </Panel>
-        <Panel position="bottom-left" style={panelStyle}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: "var(--text-muted)" }}>
-            <span style={{ fontWeight: 700, fontSize: 12, color: "var(--text)" }}>Legend</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--green)", marginRight: 6 }} />Client / User</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", marginRight: 6 }} />Gateway / Service</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-3)", marginRight: 6 }} />Middleware</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-4)", marginRight: 6 }} />Database / Storage</span>
-          </div>
         </Panel>
       </ReactFlow>
     </div>
@@ -438,16 +438,23 @@ const deployEdges: Edge[] = [
 ];
 
 export function DeploymentFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(deployNodes);
+  const [nodes, , onNodesChange] = useNodesState(deployNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(deployEdges);
 
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: "custom", animated: true }, eds)),
+    [setEdges],
+  );
+
   return (
-    <div style={{ ...flowContainerStyle, height: 480 }}>
+    <div className="arch-flow" style={{ ...flowContainerStyle, height: 480 }}>
       <ReactFlow
+        className="arch-flow"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
@@ -461,15 +468,6 @@ export function DeploymentFlow() {
         <Controls style={{ background: "var(--surface)", borderRadius: 8, border: "1px solid var(--glass-border)" }} />
         <Panel position="top-left" style={panelStyle}>
           <span style={panelLabelStyle}>☁️ Deployment Architecture</span>
-        </Panel>
-        <Panel position="bottom-left" style={panelStyle}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: "var(--text-muted)" }}>
-            <span style={{ fontWeight: 700, fontSize: 12, color: "var(--text)" }}>Legend</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--green)", marginRight: 6 }} />Client / User</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", marginRight: 6 }} />Gateway / Service</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-3)", marginRight: 6 }} />Middleware</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-4)", marginRight: 6 }} />Database / Storage</span>
-          </div>
         </Panel>
       </ReactFlow>
     </div>
@@ -509,16 +507,23 @@ const authEdges: Edge[] = [
 ];
 
 export function AuthFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([...authNodes, authJunction]);
+  const [nodes, , onNodesChange] = useNodesState([...authNodes, authJunction]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(authEdges);
 
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: "custom", animated: true }, eds)),
+    [setEdges],
+  );
+
   return (
-    <div style={{ ...flowContainerStyle, height: 400 }}>
+    <div className="arch-flow" style={{ ...flowContainerStyle, height: 400 }}>
       <ReactFlow
+        className="arch-flow"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionLineComponent={ConnectionLine}
@@ -531,15 +536,6 @@ export function AuthFlow() {
         <Controls style={{ background: "var(--surface)", borderRadius: 8, border: "1px solid var(--glass-border)" }} />
         <Panel position="top-left" style={panelStyle}>
           <span style={panelLabelStyle}>🔐 Auth &amp; Security Flow</span>
-        </Panel>
-        <Panel position="bottom-left" style={panelStyle}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: "var(--text-muted)" }}>
-            <span style={{ fontWeight: 700, fontSize: 12, color: "var(--text)" }}>Legend</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--green)", marginRight: 6 }} />Client / User</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", marginRight: 6 }} />Gateway / Service</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-3)", marginRight: 6 }} />Middleware</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-4)", marginRight: 6 }} />Database / Storage</span>
-          </div>
         </Panel>
       </ReactFlow>
     </div>
@@ -591,16 +587,23 @@ const sdlcEdges: Edge[] = [
 ];
 
 export function WaterfallSdlcFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(sdlcNodes);
+  const [nodes, , onNodesChange] = useNodesState(sdlcNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(sdlcEdges);
 
+  const onConnect = useCallback(
+    (params: Connection) => setEdges((eds) => addEdge({ ...params, type: "custom", animated: true }, eds)),
+    [setEdges],
+  );
+
   return (
-    <div style={{ ...flowContainerStyle, height: 780 }}>
+    <div className="arch-flow" style={{ ...flowContainerStyle, height: 780 }}>
       <ReactFlow
+        className="arch-flow"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         connectionLineComponent={ConnectionLine}
@@ -613,13 +616,6 @@ export function WaterfallSdlcFlow() {
         <Controls style={{ background: "var(--surface)", borderRadius: 8, border: "1px solid var(--glass-border)" }} />
         <Panel position="top-left" style={panelStyle}>
           <span style={panelLabelStyle}>🌊 Waterfall SDLC</span>
-        </Panel>
-        <Panel position="bottom-left" style={panelStyle}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4, fontSize: 11, color: "var(--text-muted)" }}>
-            <span style={{ fontWeight: 700, fontSize: 12, color: "var(--text)" }}>Legend</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent)", marginRight: 6 }} />Phase</span>
-            <span><span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", background: "var(--accent-4)", marginRight: 6 }} />Deliverable</span>
-          </div>
         </Panel>
       </ReactFlow>
     </div>

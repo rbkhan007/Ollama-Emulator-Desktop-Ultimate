@@ -1,6 +1,6 @@
 import { SITE_URL, REPO_URL, RELEASES_URL } from "@/lib/config";
 import type { Metadata } from "next";
-import { Monitor, Smartphone, Code2, ExternalLink, Monitor as MonitorIcon, Menu } from "lucide-react";
+import { Monitor, Smartphone, Code2, ExternalLink, Menu } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Download",
@@ -65,7 +65,7 @@ export default function Download() {
             <div style={{
               width: 52, height: 52, borderRadius: 16, flexShrink: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              background: item.btnStyle === "primary" ? "rgba(13,148,136,0.1)" : "var(--surface-2)",
+              background: item.btnStyle === "primary" ? "var(--accent-alpha-10)" : "var(--surface-2)",
               color: item.btnStyle === "primary" ? "var(--accent)" : "var(--text-muted)",
             }}>
               {item.svg}
@@ -108,7 +108,7 @@ export default function Download() {
             borderRadius: 12, background: "var(--surface)", border: "1px solid var(--glass-border)",
             color: "var(--text)", textDecoration: "none", fontWeight: 600, fontSize: "var(--text-sm)",
           }}>
-            <MonitorIcon size={20} strokeWidth={2} />
+            <Monitor size={20} strokeWidth={2} />
             Deploy to Render
           </a>
           <a href="https://railway.app/template/ollamomui?referralCode=ollamomui" target="_blank" rel="noopener noreferrer" style={{

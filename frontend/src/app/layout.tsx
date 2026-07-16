@@ -12,6 +12,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { AuthProvider } from "@/lib/AuthContext";
 import { DbProvider } from "@/lib/DbContext";
+import GlobalScripts from "@/components/GlobalScripts";
 import { SITE_URL, ASSET_BASE, BACKEND_URL } from "@/lib/config";
 
 const inter = Inter({
@@ -31,9 +32,19 @@ const jetbrains = JetBrains_Mono({
 });
 
 const themeScript = `
-(function(){try{var t=localStorage.getItem('ollamomui-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);else if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}catch(e){}})()
-window.addEventListener('unhandledrejection',function(e){var m=(e.reason||'').toString();if(m.includes('listener indicated')||m.includes('message channel closed'))e.preventDefault();});
-window.addEventListener('error',function(e){var m=(e.error||'').toString();if(m.includes('listener indicated')||m.includes('message channel closed'))e.preventDefault();});
+(function(){
+  try {
+    if (typeof localStorage === 'undefined' || typeof document === 'undefined') return;
+    var t = localStorage.getItem('ollamomui-theme');
+    if (t === 'light' || t === 'dark') {
+      document.documentElement.setAttribute('data-theme', t);
+    } else if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  } catch (e) {}
+})();
 `;
 
 export const metadata: Metadata = {
@@ -88,6 +99,12 @@ export const metadata: Metadata = {
     icon: [`${ASSET_BASE}/favicon.ico`, { url: `${ASSET_BASE}/icon-192.png`, type: "image/png", sizes: "192x192" }],
     apple: `${ASSET_BASE}/apple-touch-icon.png`,
   },
+  verification: {
+    google: "B9BhgbOr0QhuTmOzNOmBvFMm5d8wuyjyMqKgGFRPbTc",
+  },
+  other: {
+    "dns-prefetch": "https://github.com",
+  },
 };
 
 export const viewport: Viewport = {
@@ -96,85 +113,78 @@ export const viewport: Viewport = {
   maximumScale: 5,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f9fc" },
-    { media: "(prefers-color-scheme: dark)", color: "#06060e" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f2ed" },
+    { media: "(prefers-color-scheme: dark)", color: "#080c14" },
   ],
+};
+
+const softwareApplicationLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "OllamoMUI",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Windows, macOS, Linux, Web, Android",
+  url: SITE_URL,
+  image: `${ASSET_BASE}/og-image.png`,
+  screenshot: `${ASSET_BASE}/og-image.png`,
+  description:
+    "Free, self-hosted AI gateway that emulates the Ollama API and routes prompts to 26 free LLMs with RAG, memory, desktop and mobile clients.",
+  offers: [
+    { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
+    { "@type": "Offer", name: "Desktop Pro", price: "4.99", priceCurrency: "USD" },
+    { "@type": "Offer", name: "Mobile Ultimate", price: "2.99", priceCurrency: "USD" },
+    { "@type": "Offer", name: "Web Pro", price: "9.99", priceCurrency: "USD" },
+  ],
+};
+
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "OllamoMUI",
+  url: SITE_URL,
+  logo: `${ASSET_BASE}/icon-192.png`,
+  sameAs: ["https://github.com/rbkhan007/ollamomui"],
+};
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "OllamoMUI",
+  url: SITE_URL,
+  description: "Best free Ollama alternative — local LLM proxy with 26 free models, RAG, and persistent AI memory.",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/playground`,
+    },
+    "query-input": "required",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable}`}>
-        <head>
-          <link rel="dns-prefetch" href="https://github.com" />
-          <link rel="preconnect" href="https://github.com" />
-          <link rel="dns-prefetch" href={BACKEND_URL} />
-          <link rel="preconnect" href={BACKEND_URL} />
-          <link rel="dns-prefetch" href={SITE_URL} />
-          <link rel="preconnect" href={SITE_URL} />
-          <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
-          <link rel="preconnect" href="https://va.vercel-scripts.com" />
-          <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-          <link rel="preconnect" href="https://www.googletagmanager.com" />
-          <link rel="icon" type="image/x-icon" href={`${ASSET_BASE}/favicon.ico`} />
-          <link rel="icon" type="image/vnd.microsoft.icon" href={`${ASSET_BASE}/brand-mark.ico`} />
-          <link rel="apple-touch-icon" href={`${ASSET_BASE}/apple-touch-icon.png`} />
-          <meta name="google-site-verification" content="B9BhgbOr0QhuTmOzNOmBvFMm5d8wuyjyMqKgGFRPbTc" />
-          <Script id="theme-init" strategy="beforeInteractive">{themeScript}</Script>
-          <JsonLd data={{
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            name: "OllamoMUI",
-            applicationCategory: "DeveloperApplication",
-            operatingSystem: "Windows, macOS, Linux, Web, Android",
-            url: SITE_URL,
-            image: `${ASSET_BASE}/og-image.png`,
-            screenshot: `${ASSET_BASE}/og-image.png`,
-            description:
-              "Free, self-hosted AI gateway that emulates the Ollama API and routes prompts to 26 free LLMs with RAG, memory, desktop and mobile clients.",
-            offers: [
-              { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
-              { "@type": "Offer", name: "Desktop Pro", price: "4.99", priceCurrency: "USD" },
-              { "@type": "Offer", name: "Mobile Ultimate", price: "2.99", priceCurrency: "USD" },
-              { "@type": "Offer", name: "Web Pro", price: "9.99", priceCurrency: "USD" },
-            ],
-          }} />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Organization",
-                name: "OllamoMUI",
-                url: SITE_URL,
-                logo: `${ASSET_BASE}/icon-192.png`,
-                sameAs: [
-                  "https://github.com/rbkhan007/ollamomui",
-                ],
-              }),
-            }}
-          />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "WebSite",
-                name: "OllamoMUI",
-                url: SITE_URL,
-                description: "Best free Ollama alternative — local LLM proxy with 26 free models, RAG, and persistent AI memory.",
-                potentialAction: {
-                  "@type": "SearchAction",
-                  target: {
-                    "@type": "EntryPoint",
-                    urlTemplate: `${SITE_URL}/playground`,
-                  },
-                  "query-input": "required",
-                },
-              }),
-            }}
-          />
-        </head>
+      <head>
+        <link rel="dns-prefetch" href="https://github.com" />
+        <link rel="preconnect" href="https://github.com" />
+        <link rel="dns-prefetch" href={BACKEND_URL} />
+        <link rel="preconnect" href={BACKEND_URL} />
+        <link rel="dns-prefetch" href={SITE_URL} />
+        <link rel="preconnect" href={SITE_URL} />
+        <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
+        <link rel="preconnect" href="https://va.vercel-scripts.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
+        <JsonLd data={softwareApplicationLd} />
+        <JsonLd data={organizationLd} />
+        <JsonLd data={websiteLd} />
+      </head>
       <body>
+        <GlobalScripts />
         <ScrollToTop />
         <ThemeProvider>
           <AuthProvider>
