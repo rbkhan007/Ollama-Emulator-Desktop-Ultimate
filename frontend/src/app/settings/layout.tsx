@@ -4,6 +4,7 @@ import { SITE_URL } from "@/lib/config";
 export const metadata: Metadata = {
   title: "Settings",
   description: "Configure your LLM providers, add API keys, manage models, and connect to your local gateway. Supports OpenRouter, OpenAI, Anthropic, Groq, and 20+ more.",
+  keywords: ["LLM settings", "API keys", "provider config", "Rakibul Hasan", "Rhasan@dev", "full-stack developer Bangladesh", "Dhaka developer", "freelance"],
   alternates: { canonical: `${SITE_URL}/settings` },
   openGraph: {
     title: "Settings",

@@ -4,6 +4,7 @@ import { SITE_URL } from "@/lib/config";
 export const metadata: Metadata = {
   title: "RAG Knowledge Base",
   description: "Upload documents, paste text, and search with semantic TF-IDF retrieval. OllamoMUI's RAG engine grounds AI answers in your own data using pgvector vector search.",
+  keywords: ["RAG", "knowledge base", "pgvector", "semantic search", "Rakibul Hasan", "Rhasan@dev", "full-stack developer Bangladesh", "Dhaka developer"],
   alternates: { canonical: `${SITE_URL}/rag` },
   openGraph: {
     title: "RAG Knowledge Base",

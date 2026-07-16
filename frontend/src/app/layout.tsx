@@ -66,6 +66,9 @@ export const metadata: Metadata = {
     "fake ollama server", "ollama api emulator", "local gpt proxy", "free chatgpt alternative",
     "private AI", "self-hosted LLM", "offline AI proxy", "free github copilot alternative",
     "ai agent proxy", "llm load balancer", "streaming chat completions",
+    "Rakibul Hasan", "Rhasan@dev", "full-stack developer Dhaka", "full-stack developer Bangladesh",
+    "remote jobs Bangladesh", "work from home Bangladesh", "freelance developer Bangladesh",
+    "hire full-stack developer", "Bangladesh developer for hire", "Dhaka software engineer",
   ],
   authors: [{ name: "Rhasan@dev" }, { name: "rbkhan007" }],
   creator: "Rhasan@dev",
@@ -162,6 +165,29 @@ const websiteLd = {
   },
 };
 
+const personLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Rakibul Hasan",
+  alternateName: "Rhasan@dev",
+  url: `${SITE_URL}/resume`,
+  image: `${SITE_URL}/Rhasan%40dev.jpg`,
+  jobTitle: "Full-Stack Developer & AI Engineer",
+  description: "Full-stack developer and AI engineer based in Dhaka, Bangladesh (GMT+6), available for remote jobs, work-from-home, and freelance roles.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Dhaka",
+    addressCountry: "Bangladesh",
+  },
+  knowsAbout: ["Full-Stack Development", "AI/LLM Integration", "React", "Next.js", "TypeScript", "Python", "PostgreSQL", "RAG"],
+  sameAs: [
+    "https://github.com/rbkhan007",
+    `${SITE_URL}/resume`,
+  ],
+  email: "mailto:rbkhan00009@gmail.com",
+  availableForHire: true,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable}`}>
@@ -182,6 +208,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <JsonLd data={softwareApplicationLd} />
         <JsonLd data={organizationLd} />
         <JsonLd data={websiteLd} />
+        <JsonLd data={personLd} />
       </head>
       <body>
         <GlobalScripts />

@@ -231,9 +231,13 @@ export default function About() {
           padding: "40px 32px",
         }}>
           <h2 style={{ fontSize: "var(--text-h2)", fontWeight: 700, marginBottom: 12 }}>Hire Me</h2>
-          <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.6, marginBottom: 20, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>
-            I build full-stack applications, cross-platform desktop/mobile apps, AI/LLM integrations, and
-            developer tools. If you have a project, an idea, or a problem to solve — let&apos;s talk.
+          <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.6, marginBottom: 20, maxWidth: 540, marginLeft: "auto", marginRight: "auto" }}>
+            I&apos;m Rakibul Hasan (Rhasan@dev), a full-stack developer based in <strong style={{ color: "var(--text)" }}>Dhaka, Bangladesh</strong> (GMT+6), available for{" "}
+            <strong style={{ color: "var(--text)" }}>remote jobs</strong>,{" "}
+            <strong style={{ color: "var(--text)" }}>work-from-home</strong>,{" "}
+            <strong style={{ color: "var(--text)" }}>freelance</strong>, and local roles. I build full-stack
+            applications, cross-platform desktop/mobile apps, AI/LLM integrations, and developer tools. If you
+            have a project, an idea, or a problem to solve — let&apos;s talk.
           </p>
           <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:rbkhan00009@gmail.com" style={{

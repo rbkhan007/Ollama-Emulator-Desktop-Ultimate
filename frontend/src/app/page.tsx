@@ -17,11 +17,16 @@ import { MessageSquare, Grid, Brain, Shield, Infinity, Zap, Terminal, Download, 
 
 export const metadata: Metadata = {
   title: "The #1 Ollama Alternative with 26 Free LLMs",
-  description: "Stop paying $20/mo for ChatGPT. OllamoMUI is the best free Ollama alternative — a local LLM proxy that routes your prompts to 26 free models. RAG knowledge base, persistent AI memory, usage analytics, and a polished dashboard. Works with Claude Code, Cursor, OpenCode, Continue.dev.",
+  description: "Stop paying $20/mo for ChatGPT. OllamoMUI is the best free Ollama alternative — a local LLM proxy that routes your prompts to 26 free models. RAG knowledge base, persistent AI memory, usage analytics, and a polished dashboard. Built by Rakibul Hasan (Rhasan@dev), a Dhaka, Bangladesh full-stack developer open to remote jobs and freelance work.",
+  keywords: [
+    "Ollama alternative", "free LLMs", "local LLM proxy", "RAG",
+    "Rakibul Hasan", "Rhasan@dev", "full-stack developer Dhaka", "full-stack developer Bangladesh",
+    "remote jobs Bangladesh", "freelance developer Bangladesh", "hire full-stack developer",
+  ],
   alternates: { canonical: SITE_URL },
   openGraph: {
     title: "The #1 Ollama Alternative with 26 Free LLMs",
-    description: "Best free Ollama alternative. 26 free LLMs, RAG knowledge base, persistent memory, and analytics. Works with Claude Code, Cursor, OpenCode.",
+    description: "Best free Ollama alternative. 26 free LLMs, RAG knowledge base, persistent memory, and analytics. Built by a Dhaka-based full-stack developer open to remote work.",
     url: SITE_URL,
   },
 };
@@ -394,6 +399,21 @@ export default function Home() {
             Open the App &rarr;
           </Link>
         </div>
+      </section>
+
+      <section style={{ maxWidth: 760, margin: "0 auto", padding: "0 0 8px", textAlign: "center" }}>
+        <p style={{ color: "var(--text-muted)", fontSize: "var(--text-sm)", lineHeight: 1.7 }}>
+          Made with ❤️ in <strong style={{ color: "var(--text)" }}>Dhaka, Bangladesh</strong> by{" "}
+          <Link href="/resume" style={{ color: "var(--accent-2)", textDecoration: "none", fontWeight: 600 }}>
+            Rakibul Hasan (Rhasan@dev)
+          </Link>{" "}
+          — a full-stack developer open to <strong style={{ color: "var(--text)" }}>remote jobs</strong>,{" "}
+          <strong style={{ color: "var(--text)" }}>work-from-home</strong>, and{" "}
+          <strong style={{ color: "var(--text)" }}>freelance</strong> roles across Bangladesh &amp; worldwide.{" "}
+          <Link href="/resume" style={{ color: "var(--accent-2)", textDecoration: "none", fontWeight: 600 }}>
+            Hire me &rarr;
+          </Link>
+        </p>
       </section>
     </div>
   );

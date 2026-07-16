@@ -3,7 +3,8 @@ import { SITE_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
   title: "AI Chat Playground",
-  description: "Test 26 free LLMs in real-time. Stream responses from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, and Gemini — zero cost. Markdown rendering, model switching, and conversation export.",
+  description: "Test 26 free LLMs in real-time. Stream responses from OpenRouter, OpenAI, Anthropic, Groq, DeepSeek, and Gemini — zero cost. Built by Rakibul Hasan (Rhasan@dev), a Dhaka, Bangladesh full-stack developer open to remote and freelance work.",
+  keywords: ["AI chat playground", "free LLMs", "OllamoMUI", "Rakibul Hasan", "Rhasan@dev", "full-stack developer Dhaka", "remote jobs Bangladesh", "freelance developer Bangladesh"],
   alternates: { canonical: `${SITE_URL}/playground` },
   openGraph: {
     title: "AI Chat Playground",
